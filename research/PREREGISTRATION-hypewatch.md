@@ -52,3 +52,35 @@ will show the rewrites as "unverified suggestions".
 ---
 
 ## Results (appended after the run)
+
+Run 2026-10-17. Archive pages 0–51 held 516 releases dated 2023-02-01 to 2026-10-14. Of those:
+- 422 had no DOI reference. They are mostly announcements, plus older releases that name the journal without a DOI.
+- 9 cited a paper whose abstract wasn't found.
+- **85 were checked**, covering 615 sentences.
+
+Matching a release to its paper by journal name and date would have raised coverage. We didn't
+do it: a wrong match puts a false flag on a real institution. The full summary is in
+`results/hypewatch-summary.json` and the per-release data in `hypecheck/hypewatch.json`.
+
+| Measure | Predicted | Result | Hit? |
+|---|---|---|---|
+| Releases with ≥ 1 BLOCK, public rule | 3–20% | **15.3%** (13 of 85) | yes |
+| Releases with ≥ 1 BLOCK, benchmark rule | 20–50% | **43.5%** | yes |
+| Mean score, headlines vs others | headlines higher | 0.204 vs 0.193 (benchmark rule: 0.269 vs 0.265) | nominally yes; the gap is negligible |
+| Rewrites verified within 2 tries | ≥ 85% | **66.7%** (12 of 18; 55.6% on the first try) | **no** |
+| Skipped because no abstract was found | ≤ 15% | 9.6% (9 of 94 with a DOI) | yes |
+
+**Notes on the results:**
+- **The stricter public rule removes about two-thirds of the flags** the benchmark rule would
+  raise: 43.5% of releases down to 15.3%. That is the cost of not accusing a release over a claim
+  its abstract supports elsewhere.
+- **Headlines scored no higher than the sentences below them in NIH releases.** That runs against
+  the expectation from university releases. NIH headlines also go through the same federal office.
+- **The rewrite miss is partly how verification was defined.** A rewrite is checked against the
+  paper's conclusion (benchmark rule). The original flag used the more lenient public rule, so
+  rewrites are held to a stricter standard than the sentences they replace. We report the
+  pre-registered number as it is.
+- **Applied consequence.** As written above, rewrites under 70% are shown as "suggestions", each
+  with its own Decider result, not as fixes.
+- **Date bug.** Five dates prefixed "Media Advisory" failed to parse at first. The fix changed no
+  scores.

@@ -1,0 +1,23 @@
+{
+ "releases": 85,
+ "sentences": 615,
+ "skipped_no_paper": 422,
+ "skipped_no_abstract": 9,
+ "releases_with_block": 0.1529,
+ "releases_with_block_benchmark_rule": 0.4353,
+ "releases_with_review": 0.3059,
+ "headline_block_rate": 0.0353,
+ "body_block_rate": 0.0283,
+ "headline_mean_p": 0.204,
+ "body_mean_p": 0.1925,
+ "headline_mean_p_benchmark_rule": 0.2689,
+ "body_mean_p_benchmark_rule": 0.2645,
+ "rewrites": 18,
+ "rewrites_verified": 0.6667,
+ "rewrites_first_try": 0.5556,
+ "first_date": "2023-02-01",
+ "last_date": "2026-10-14",
+ "updated": "2026-10-17T18:13:13+00:00",
+ "threshold": 0.5001,
+ "review_threshold": 0.3986
+}

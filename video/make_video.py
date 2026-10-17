@@ -29,9 +29,8 @@ SCENES = [
     ("hero", "HypeCheck is a press-office agent that won't publish that. It reads a draft release next to the "
              "paper, flags every sentence that claims more than the study found, has Claude rewrite it, and "
              "checks the rewrite again before anything goes out."),
-    ("how", "Two models, two jobs. Claude, on Amazon Bedrock, writes. Strands Decider 2B, a small decision "
-            "model, judges. It rates how strong each claim is, from no relationship up to a definite cause, and "
-            "compares that with the paper. It can't write, so Claude can't argue with it."),
+    ("how", "Two models, two jobs. Claude, on Amazon Bedrock, writes. Strands Decider 2B judges: it rates how "
+            "strong each claim is, from no link up to a definite cause, and compares that with the paper."),
     ("run", "Here is a real press release from the research data. The agent is running on Amazon Bedrock "
             "AgentCore Runtime, and Decider reads the draft one sentence at a time."),
     ("blocked", "The saving-lives sentence scores point eight: a definite cause, where the paper only says the "
@@ -45,9 +44,11 @@ SCENES = [
                  "asked to judge flagged thirty to forty-five percent of faithful releases as exaggerated, Opus "
                  "included. Decider, with a calibrated threshold, flags six point seven percent, and edges the best "
                  "published system on overall accuracy without training on the task."),
-    ("limits", "Every experiment was pre-registered, and the limits are on the page. At its strictest setting "
-               "it catches thirty-nine percent of exaggerations, so it's a safety net for the press office, not a "
-               "replacement for an editor."),
+    ("hypewatch", "Then we pointed it at the real world. HypeWatch checks every research release from the US "
+                  "National Institutes of Health in the past year against the paper it cites, with Claude's "
+                  "suggested fix, verified by Decider, beside every flag. It updates every morning."),
+    ("limits", "Every experiment was pre-registered, and the limits are on the page: at its strictest setting it "
+               "catches thirty-nine percent of exaggerations. It's a safety net, not an editor."),
     ("builders", "The gate is a reusable Strands intervention handler: one typed question, a calibrated "
                  "threshold, and Guide, Confirm or Proceed. The same code runs a patient-leaflet writer unchanged."),
     ("outro", "HypeCheck. Spell-check for hype. Links are below."),
@@ -132,7 +133,18 @@ def record(site: str, clips: dict, out: Path) -> tuple[Path, list[tuple[str, flo
         scene("info", action=hover_info)
         page.mouse.move(5, 5)
         scene("evidence", action=lambda: scroll_to(page, "#evTable", 120))
-        scene("limits", action=lambda: page.evaluate("window.scrollBy({top: 420, behavior:'smooth'})"))
+        def open_hypewatch():
+            page.goto(site.rstrip("/") + "/hypewatch")
+            page.wait_for_selector(".rel", timeout=60_000)
+            page.wait_for_timeout(1500)
+            page.evaluate("window.scrollTo({top: document.querySelector('.rel').getBoundingClientRect().top + scrollY - 70, behavior:'smooth'})")
+        scene("hypewatch", action=open_hypewatch, pad=1.0)
+
+        def back_to_limits():
+            page.goto(site)
+            page.wait_for_selector("#evTable")
+            scroll_to(page, "#evTable", -260)
+        scene("limits", action=back_to_limits)
         scene("builders", action=lambda: scroll_to(page, "#builders", 80))
         page.goto(f"{card}?s=outro")
         page.wait_for_timeout(300)

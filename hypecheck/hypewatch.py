@@ -180,8 +180,10 @@ def suggest(bedrock, decider: Decider, paper: str, p_paper: list[float], sentenc
 
 
 def iso_date(d: str) -> str:
+    """'Wednesday, October 14, 2026' -> '2026-10-14'; tolerates prefixes such as 'Media Advisory'."""
+    m = re.search(r"[A-Z][a-z]+day, [A-Z][a-z]+ \d{1,2}, \d{4}", d or "")
     try:
-        return datetime.strptime(d.strip(), "%A, %B %d, %Y").date().isoformat()
+        return datetime.strptime(m.group(0), "%A, %B %d, %Y").date().isoformat() if m else ""
     except ValueError:
         return ""
 
@@ -232,6 +234,43 @@ def check_release(rel: dict, paper: tuple[str, str, str], decider: Decider, bedr
     }
 
 
+# ----------------------------------------------------------------------------- summary
+
+def summarize(store: dict, threshold: float, review_threshold: float) -> dict:
+    """The numbers the page, the article and the pre-registration report, from one place."""
+    rel = store["releases"]
+    sents = [s for r in rel for s in r["sentences"]]
+    heads = [s for s in sents if s["role"] == "headline"]
+    body = [s for s in sents if s["role"] != "headline"]
+    sugg = [s for s in sents if "suggestion_ok" in s]
+    skipped = store.get("skipped", {}).values()
+
+    def share(xs, f):
+        return round(sum(map(f, xs)) / len(xs), 4) if xs else None
+
+    def mean(xs, key):
+        return round(sum(x[key] for x in xs) / len(xs), 4) if xs else None
+
+    return {
+        "releases": len(rel), "sentences": len(sents),
+        "skipped_no_paper": sum("no paper" in v for v in skipped),
+        "skipped_no_abstract": sum("abstract" in v for v in skipped),
+        "releases_with_block": share(rel, lambda r: r["flagged"] > 0),
+        "releases_with_block_benchmark_rule": share(rel, lambda r: any(s["p_vs_conclusion"] > threshold for s in r["sentences"])),
+        "releases_with_review": share(rel, lambda r: r["review"] > 0),
+        "headline_block_rate": share(heads, lambda s: s["zone"] == "block"),
+        "body_block_rate": share(body, lambda s: s["zone"] == "block"),
+        "headline_mean_p": mean(heads, "p"), "body_mean_p": mean(body, "p"),
+        "headline_mean_p_benchmark_rule": mean(heads, "p_vs_conclusion"),
+        "body_mean_p_benchmark_rule": mean(body, "p_vs_conclusion"),
+        "rewrites": len(sugg), "rewrites_verified": share(sugg, lambda s: s["suggestion_ok"]),
+        "rewrites_first_try": share(sugg, lambda s: s["suggestion_ok"] and s["attempts"] == 1),
+        "first_date": min((r["date_iso"] for r in rel if r.get("date_iso")), default=None),
+        "last_date": max((r["date_iso"] for r in rel if r.get("date_iso")), default=None),
+        "updated": store.get("updated"), "threshold": threshold, "review_threshold": review_threshold,
+    }
+
+
 # ----------------------------------------------------------------------------- store
 
 def load() -> dict:
@@ -269,7 +308,11 @@ def process(urls: list[str], store: dict, rewrite: bool = True, log=print) -> in
         if not paper or len(paper[1]) < 30 or len(paper[3]) < 200:
             store["skipped"][url] = "paper abstract not available yet"
             continue
-        rec = check_release(rel, paper, decider, bedrock, thr, rev)
+        try:
+            rec = check_release(rel, paper, decider, bedrock, thr, rev)
+        except Exception as exc:  # e.g. Decider restarting; leave it for the next run, don't crash the job
+            log(f"check failed, will retry next run: {type(exc).__name__}: {rel['title'][:60]}")
+            continue
         store["releases"].append(rec)
         added += 1
         log(f"[{added}] {rec['flagged']} block / {rec['review']} review  max {rec['max_p']:.2f}  {rec['title'][:80]}")
@@ -287,9 +330,13 @@ def main() -> int:
     b.add_argument("--pages", type=int, default=30)
     b.add_argument("--start", type=int, default=0)
     sub.add_parser("update")
+    sub.add_parser("summary")
     ap.add_argument("--no-rewrite", action="store_true")
     args = ap.parse_args()
     store = load()
+    if args.cmd == "summary":
+        print(json.dumps(summarize(store, *thresholds()), indent=1))
+        return 0
     if args.cmd == "backfill":
         urls = []
         for page in range(args.start, args.start + args.pages):

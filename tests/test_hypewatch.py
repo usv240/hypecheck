@@ -36,4 +36,5 @@ def test_conclusion_extraction():
 
 def test_iso_date():
     assert iso_date("Wednesday, October 14, 2026") == "2026-10-14"
+    assert iso_date("Media Advisory Thursday, May 22, 2025") == "2025-05-22"
     assert iso_date("not a date") == ""
