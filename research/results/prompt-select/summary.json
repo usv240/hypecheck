@@ -1,0 +1,23 @@
+{
+ "V0": {
+  "auroc_exag": 0.7121,
+  "macro_f1": 0.5104
+ },
+ "V1": {
+  "auroc_exag": 0.722,
+  "macro_f1": 0.6015
+ },
+ "V2": {
+  "auroc_exag": 0.5851,
+  "macro_f1": 0.3916
+ },
+ "V3": {
+  "auroc_exag": 0.7407,
+  "macro_f1": 0.6017
+ },
+ "decision": {
+  "best": "V3",
+  "gain_over_V0": 0.0286,
+  "adopt": false
+ }
+}
