@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 430" font-family="system-ui,Segoe UI,Roboto,sans-serif" font-size="14">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#3c4043"/></marker>
+    <style>
+      .box{fill:#fff;stroke:#c4c9d0;stroke-width:1.5}
+      .aws{fill:#f3f7ff;stroke:#0b57d0;stroke-width:1.5}
+      .dec{fill:#e8f5ee;stroke:#17663f;stroke-width:1.5}
+      .t{fill:#14171a;font-weight:700}
+      .s{fill:#5b6470;font-size:12.5px}
+      .l{fill:#3c4043;font-size:12px}
+      .line{stroke:#3c4043;stroke-width:1.6;fill:none;marker-end:url(#a)}
+      .dash{stroke-dasharray:5 4}
+    </style>
+  </defs>
+  <rect width="960" height="430" fill="#fafbfc" rx="14"/>
+  <text x="24" y="34" class="t" font-size="17">HypeCheck on AWS</text>
+  <text x="24" y="54" class="s">Decider judges, Claude writes. The gate sits in the agent's path before publish_release runs.</text>
+
+  <rect x="24" y="92" width="150" height="70" rx="10" class="box"/>
+  <text x="99" y="122" text-anchor="middle" class="t">Browser</text>
+  <text x="99" y="142" text-anchor="middle" class="s">press officer / judge</text>
+
+  <rect x="214" y="92" width="150" height="70" rx="10" class="aws"/>
+  <text x="289" y="122" text-anchor="middle" class="t">Amazon CloudFront</text>
+  <text x="289" y="142" text-anchor="middle" class="s">HTTPS, streaming</text>
+
+  <rect x="404" y="78" width="250" height="210" rx="12" class="aws"/>
+  <text x="529" y="102" text-anchor="middle" class="t">Amazon EC2 (Elastic IP)</text>
+  <rect x="424" y="116" width="210" height="60" rx="9" class="box"/>
+  <text x="529" y="141" text-anchor="middle" class="t">HypeCheck web app</text>
+  <text x="529" y="160" text-anchor="middle" class="s">FastAPI · job queue · SSE</text>
+  <rect x="424" y="196" width="210" height="76" rx="9" class="dec"/>
+  <text x="529" y="222" text-anchor="middle" class="t">Strands Decider 2B</text>
+  <text x="529" y="241" text-anchor="middle" class="s">strands-decider serve (local)</text>
+  <text x="529" y="259" text-anchor="middle" class="s">claim strength per sentence</text>
+
+  <rect x="704" y="92" width="232" height="86" rx="12" class="aws"/>
+  <text x="820" y="118" text-anchor="middle" class="t">Bedrock AgentCore Runtime</text>
+  <text x="820" y="138" text-anchor="middle" class="s">Strands agent + ClaimFidelityGate</text>
+  <text x="820" y="156" text-anchor="middle" class="s">(InterventionHandler)</text>
+
+  <rect x="704" y="226" width="232" height="62" rx="12" class="aws"/>
+  <text x="820" y="252" text-anchor="middle" class="t">Amazon Bedrock</text>
+  <text x="820" y="271" text-anchor="middle" class="s">Claude Sonnet 4.6 rewrites</text>
+
+  <rect x="704" y="330" width="232" height="62" rx="12" class="aws"/>
+  <text x="820" y="356" text-anchor="middle" class="t">SSM Parameter Store</text>
+  <text x="820" y="375" text-anchor="middle" class="s">Decider endpoint key</text>
+
+  <path d="M174 127H210" class="line"/>
+  <path d="M364 127H420" class="line"/>
+  <path d="M634 136H700" class="line"/>
+  <text x="667" y="128" text-anchor="middle" class="l">invoke</text>
+  <path d="M820 178V222" class="line"/>
+  <text x="828" y="204" class="l">Converse</text>
+  <path d="M706 168C660 190 660 225 638 232" class="line dash"/>
+  <text x="600" y="312" class="l">/decider/v1/systemone (key-guarded)</text>
+  <path d="M820 330V292" class="line dash"/>
+  <path d="M529 176V192" class="line"/>
+  <text x="537" y="188" class="l">in-process fallback</text>
+
+  <rect x="24" y="214" width="340" height="178" rx="12" class="box"/>
+  <text x="40" y="240" class="t">One run</text>
+  <text x="40" y="264" class="s">1. Claude calls publish_release with the draft</text>
+  <text x="40" y="286" class="s">2. Gate: Decider rates every sentence vs the paper</text>
+  <text x="40" y="308" class="s">3. Over the calibrated threshold → Guide (rewrite)</text>
+  <text x="40" y="330" class="s">4. Claude rewrites only the blocked sentences</text>
+  <text x="40" y="352" class="s">5. Decider re-checks → Proceed (publish) or Confirm</text>
+  <text x="40" y="374" class="s">Review-zone sentences go into the publish record</text>
+</svg>

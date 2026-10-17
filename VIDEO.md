@@ -14,28 +14,29 @@ Record at 1080p with the browser at 125% zoom so the red/green rows are legible.
 
 > "HypeCheck reads a draft press release next to the paper it reports, flags every sentence
 > that claims more than the study found, has Claude rewrite it, and re-checks the rewrite
-> before anything is published. The check is made by Strands Decider 2B, running locally.
+> before anything is published. The check is made by Strands Decider 2B, a small decision model on our own server.
 > The writing is done by Claude on Amazon Bedrock."
 
-## 0:40–1:30 — Live run (pick the first example, click "Run the agent")
+## 0:40–1:30 — Live run (pick the first example, keep "AgentCore Runtime" selected, click "Run the agent")
 
 Point at the screen as the events arrive:
 
-> "Round one: Decider reads four sentences in about a second. The 'saving lives' sentence
+> "The agent is running on Amazon Bedrock AgentCore Runtime; you can see the badge. Round one:
+> Decider reads the draft one sentence at a time. The 'saving lives' sentence
 > scores 0.81 for claiming more than the paper's hedged conclusion. Everything else is green.
 > The publish call is blocked, and Claude gets the feedback."
 
 > "Round two: Claude changed 'is saving lives' to 'could be efficacious', and softened the
 > advice. Decider reads the rewrite again, nothing is above threshold, and the release is
-> published. The whole loop took under ten seconds, and the decision model's share was about
-> two seconds for sixteen decisions."
+> published. The bar at the bottom shows where the time went: green is Decider, blue is
+> Claude."
 
 ## 1:30–2:05 — Why Decider, with the numbers (README results table)
 
 > "Why not ask Claude to check itself? We did. On 563 expert-labelled press-release pairs,
-> Claude Haiku flagged 45% of the *faithful* releases as exaggerated. Decider, with a threshold
-> fitted by conformal calibration, flags 7.7%, inside the 10% it promises, and still catches
-> twice as many real exaggerations at that false-flag rate. Zero-shot, it also edges the best
+> Claude flagged 30 to 45% of the *faithful* releases as exaggerated, depending on the model,
+> Opus included. Decider, with a threshold fitted by conformal calibration, flags 6.7%, and
+> still catches twice as many real exaggerations as Haiku at that false-flag rate. Zero-shot, it also edges the best
 > published system on this benchmark. And because Decider cannot generate text, Claude cannot
 > talk it out of a verdict."
 

@@ -170,6 +170,11 @@ def index() -> FileResponse:
     return FileResponse(STATIC / "index.html")
 
 
+@app.get("/architecture.svg")
+def architecture() -> FileResponse:
+    return FileResponse(STATIC / "architecture.svg", media_type="image/svg+xml")
+
+
 @app.get("/favicon.svg")
 def favicon() -> FileResponse:
     return FileResponse(STATIC / "favicon.svg", media_type="image/svg+xml")

@@ -16,13 +16,13 @@ Status key:
 |---|---|---|
 | Working agent on AWS | ✅ | EC2 + CloudFront live URL, with Bedrock via the instance role. 🔧 Elastic IP added, so a stop/start doesn't break the CloudFront origin |
 | Decider makes ≥1 *meaningful* decision | ✅ | Claim strength per sentence gates `publish_release` |
-| Paired with Amazon Bedrock for generation | ✅ | Claude Sonnet 4.6 rewrites flagged sentences. 🔧 The agent also runs on **Amazon Bedrock AgentCore Runtime** (see C) |
+| Paired with Amazon Bedrock for generation | ✅ | Claude Sonnet 4.6 rewrites flagged sentences. ✅ The agent runs on **Amazon Bedrock AgentCore Runtime** (direct code deploy, streaming), with an in-process fallback on EC2. It was verified end to end through the public URL |
 | Article on Builder Center | ⏳ | Draft in `ARTICLE.md`. It must be posted by the author |
 | Article covers the agent, the decision, and what it does | ✅ | Sections "The decision handed to Decider", "Results" |
 | *Encouraged:* latency/cost vs LLM, accuracy, low-confidence handling | 🔧 | The latency and accuracy were there. Added: **$ cost per check** from list prices, and an explicit **three-zone low-confidence policy** (Proceed / human-review band / Guide), both thresholds conformal |
 | Public repo, OSI licence | ✅ | github.com/usv240/hypecheck, Apache-2.0 |
 | Reusable pattern **clearly labelled**, with typed question + option set + wiring + note | 🔧 | It was only described inside the main README. Added `decision_pattern/README.md` with the questions verbatim, the wiring, a usage note, calibration steps, and a decision table |
-| Video < 3 min, public on YouTube/Vimeo, no third-party music/marks | ⏳ | Script in `VIDEO.md`. 🔧 Added a fully automated narrated recording (`video/`, Amazon Polly voice, no music) so a draft exists. The author uploads it |
+| Video < 3 min, public on YouTube/Vimeo, no third-party music/marks | ⏳ | Script in `VIDEO.md`. The author records it with the script in `VIDEO.md` and uploads it |
 | Tags `#strands-decider-2b` + exactly one pattern tag | ⏳ | `#guardrails`, listed in `SUBMISSION.md` |
 | Original, unpublished agent | ✅ | Created 2026-10-16/17. No prior publication |
 
@@ -43,7 +43,7 @@ Status key:
 |---|---|
 | Thresholds hand-picked, as in most entries | ✅ Conformal calibration with a stated and measured false-flag rate |
 | "Low-confidence handling" is implicit | 🔧 Three zones. The review band sits between the α = 0.20 and α = 0.10 conformal thresholds. Those sentences don't block, but are surfaced for a human glance and listed in the publish record |
-| Bedrock is used only as a raw model call | 🔧 The agent is also deployed to **AgentCore Runtime**, with a guarded Decider endpoint on EC2. Bedrock is used both as model access and as managed agent hosting |
+| Bedrock is used only as a raw model call | ✅ The agent is also deployed to **AgentCore Runtime**, with a guarded Decider endpoint on EC2. Bedrock is used both as model access and as managed agent hosting |
 | No cost number (the bonus) | 🔧 Measured tokens × list price → $ per check for Haiku 4.5 and Sonnet 4.6, against the EC2 cost per Decider decision. In README and article |
 | Is the pattern reusable or just claimed to be? | ✅ `examples/leaflet_gate.py` runs it unchanged in a second domain, plus offline tests |
 
@@ -53,7 +53,7 @@ Status key:
 |---|---|
 | Wall of text, no "60-second tour" | 🔧 The README opens with a judge-first summary: tagline, two numbers, links, screenshot. Detail sits below the fold |
 | Jargon (AUROC, conformal, macro-F1) | 🔧 Each term has a ⓘ on the site and a one-line plain-English gloss in the article |
-| No video | ⏳ / 🔧 An automated narrated draft exists. The author records or uploads it |
+| No video | ⏳ The script with timings is in `VIDEO.md` |
 | Learnings missing | ✅ The article has a "What we learned" section, including the two failed pre-registered experiments |
 
 ### Originality (15%)
@@ -68,8 +68,8 @@ Status key:
 |---|---|---|
 | 1 | Two numbers | ✅ Benchmark (W&A F1 / false flags), plus a second, independent set: InSciOut real releases, AUROC 0.84 |
 | 2 | Cases from outside | ✅ All data is published expert coding |
-| 3 | Named baseline beaten | ✅ Published SOTA 0.4735; Claude Haiku 4.5 / Sonnet 4.6 / Opus 4.6 |
-| 4 | Negative control is the headline | ✅ 7.7% false flags vs 45% |
+| 3 | Named baseline beaten | ✅ Beats the published SOTA 0.4735 and every Claude model asked the same question (Haiku 4.5 0.358, Sonnet 4.6 0.401, Opus 4.6 0.460) |
+| 4 | Negative control is the headline | ✅ 6.7% false flags on faithful releases vs 29.6–44.9% for Claude |
 | 5 | Loop closes into the user's system | ✅ The release is published to the outbox only when clean. The publish record lists review-band sentences |
 | 6 | Depth on one surface | ✅ One decision, five measurements |
 | 7 | Verb-chain tagline | ✅ "reads… flags… has Claude rewrite… re-checks" |
