@@ -22,33 +22,10 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from decision_pattern.decider import Decider  # noqa: E402
+from decision_pattern.fidelity import ADVICE as ADVICE_LEVELS  # noqa: E402
+from decision_pattern.fidelity import ADVICE_Q, ANIMAL_Q  # the product's own questions  # noqa: E402
 from research.calibration_eval import wilson  # noqa: E402
 from research.spike import auroc, macro_f1  # noqa: E402
-
-ANIMAL_Q = {
-    "type": "noul",
-    "instructions": "Does the press release present the finding as if it applied to people?",
-    "criteria": {
-        "true": "the press release talks about people, patients or humans as if the study had shown "
-        "the effect in them",
-        "false": "the press release keeps clear that the finding is in animals, cells or a lab model",
-    },
-}
-
-ADVICE_LEVELS = ["no_advice", "implicit", "explicit_indirect", "explicit_direct"]
-ADVICE_Q = {
-    "type": "choice",
-    "instructions": "What is the strongest advice or recommendation this text gives?",
-    "criteria": {
-        "no_advice": "no advice or recommendation of any kind",
-        "implicit": "only implies what might be done, e.g. 'has implications for treatment', "
-        "'could help doctors'",
-        "explicit_indirect": "explicitly recommends what others should do, e.g. 'doctors should', "
-        "'policy makers need to', 'parents ought to'",
-        "explicit_direct": "explicitly tells the reader what to do, e.g. 'you should', 'eat more', "
-        "'avoid', 'people should take'",
-    },
-}
 
 
 def label_rows(book, sheet: str) -> dict[int, tuple[int, int]]:

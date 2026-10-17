@@ -74,7 +74,6 @@ class ClaimFidelityGate(InterventionHandler):
         text = (event.tool_use.get("input") or {}).get(self.text_arg, "")
         verdict = check_document(self.decider, self.source(), text)
         flagged = [s for s in verdict.sentences if s.p_overclaim > self.threshold]
-        advisories = [(s, k) for s in verdict.sentences for k, p in s.advisory.items() if p >= 0.5]
         self.rounds += 1
         self.history.append({"round": self.rounds, "flagged": len(flagged),
                              "sentences": len(verdict.sentences),
@@ -89,22 +88,23 @@ class ClaimFidelityGate(InterventionHandler):
                                     f"{self.max_rounds} rewrites. Publish anyway? (y/n)")
         else:
             action = "guide"
-            result = Guide(feedback=self._feedback(verdict, flagged, advisories))
+            result = Guide(feedback=self._feedback(verdict, flagged))
         if self.on_verdict:
             self.on_verdict(verdict, action)
         return result
 
-    def _feedback(self, verdict: DocumentVerdict, flagged, advisories) -> str:
+    def _feedback(self, verdict: DocumentVerdict, flagged) -> str:
         lines = [f"The paper's conclusion claims {READABLE[verdict.source_strength]}. "
                  "These sentences claim more than that:"]
         for s in flagged:
             lines.append(f'- "{s.sentence}" reads as {READABLE[s.strength]} '
                          f"(overclaim probability {s.p_overclaim:.2f}).")
-        notes = {k for _, k in advisories}
-        if "animal_to_human" in notes:
-            lines.append("Also check: a sentence may present an animal or lab result as if it applied to people.")
-        if "unsupported_advice" in notes:
-            lines.append("Also check: a sentence may give readers advice the paper does not make.")
+        # Document-level advisories: measured weaker than the sentence gate, so they inform the
+        # rewrite but never block on their own.
+        if verdict.advisory.get("advice_inflated", 0) >= 0.5:
+            lines.append("Also check: the release gives readers stronger advice than the paper does.")
+        if verdict.advisory.get("animal_to_human", 0) >= 0.5:
+            lines.append("Also check: the release may present an animal or lab result as if it applied to people.")
         lines.append("Rewrite only those sentences so they claim no more than the paper does (e.g. 'is "
                      "associated with' instead of 'causes'), keep everything else, then call the tool again.")
         return "\n".join(lines)

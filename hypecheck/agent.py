@@ -63,9 +63,9 @@ def europepmc_conclusion(pmid: str) -> tuple[str, str]:
 def verdict_event(verdict: DocumentVerdict, action: str, threshold: float, round_no: int, text: str) -> dict[str, Any]:
     return {
         "type": "verdict", "round": round_no, "action": action, "threshold": threshold,
-        "paper_strength": verdict.source_strength, "text": text,
+        "paper_strength": verdict.source_strength, "text": text, "advisory": verdict.advisory,
         "sentences": [{"sentence": s.sentence, "strength": s.strength, "p_overclaim": round(s.p_overclaim, 4),
-                       "flagged": s.p_overclaim > threshold, "advisory": s.advisory} for s in verdict.sentences],
+                       "flagged": s.p_overclaim > threshold} for s in verdict.sentences],
     }
 
 

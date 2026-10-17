@@ -96,13 +96,13 @@ function body() {
 }
 function cls(s, thr) { return s.flagged ? 'flag' : (s.p_overclaim > thr*0.7 ? 'near' : 'ok'); }
 function sentencesHtml(ev) {
-  return ev.sentences.map(s => `<div class="sent ${cls(s, ev.threshold)}"><span class="score">${s.p_overclaim.toFixed(2)}</span><span>${esc(s.sentence)}<span class="tag">${READ[s.strength]}</span>${advis(s)}</span></div>`).join('');
+  return ev.sentences.map(s => `<div class="sent ${cls(s, ev.threshold)}"><span class="score">${s.p_overclaim.toFixed(2)}</span><span>${esc(s.sentence)}<span class="tag">${READ[s.strength]}</span></span></div>`).join('') + advis(ev.advisory || {});
 }
-function advis(s) {
-  const a = s.advisory || {}; let t = '';
-  if (a.unsupported_advice >= 0.5) t += `<span class="tag">advice not in paper (${a.unsupported_advice.toFixed(2)})</span>`;
-  if (a.animal_to_human >= 0.5) t += `<span class="tag">animal → human? (${a.animal_to_human.toFixed(2)})</span>`;
-  return t;
+function advis(a) {   // document-level hints; measured weaker than the sentence gate, never block
+  const t = [];
+  if (a.advice_inflated >= 0.5) t.push(`advice stronger than the paper's (${a.advice_inflated.toFixed(2)})`);
+  if (a.animal_to_human >= 0.5) t.push(`animal → human? (${a.animal_to_human.toFixed(2)}, weak signal)`);
+  return t.length ? `<p class="muted">Hints: ${t.join(' · ')}</p>` : '';
 }
 function esc(t) { return t.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
 function paperLine(ev) { return `<p class="muted">Paper claims: <b>${READ[ev.paper_strength]}</b>${ev.conclusion ? ' — “' + esc(ev.conclusion) + '”' : ''}</p>`; }
