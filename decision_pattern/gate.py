@@ -2,16 +2,20 @@
 
 Runs in `before_tool_call` on whichever tool publishes, sends or saves derived text. Strands
 Decider scores every sentence against the source; plain Python turns the scores into a typed
-action:
+action, with three zones for each sentence:
 
-    any sentence over the calibrated threshold  -> Guide   (the model gets its turn back with the
-                                                             offending sentences and rewrites)
-    still over after `max_rounds` rewrites       -> Confirm (a person decides)
-    otherwise                                    -> Proceed
+    p_overclaim > threshold                  BLOCK   -> the call returns Guide: the model gets its turn
+                                                        back with the offending sentences and rewrites
+    review_threshold < p <= threshold        REVIEW  -> low confidence: never blocks, but listed for a
+                                                        human glance in the publish record
+    p <= review_threshold                    OK
 
-The threshold comes from `decision_pattern.calibrate`, not from a hand-picked band, so it carries
-a stated false-flag rate. The model classifies; the code decides; the LLM cannot negotiate with
-a number.
+    still blocking after `max_rounds` rewrites -> Confirm (a person decides)
+    nothing blocking                           -> Proceed
+
+Both thresholds come from `decision_pattern.calibrate` (conformal, alpha = 0.10 and 0.20), not
+from a hand-picked band, so each carries a stated false-flag rate. The model classifies; the code
+decides; the LLM cannot negotiate with a number.
 """
 
 from __future__ import annotations
@@ -24,7 +28,7 @@ from typing import Any
 from strands.interventions import Confirm, Guide, InterventionHandler, Proceed
 
 from .decider import Decider
-from .fidelity import STRENGTH, DocumentVerdict, check_document
+from .fidelity import STRENGTH, DocumentVerdict, SentenceVerdict, check_document
 
 READABLE = {
     "no_relationship": "no relationship",
@@ -40,6 +44,14 @@ def load_threshold(path: str | Path, alpha: str = "0.1") -> float:
     return data["threshold"] if "threshold" in data else data["by_alpha"][alpha]["threshold"]
 
 
+def zone(p_overclaim: float, threshold: float, review_threshold: float | None) -> str:
+    if p_overclaim > threshold:
+        return "block"
+    if review_threshold is not None and p_overclaim > review_threshold:
+        return "review"
+    return "ok"
+
+
 class ClaimFidelityGate(InterventionHandler):
     """Gate a publishing tool on claim fidelity.
 
@@ -48,40 +60,50 @@ class ClaimFidelityGate(InterventionHandler):
         source: callable returning the source text (e.g. the paper's conclusion) for this run.
         tool_name: the tool to gate; other tools pass through.
         text_arg: the tool argument holding the derived text.
-        threshold: overclaim probability above which a sentence is flagged.
+        threshold: overclaim probability above which a sentence blocks the call.
+        review_threshold: optional lower threshold; sentences between the two are surfaced for
+            review but do not block (low-confidence zone).
         max_rounds: rewrites allowed before a person is asked.
-        on_verdict: optional callback for UIs and logs.
+        on_verdict: optional callback (verdict, action) for UIs and logs.
+        on_sentence: optional callback (index, total, sentence_verdict) as each sentence is scored.
     """
 
     name = "claim-fidelity-gate"
 
     def __init__(self, decider: Decider, source: Callable[[], str], *, tool_name: str = "publish_release",
-                 text_arg: str = "text", threshold: float = 0.5, max_rounds: int = 3,
-                 on_verdict: Callable[[DocumentVerdict, str], None] | None = None) -> None:
+                 text_arg: str = "text", threshold: float = 0.5, review_threshold: float | None = None,
+                 max_rounds: int = 3,
+                 on_verdict: Callable[[DocumentVerdict, str], None] | None = None,
+                 on_sentence: Callable[[int, int, SentenceVerdict], None] | None = None) -> None:
         self.decider = decider
         self.source = source
         self.tool_name = tool_name
         self.text_arg = text_arg
         self.threshold = threshold
+        self.review_threshold = review_threshold
         self.max_rounds = max_rounds
         self.on_verdict = on_verdict
+        self.on_sentence = on_sentence
         self.rounds = 0
         self.history: list[dict[str, Any]] = []
+        self.review: list[str] = []
 
     def before_tool_call(self, event, **kwargs):
         if event.tool_use["name"] != self.tool_name:
             return Proceed()
         text = (event.tool_use.get("input") or {}).get(self.text_arg, "")
-        verdict = check_document(self.decider, self.source(), text)
-        flagged = [s for s in verdict.sentences if s.p_overclaim > self.threshold]
         self.rounds += 1
-        self.history.append({"round": self.rounds, "flagged": len(flagged),
+        verdict = check_document(self.decider, self.source(), text, on_sentence=self.on_sentence)
+        zones = [zone(s.p_overclaim, self.threshold, self.review_threshold) for s in verdict.sentences]
+        flagged = [s for s, z in zip(verdict.sentences, zones) if z == "block"]
+        self.review = [s.sentence for s, z in zip(verdict.sentences, zones) if z == "review"]
+        self.history.append({"round": self.rounds, "flagged": len(flagged), "review": len(self.review),
                              "sentences": len(verdict.sentences),
                              "max_p_overclaim": round(max((s.p_overclaim for s in verdict.sentences), default=0.0), 4)})
 
         if not flagged:
             action = "proceed"
-            result = Proceed(reason=f"no sentence above {self.threshold:.2f}")
+            result = Proceed(reason=f"no sentence above {self.threshold:.2f}; {len(self.review)} for review")
         elif self.rounds > self.max_rounds:
             action = "confirm"
             result = Confirm(prompt=f"{len(flagged)} sentence(s) still claim more than the paper after "
@@ -110,4 +132,4 @@ class ClaimFidelityGate(InterventionHandler):
         return "\n".join(lines)
 
 
-__all__ = ["ClaimFidelityGate", "load_threshold", "STRENGTH"]
+__all__ = ["ClaimFidelityGate", "load_threshold", "zone", "STRENGTH"]

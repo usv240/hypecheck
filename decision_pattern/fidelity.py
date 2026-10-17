@@ -112,14 +112,22 @@ def advice_level(decider: Decider, text: str) -> list[float]:
     return [ans["probabilities"][k] for k in ADVICE]
 
 
-def check_document(decider: Decider, source: str, derived: str, advisory: bool = True) -> DocumentVerdict:
+def check_document(decider: Decider, source: str, derived: str, advisory: bool = True,
+                   on_sentence=None) -> DocumentVerdict:
     """Score every sentence of `derived` against `source`: one decider request per sentence,
-    one for the source, plus three for the document-level advisories."""
+    one for the source, plus three for the document-level advisories.
+
+    `on_sentence(index, total, verdict)` is called as each sentence is scored, so a UI can show
+    the decisions arriving one by one.
+    """
     p_src = strength(decider, source)
     verdicts = []
-    for sent in split_sentences(derived):
+    sentences = split_sentences(derived)
+    for i, sent in enumerate(sentences):
         p = strength(decider, sent)
         verdicts.append(SentenceVerdict(sent, STRENGTH[p.index(max(p))], p, overclaim_probability(p, p_src)))
+        if on_sentence:
+            on_sentence(i, len(sentences), verdicts[-1])
 
     adv: dict[str, float] = {}
     if advisory:

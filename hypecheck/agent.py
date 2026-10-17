@@ -26,8 +26,8 @@ from typing import Any
 from strands import Agent, tool
 
 from decision_pattern.decider import Decider, DeciderUnavailable
-from decision_pattern.fidelity import DocumentVerdict
-from decision_pattern.gate import ClaimFidelityGate, load_threshold
+from decision_pattern.fidelity import DocumentVerdict, SentenceVerdict
+from decision_pattern.gate import ClaimFidelityGate, load_threshold, zone
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTBOX = Path(os.environ.get("HYPECHECK_OUTBOX", ROOT / "outbox"))
@@ -46,6 +46,11 @@ SYSTEM = (
 Emit = Callable[[dict[str, Any]], None]
 
 
+def thresholds() -> tuple[float, float]:
+    """(block, review): conformal thresholds at alpha 0.10 and 0.20, fitted on the train split."""
+    return load_threshold(THRESHOLD_FILE, "0.1"), load_threshold(THRESHOLD_FILE, "0.2")
+
+
 def europepmc_conclusion(pmid: str) -> tuple[str, str]:
     """Title and conclusion of a paper from Europe PMC's open REST API."""
     q = urllib.parse.quote(f"EXT_ID:{pmid} AND SRC:MED")
@@ -60,21 +65,30 @@ def europepmc_conclusion(pmid: str) -> tuple[str, str]:
     return hits[0].get("title", ""), " ".join(conclusion.split())
 
 
-def verdict_event(verdict: DocumentVerdict, action: str, threshold: float, round_no: int, text: str) -> dict[str, Any]:
+def sentence_dict(s: SentenceVerdict, threshold: float, review: float | None) -> dict[str, Any]:
+    z = zone(s.p_overclaim, threshold, review)
+    return {"sentence": s.sentence, "strength": s.strength, "p_overclaim": round(s.p_overclaim, 4),
+            "zone": z, "flagged": z == "block"}
+
+
+def verdict_event(verdict: DocumentVerdict, action: str, threshold: float, round_no: int, text: str,
+                  review: float | None = None) -> dict[str, Any]:
     return {
         "type": "verdict", "round": round_no, "action": action, "threshold": threshold,
-        "paper_strength": verdict.source_strength, "text": text, "advisory": verdict.advisory,
-        "sentences": [{"sentence": s.sentence, "strength": s.strength, "p_overclaim": round(s.p_overclaim, 4),
-                       "flagged": s.p_overclaim > threshold} for s in verdict.sentences],
+        "review_threshold": review, "paper_strength": verdict.source_strength, "text": text,
+        "advisory": verdict.advisory,
+        "sentences": [sentence_dict(s, threshold, review) for s in verdict.sentences],
     }
 
 
 def run_hypecheck(draft: str, *, conclusion: str | None = None, pmid: str | None = None,
                   emit: Emit = lambda e: None, decider: Decider | None = None, model: str = MODEL,
-                  threshold: float | None = None, max_rounds: int = 3) -> dict[str, Any]:
+                  threshold: float | None = None, review_threshold: float | None = None,
+                  max_rounds: int = 3) -> dict[str, Any]:
     """Run the agent once. Every step is reported through `emit`; the summary is returned."""
     decider = decider or Decider()
-    threshold = threshold if threshold is not None else load_threshold(THRESHOLD_FILE, "0.1")
+    if threshold is None:
+        threshold, review_threshold = thresholds()
     paper = {"conclusion": conclusion or "", "title": ""}
     published: dict[str, str] = {}
 
@@ -98,24 +112,33 @@ def run_hypecheck(draft: str, *, conclusion: str | None = None, pmid: str | None
         """
         OUTBOX.mkdir(parents=True, exist_ok=True)
         path = OUTBOX / f"release-{datetime.now():%Y%m%d-%H%M%S-%f}.txt"
-        path.write_text(text, encoding="utf-8")
+        record = text
+        if gate.review:  # the publish record carries the low-confidence sentences for a human glance
+            record += "\n\n---\nFor editor review (low confidence, not blocked):\n" + "\n".join(f"- {s}" for s in gate.review)
+        path.write_text(record, encoding="utf-8")
         published["text"], published["file"] = text, path.name
-        emit({"type": "published", "text": text, "file": path.name})
+        emit({"type": "published", "text": text, "file": path.name, "review": list(gate.review)})
         return f"Published to {path.name}."
 
     pending: dict[str, Any] = {}
 
     def on_verdict(verdict: DocumentVerdict, action: str) -> None:
-        emit(verdict_event(verdict, action, threshold, gate.rounds, pending.get("text", "")))
+        emit(verdict_event(verdict, action, threshold, gate.rounds, pending.get("text", ""), review_threshold))
+
+    def on_sentence(i: int, total: int, s: SentenceVerdict) -> None:
+        emit({"type": "progress", "round": gate.rounds, "index": i, "total": total,
+              **sentence_dict(s, threshold, review_threshold)})
 
     class RecordingGate(ClaimFidelityGate):
         def before_tool_call(self, event, **kwargs):
             if event.tool_use["name"] == self.tool_name:
                 pending["text"] = (event.tool_use.get("input") or {}).get(self.text_arg, "")
+                emit({"type": "round_start", "round": self.rounds + 1, "text": pending["text"]})
             return super().before_tool_call(event, **kwargs)
 
     gate = RecordingGate(decider, lambda: paper["conclusion"], threshold=threshold,
-                         max_rounds=max_rounds, on_verdict=on_verdict)
+                         review_threshold=review_threshold, max_rounds=max_rounds,
+                         on_verdict=on_verdict, on_sentence=on_sentence)
     agent = Agent(model=model, tools=[fetch_paper, publish_release], interventions=[gate],
                   system_prompt=SYSTEM, callback_handler=None)
 
@@ -134,6 +157,7 @@ def run_hypecheck(draft: str, *, conclusion: str | None = None, pmid: str | None
     summary = {
         "type": "done", "published": bool(published), "final_text": published.get("text"),
         "rounds": gate.rounds, "history": gate.history, "agent_reply": str(result),
+        "review": list(gate.review),
         "decider_calls": decider.calls - calls0, "decider_ms": round(decider_ms),
         "wall_ms": round(wall_ms), "llm_ms": round(wall_ms - decider_ms),
         "usage": dict(result.metrics.accumulated_usage) if getattr(result, "metrics", None) else {},
@@ -162,11 +186,12 @@ def main() -> int:
         if e["type"] == "verdict":
             print(f"\n[HypeCheck] round {e['round']}: paper claims {e['paper_strength']}")
             for s in e["sentences"]:
-                print(f"  {'!!' if s['flagged'] else 'ok'} {s['p_overclaim']:.2f}  {s['strength']:<18} {s['sentence'][:90]}")
+                print(f"  {s['zone'].upper():<6} {s['p_overclaim']:.2f}  {s['strength']:<18} {s['sentence'][:90]}")
             print(f"[HypeCheck] -> {e['action']}", flush=True)
         elif e["type"] == "done":
             print(f"\n--- agent ---\n{e['agent_reply']}\n\n[HypeCheck] rounds={e['rounds']} "
-                  f"decider_calls={e['decider_calls']} decider_ms={e['decider_ms']} llm_ms={e['llm_ms']}")
+                  f"decider_calls={e['decider_calls']} decider_ms={e['decider_ms']} llm_ms={e['llm_ms']}"
+                  f" review={len(e['review'])}")
 
     run_hypecheck(args.draft.read_text(encoding="utf-8"), conclusion=args.conclusion, pmid=args.pmid,
                   emit=show, decider=decider, model=args.model)

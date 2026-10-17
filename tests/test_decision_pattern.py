@@ -84,3 +84,16 @@ def test_gate_guides_then_proceeds_then_confirms():
     gate.rounds = 2
     assert isinstance(gate.before_tool_call(_Event("publish_release", "The pathway saves lives.")), Confirm)
     assert STRENGTH[-1] == "direct_causal"
+
+
+def test_review_zone_does_not_block():
+    from strands.interventions import Proceed
+
+    from decision_pattern.gate import zone
+
+    assert zone(0.8, 0.5, 0.4) == "block" and zone(0.45, 0.5, 0.4) == "review" and zone(0.2, 0.5, 0.4) == "ok"
+    decider = FakeDecider({"may": 2, "could be": 2})
+    gate = ClaimFidelityGate(decider, lambda: "The pathway could be efficacious.", threshold=0.99, review_threshold=0.0)
+    # same level as the source: overclaim ~0, so it is OK; nothing blocks, review list is empty
+    assert isinstance(gate.before_tool_call(_Event("publish_release", "The pathway may help.")), Proceed)
+    assert gate.history[-1]["flagged"] == 0

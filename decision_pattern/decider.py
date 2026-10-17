@@ -15,6 +15,8 @@ import urllib.request
 from typing import Any
 
 DEFAULT_URL = os.environ.get("STRANDS_DECIDER_URL", "http://127.0.0.1:8099")
+# Optional shared secret, sent as x-hypecheck-key, for a Decider behind a guarded proxy.
+DEFAULT_KEY = os.environ.get("STRANDS_DECIDER_KEY", "")
 
 
 class DeciderUnavailable(RuntimeError):
@@ -22,15 +24,19 @@ class DeciderUnavailable(RuntimeError):
 
 
 class Decider:
-    def __init__(self, url: str = DEFAULT_URL, timeout: float = 120.0) -> None:
+    def __init__(self, url: str = DEFAULT_URL, timeout: float = 120.0, key: str = DEFAULT_KEY) -> None:
         self.url = url.rstrip("/")
+        self.key = key
         self.timeout = timeout
         self.calls = 0
         self.total_ms = 0.0
 
     def ask(self, state: str, questions: dict[str, dict[str, Any]]) -> dict[str, dict[str, Any]]:
         body = json.dumps({"state": state, "questions": questions}).encode()
-        req = urllib.request.Request(f"{self.url}/v1/systemone", body, {"content-type": "application/json"})
+        headers = {"content-type": "application/json"}
+        if self.key:
+            headers["x-hypecheck-key"] = self.key
+        req = urllib.request.Request(f"{self.url}/v1/systemone", body, headers)
         t0 = time.perf_counter()
         try:
             with urllib.request.urlopen(req, timeout=self.timeout) as r:
