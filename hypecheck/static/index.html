@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>HypeCheck — stop health hype at its source</title>
 <meta name="description" content="A third of health press releases claim more than their study found, and most news repeats them. HypeCheck checks every sentence against the paper before it is published, has Claude rewrite what overclaims, and re-checks the rewrite.">
+<script>/* apply the saved theme before first paint, so there is no flash */
+(function(){try{var t=localStorage.getItem('hc-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <style>
 :root{
@@ -15,12 +17,19 @@
   --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; --r:14px;
   --shadow:0 1px 2px rgba(16,19,24,.06),0 8px 24px rgba(16,19,24,.06);
 }
-@media (prefers-color-scheme:dark){:root{
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){
   --bg:#0d1014; --fg:#e9ecf1; --muted:#a3acb8; --card:#161a20; --line:#2a3039; --soft:#1d222a;
   --accent:#8ab4f8; --accent-fg:#0b1a33; --mark:#3987e5; --mark-dim:#6b7380;
   --ok:#6fd49d; --okbg:#0f2a1c; --rev:#f2b766; --revbg:#2d2110; --bad:#ff9a90; --badbg:#3a1714;
   --ink:#070d1c; --ink2:#0f2149; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
 }}
+:root[data-theme=dark]{
+  --bg:#0d1014; --fg:#e9ecf1; --muted:#a3acb8; --card:#161a20; --line:#2a3039; --soft:#1d222a;
+  --accent:#8ab4f8; --accent-fg:#0b1a33; --mark:#3987e5; --mark-dim:#6b7380;
+  --ok:#6fd49d; --okbg:#0f2a1c; --rev:#f2b766; --revbg:#2d2110; --bad:#ff9a90; --badbg:#3a1714;
+  --ink:#070d1c; --ink2:#0f2149; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+}
+:root[data-theme=dark]{color-scheme:dark} :root[data-theme=light]{color-scheme:light}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
@@ -44,7 +53,7 @@ nav .links a{color:var(--onink-muted);text-decoration:none} nav .links a:hover{c
 #tourBtn{font:inherit;font-size:14px;font-weight:650;padding:7px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.25);background:transparent;color:#fff;cursor:pointer;white-space:nowrap}
 #tourBtn:hover{background:rgba(255,255,255,.08)}
 #tourBtn .short{display:none}
-@media (max-width:820px){nav .links{display:none} #tourBtn{margin-left:auto}}
+@media (max-width:820px){nav .links{display:none} #themeBtn{margin-left:auto}}
 @media (max-width:520px){#tourBtn .long{display:none} #tourBtn .short{display:inline}}
 
 /* hero */
@@ -181,6 +190,8 @@ pre{white-space:pre-wrap;font:inherit;background:var(--soft);padding:12px;border
 .axis{display:grid;grid-template-columns:150px 1fr;gap:14px;margin-top:6px}
 .axis .ticks{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:6px}
 .kpis{display:grid;gap:14px}
+.takeaway{margin-top:22px;padding:14px 16px;border-radius:12px;background:var(--soft);font-size:15px}
+.takeaway b{color:var(--fg)}
 .kpi{padding:20px}
 .kpi .n{font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1}
 .kpi .n small{font-size:16px;color:var(--muted);font-weight:650;letter-spacing:0}
@@ -219,6 +230,9 @@ footer a{color:#cfe0ff}
 #tourBox{position:fixed;z-index:62;display:none;max-width:360px;background:var(--card);color:var(--fg);border-radius:14px;padding:18px 20px;box-shadow:0 18px 50px rgba(0,0,0,.35)}
 #tourBox.on{display:block} #tourBox h4{margin:0 0 6px;font-size:17px} #tourBox p{margin:0 0 14px;font-size:14.5px;color:var(--muted)}
 .lit{position:relative;z-index:61;box-shadow:0 0 0 4px var(--accent);border-radius:14px;background:var(--bg)}
+
+#themeBtn{all:unset;cursor:pointer;display:inline-grid;place-items:center;width:36px;height:36px;border-radius:999px;border:1px solid rgba(255,255,255,.25);color:#fff;font-size:16px;flex:none}
+#themeBtn:hover{background:rgba(255,255,255,.08)} #themeBtn:focus-visible{outline:3px solid #9cc0ff;outline-offset:2px}
 </style>
 </head>
 <body>
@@ -229,6 +243,7 @@ footer a{color:#cfe0ff}
     <a href="#impact">Why it matters</a><a href="#try">Try it</a><a href="#proof">Evidence</a>
     <a href="/hypewatch">HypeWatch</a><a href="#builders">For builders</a><a href="https://github.com/usv240/hypecheck">GitHub</a>
   </div>
+  <button id="themeBtn" type="button" aria-label="Switch colour theme"><span aria-hidden="true">☾</span></button>
   <button id="tourBtn" type="button"><span class="long">New here? 30-second tour</span><span class="short">Take the tour</span></button>
 </div></nav>
 
@@ -340,6 +355,7 @@ footer a{color:#cfe0ff}
       <p class="cap">345 releases experts judged faithful to their paper · lower is better · hover a bar for detail</p>
       <div id="bars"></div>
       <div class="axis"><span></span><div class="ticks"><span>0%</span><span>20%</span><span>40%</span><span>60%</span></div></div>
+      <div class="takeaway"><b>4.4–6.7× fewer false alarms</b> than any Claude model asked the same question. <button class="i" type="button" data-tip="29.6% ÷ 6.7% = 4.4× (Sonnet 4.6) up to 44.9% ÷ 6.7% = 6.7× (Haiku 4.5). In press-office terms: of every 100 accurate releases, Claude would wrongly stop 30 to 45; HypeCheck about 7.">i</button></div>
     </div>
     <div class="kpis">
       <div class="card kpi"><div class="n" id="k_prom">7.7% <small>vs ≤10% promised</small></div><p>Calibrated threshold, checked on 441 pairs it had never seen. <button class="i" type="button" data-tip="<b>Conformal calibration:</b> the cut-off is set on 78 training pairs so that at most 10% of non-exaggerating sentences should be flagged. Measured 7.7% (95% CI 5.6–10.6%) on unseen pairs.">i</button></p></div>
@@ -585,6 +601,17 @@ function tourShow(){$$('.lit').forEach(x=>x.classList.remove('lit')); if(ts<0||t
     box.style.top=top+'px'; box.style.left=Math.max(12,Math.min(left,innerWidth-bw-12))+'px'; $('#tourNext').focus();});}
 function endTour(){ts=-1; $('#tour').classList.remove('on'); $('#tourBox').classList.remove('on'); $$('.lit').forEach(x=>x.classList.remove('lit'));}
 $('#tourBtn').onclick=()=>{ts=0; tourShow();}; $('#tourNext').onclick=()=>{ts++; if(ts===2) loadExample(0); tourShow();}; $('#tourSkip').onclick=endTour; $('#tour .shade').onclick=endTour;
+
+/* light / dark toggle: starts from the system setting, remembers the choice */
+(function(){
+  const btn=document.getElementById('themeBtn'), root=document.documentElement, mq=matchMedia('(prefers-color-scheme: dark)');
+  const current=()=>root.getAttribute('data-theme')||(mq.matches?'dark':'light');
+  const paint=()=>{const dark=current()==='dark'; btn.firstElementChild.textContent=dark?'☀':'☾';
+    btn.setAttribute('aria-label',dark?'Switch to light mode':'Switch to dark mode'); btn.title=dark?'Light mode':'Dark mode';};
+  btn.addEventListener('click',()=>{const next=current()==='dark'?'light':'dark'; root.setAttribute('data-theme',next);
+    try{localStorage.setItem('hc-theme',next);}catch(e){} paint();});
+  mq.addEventListener?.('change',paint); paint();
+})();
 </script>
 </body>
 </html>

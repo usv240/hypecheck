@@ -5,12 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>HypeWatch — a year of NIH health news releases, checked against their papers</title>
 <meta name="description" content="HypeWatch runs HypeCheck over real NIH news releases: every headline and opening sentence compared with the paper it cites, with suggested faithful rewrites.">
+<script>/* apply the saved theme before first paint, so there is no flash */
+(function(){try{var t=localStorage.getItem('hc-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <style>
 :root{--bg:#f6f7f9;--fg:#14171a;--muted:#5b6470;--card:#fff;--line:#dfe3e8;--soft:#eef1f4;--accent:#0b57d0;--accent-fg:#fff;
   --ok:#17663f;--okbg:#e5f3eb;--rev:#8a5300;--revbg:#fff2dc;--bad:#a3221a;--badbg:#fde8e6;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;--r:12px}
-@media (prefers-color-scheme:dark){:root{--bg:#0f1114;--fg:#e8eaed;--muted:#a2a9b3;--card:#171a1f;--line:#2c3139;--soft:#1e2228;--accent:#8ab4f8;--accent-fg:#0b1a33;
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0f1114;--fg:#e8eaed;--muted:#a2a9b3;--card:#171a1f;--line:#2c3139;--soft:#1e2228;--accent:#8ab4f8;--accent-fg:#0b1a33;
   --ok:#6fd49d;--okbg:#10291c;--rev:#f2b766;--revbg:#2d2110;--bad:#ff9a90;--badbg:#3a1714}}
+:root[data-theme=dark]{--bg:#0f1114;--fg:#e8eaed;--muted:#a2a9b3;--card:#171a1f;--line:#2c3139;--soft:#1e2228;--accent:#8ab4f8;--accent-fg:#0b1a33;
+  --ok:#6fd49d;--okbg:#10291c;--rev:#f2b766;--revbg:#2d2110;--bad:#ff9a90;--badbg:#3a1714}
+:root[data-theme=dark]{color-scheme:dark} :root[data-theme=light]{color-scheme:light}
 *{box-sizing:border-box}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,"Segoe UI",Roboto,sans-serif}
@@ -62,12 +67,16 @@ details.more summary{cursor:pointer;color:var(--accent);font-size:14px;margin-to
 footer{border-top:1px solid var(--line);padding:24px 0 50px;color:var(--muted);font-size:14px;margin-top:30px}
 .pager{display:flex;justify-content:center;margin:16px 0}
 button.btn{font:inherit;font-weight:650;padding:10px 16px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}
+
+#themeBtn{all:unset;cursor:pointer;display:inline-grid;place-items:center;width:36px;height:36px;border-radius:999px;border:1px solid rgba(255,255,255,.25);color:#fff;font-size:16px;flex:none}
+#themeBtn:hover{background:rgba(255,255,255,.08)} #themeBtn:focus-visible{outline:3px solid #9cc0ff;outline-offset:2px}
 </style>
 </head>
 <body>
 <nav><div class="wrap">
   <a class="brand" href="/"><img src="/favicon.svg" alt="">HypeCheck</a>
   <div class="links"><a href="/">Try it</a><a href="/hypewatch" aria-current="page">HypeWatch</a><a href="/#proof">Evidence</a><a href="https://github.com/usv240/hypecheck">GitHub</a></div>
+  <button id="themeBtn" type="button" aria-label="Switch colour theme"><span aria-hidden="true">☾</span></button>
 </div></nav>
 
 <div class="band"><div class="wrap">
@@ -158,6 +167,17 @@ function card(r){
   </article>`;}
 $$('.seg button').forEach(b=>b.onclick=()=>{$$('.seg button').forEach(x=>x.setAttribute('aria-pressed',x===b)); mode=b.dataset.f; render(true);});
 $('#q').oninput=()=>render(true); $('#more').onclick=()=>render(false);
+
+/* light / dark toggle: starts from the system setting, remembers the choice */
+(function(){
+  const btn=document.getElementById('themeBtn'), root=document.documentElement, mq=matchMedia('(prefers-color-scheme: dark)');
+  const current=()=>root.getAttribute('data-theme')||(mq.matches?'dark':'light');
+  const paint=()=>{const dark=current()==='dark'; btn.firstElementChild.textContent=dark?'☀':'☾';
+    btn.setAttribute('aria-label',dark?'Switch to light mode':'Switch to dark mode'); btn.title=dark?'Light mode':'Dark mode';};
+  btn.addEventListener('click',()=>{const next=current()==='dark'?'light':'dark'; root.setAttribute('data-theme',next);
+    try{localStorage.setItem('hc-theme',next);}catch(e){} paint();});
+  mq.addEventListener?.('change',paint); paint();
+})();
 </script>
 </body>
 </html>
