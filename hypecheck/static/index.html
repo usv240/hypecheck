@@ -32,7 +32,9 @@ nav .wrap{display:flex;align-items:center;gap:20px;height:56px}
 nav .links{display:flex;gap:16px;margin-left:auto;font-size:14px;flex-wrap:wrap}
 nav .links a{color:var(--muted);text-decoration:none}
 nav .links a:hover{color:var(--fg)}
-@media (max-width:760px){nav .links{display:none}}
+@media (max-width:760px){nav .links{display:none} #tourBtn{margin-left:auto}}
+#tourBtn .short{display:none}
+@media (max-width:520px){#tourBtn .long{display:none} #tourBtn .short{display:inline}}
 .hero{padding-top:44px;padding-bottom:18px}
 .hero h1{font-size:clamp(28px,4vw,42px);line-height:1.15;margin:0 0 12px;letter-spacing:-.02em;max-width:22ch}
 .hero p.lead{font-size:18px;color:var(--muted);max-width:68ch;margin:0 0 20px}
@@ -76,7 +78,7 @@ label.radio{font-weight:400;margin:4px 0;font-size:14.5px;gap:8px}
 label.radio input{width:auto;margin:0}
 .host{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:650;background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:2px 10px;margin-bottom:8px}
 /* info buttons and tooltip */
-.i{all:unset;cursor:help;display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;border:1.5px solid var(--muted);color:var(--muted);font:700 11px/1 Georgia,serif;font-style:italic;flex:none;vertical-align:middle}
+.i{all:unset;cursor:help;display:inline-grid;place-items:center;width:20px;height:20px;margin:2px;border-radius:50%;border:1.5px solid var(--muted);color:var(--muted);font:700 11px/1 Georgia,serif;font-style:italic;flex:none;vertical-align:middle}
 .i:hover,.i:focus-visible,.i[aria-expanded=true]{border-color:var(--accent);color:var(--accent)}
 .i:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 #tip{position:absolute;z-index:50;max-width:320px;background:var(--fg);color:var(--bg);padding:10px 12px;border-radius:9px;font-size:13.5px;line-height:1.45;box-shadow:0 8px 24px rgba(0,0,0,.18);display:none}
@@ -145,7 +147,7 @@ footer{border-top:1px solid var(--line);padding:24px 0 50px;color:var(--muted);f
     <a href="#builders">For builders</a><a href="#faq">FAQ</a>
     <a href="https://github.com/usv240/hypecheck">GitHub</a>
   </div>
-  <button id="tourBtn" class="btn" style="padding:6px 12px;font-size:14px">New here? 30-second tour</button>
+  <button id="tourBtn" class="btn" style="padding:6px 12px;font-size:14px;white-space:nowrap"><span class="long">New here? 30-second tour</span><span class="short">Take the tour</span></button>
 </div></nav>
 
 <main id="top">
@@ -181,7 +183,8 @@ footer{border-top:1px solid var(--line);padding:24px 0 50px;color:var(--muted);f
 </div></section>
 
 <section id="arch" style="padding-top:0"><div class="wrap">
-  <details><summary>See the AWS architecture <button class="i" type="button" data-tip="Amazon CloudFront in front of an EC2 instance that runs the web app and Strands Decider; the agent runs on Amazon Bedrock AgentCore Runtime and calls Claude through Amazon Bedrock.">i</button></summary>
+  <details><summary>See the AWS architecture</summary>
+  <p>Amazon CloudFront in front of an EC2 instance that runs the web app and Strands Decider; the agent runs on Amazon Bedrock AgentCore Runtime and calls Claude through Amazon Bedrock.</p>
   <img src="/architecture.svg" alt="Browser to CloudFront to the EC2 web app; the agent on AgentCore Runtime calls Claude on Bedrock and Decider on EC2 through a key-guarded endpoint whose key is in SSM Parameter Store." style="width:100%;margin-top:12px;border-radius:12px"></details>
 </div></section>
 
