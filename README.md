@@ -7,6 +7,8 @@ anything is published.
 Built for the AWS Agent Experience Hackathon: Strands Decider. Tags: `#strands-decider-2b`
 `#guardrails`.
 
+**Live demo:** https://d174bz5yly61n4.cloudfront.net (Decider on an EC2 CPU instance, Claude on Bedrock via the instance role). **Article:** [ARTICLE.md](ARTICLE.md). **Video script:** [VIDEO.md](VIDEO.md).
+
 - Decision model: [Strands Decider 2B](https://github.com/strands-labs/strands-decider), local, ~160 ms per sentence.
 - Generative model: Claude on Amazon Bedrock, driven by the Strands Agents SDK.
 - The decision handed to Decider: *does this sentence claim a stronger relationship than the paper's conclusion?*
@@ -32,6 +34,7 @@ No tool checks a draft release against its own paper; the one human service that
 | `decider.py` | A standard-library HTTP client for `strands-decider serve`. |
 
 Use it for anything that must not say more than its source: summaries, RAG answers, patient leaflets, release notes.
+`examples/leaflet_gate.py` runs the identical gate on a patient-leaflet writer. `pytest -q` runs the offline tests (fake decider, no Bedrock).
 
 ```python
 from decision_pattern import Decider, ClaimFidelityGate, load_threshold
