@@ -26,11 +26,11 @@ SCENES = [
     ("intro", "The paper says an urgent cancer referral pathway could be efficacious. The press release says "
               "it is saving lives. In four hundred and sixty-two university press releases, a third turned an "
               "association into a cause, and when the release exaggerated, most of the news did too."),
-    ("hero", "HypeCheck is a press-office agent that won't publish that. It reads a draft release next to the "
-             "paper, flags every sentence that claims more than the study found, has Claude rewrite it, and "
-             "checks the rewrite again before anything goes out."),
-    ("how", "Two models, two jobs. Claude, on Amazon Bedrock, writes. Strands Decider 2B judges: it rates how "
-            "strong each claim is, from no link up to a definite cause, and compares that with the paper."),
+    ("hero", "HypeCheck stops it at the source. Strands Decider 2B checks every sentence against the paper, "
+             "Claude on Amazon Bedrock rewrites what overclaims, and Decider checks the rewrite again."),
+    ("how", "One overclaim travels from a press office to millions of readers. A third of releases turn a link "
+            "into a cause, most news repeats it, and health news changes what people do. HypeCheck sits at the "
+            "one point where a single fix changes everything downstream."),
     ("run", "Here is a real press release from the research data. The agent is running on Amazon Bedrock "
             "AgentCore Runtime, and Decider reads the draft one sentence at a time."),
     ("blocked", "The saving-lives sentence scores point eight: a definite cause, where the paper only says the "
@@ -80,7 +80,7 @@ def record(site: str, clips: dict, out: Path) -> tuple[Path, list[tuple[str, flo
     with sync_playwright() as p:
         browser = p.chromium.launch()
         # A slightly smaller viewport scaled up to 720p makes on-screen text about 14% larger.
-        ctx = browser.new_context(viewport={"width": 1120, "height": 630}, color_scheme="light",
+        ctx = browser.new_context(viewport={"width": 1120, "height": 630}, color_scheme="dark",
                                   record_video_dir=str(out), record_video_size={"width": 1280, "height": 720})
         page = ctx.new_page()
         t0 = time.monotonic()
@@ -107,7 +107,7 @@ def record(site: str, clips: dict, out: Path) -> tuple[Path, list[tuple[str, flo
         page.wait_for_selector("#ex option:nth-child(2)", state="attached")
         page.wait_for_timeout(400)
         scene("hero")
-        scene("how", action=lambda: scroll_to(page, "#how", 90))
+        scene("how", action=lambda: scroll_to(page, "#impact", 64))
 
         def start_run():
             page.select_option("#ex", "0")
@@ -129,10 +129,10 @@ def record(site: str, clips: dict, out: Path) -> tuple[Path, list[tuple[str, flo
         def hover_info():
             scroll_to(page, "#top", 0)
             page.wait_for_timeout(700)
-            page.hover(".stat .i")
+            page.hover(".proof .i")
         scene("info", action=hover_info)
         page.mouse.move(5, 5)
-        scene("evidence", action=lambda: scroll_to(page, "#evTable", 120))
+        scene("evidence", action=lambda: scroll_to(page, "#chartCard", 90))
         def open_hypewatch():
             page.goto(site.rstrip("/") + "/hypewatch")
             page.wait_for_selector(".rel", timeout=60_000)
@@ -142,8 +142,8 @@ def record(site: str, clips: dict, out: Path) -> tuple[Path, list[tuple[str, flo
 
         def back_to_limits():
             page.goto(site)
-            page.wait_for_selector("#evTable")
-            scroll_to(page, "#evTable", -260)
+            page.wait_for_selector(".limits")
+            scroll_to(page, ".limits", 260)
         scene("limits", action=back_to_limits)
         scene("builders", action=lambda: scroll_to(page, "#builders", 80))
         page.goto(f"{card}?s=outro")
