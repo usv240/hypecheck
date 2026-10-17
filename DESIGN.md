@@ -1,21 +1,46 @@
 # Design notes for the demo site
 
-The page has to make sense to someone who has never heard of Strands Decider, conformal
-prediction or press-release research, in the three to five minutes a judge spends. Each rule below
-names a source and how it shows up on the page.
+**Goal:** someone who has never heard of Strands Decider, conformal prediction or press-release
+research should understand why this matters, and what it does, within the first screen. Judges
+spend three to five minutes in total.
+
+## Story order: lead with impact
+
+1. **Hero: the problem, as a claim.** "Most health hype is written before a journalist ever
+   sees it." Beside it, a replay of a real catch: BLOCK 0.80, then Claude's rewrite, then OK 0.17.
+2. **Why it matters: the chain.** paper → press release (33% overclaim) → news (81% repeat it)
+   → public (≈219,000 UK patients estimated to stop statins after one news storm, with the
+   authors' caveat that causation is unproven). The gate is placed at the one step where a
+   single correction changes everything downstream. The RCT callout shows the fix works and
+   costs nothing.
+3. How it works.
+4. Try it.
+5. Evidence, as a chart.
+6. HypeWatch, the real-world run.
+7. For builders.
+8. FAQ.
+
+## Principles and where they show up
 
 | Principle | Source | Applied as |
 |---|---|---|
-| Visibility of system status | Nielsen, *10 Usability Heuristics* (heuristic 1) | Sentences colour one by one as Decider reads them; progress counter; queue position; time split between Decider and Claude |
-| Match between system and the real world | Nielsen heuristic 2 | Plain words first ("claims more than the paper"), the technical term second, inside an ⓘ |
-| Recognition rather than recall | Nielsen heuristic 6 | Real benchmark examples one click away; no blank-page start |
-| Error prevention, clear error messages | Nielsen heuristics 5 and 9 | Inputs validated before a run; errors say what to do next |
-| Help and documentation, in context | Nielsen heuristic 10 | An ⓘ on every control, label, score and number; a glossary; a 30-second guided tour |
-| Progressive disclosure | Nielsen Norman Group, *Progressive Disclosure* | The headline and the tool sit above the fold; evidence, method and limits below; detail in ⓘ and accordions |
-| Content on hover or focus must be dismissible, hoverable and persistent | WCAG 2.2 SC 1.4.13 | Tooltips open on hover, keyboard focus or tap; Esc closes them; the pointer can move onto them; they stay until dismissed |
-| Don't use colour alone | WCAG 2.2 SC 1.4.1 | Every verdict carries a text chip and an icon: BLOCK ✕ / REVIEW ! / OK ✓ |
-| Contrast ≥ 4.5:1 for text | WCAG 2.2 SC 1.4.3 | Palette checked in light and dark themes |
-| Keyboard operable, visible focus | WCAG 2.2 SC 2.1.1, 2.4.7 | Every ⓘ is a real `<button>`; focus ring kept |
-| Respect reduced motion | WCAG 2.2 SC 2.3.3 / `prefers-reduced-motion` | Animations off when the user asks |
-| One primary action per view | Material Design, *Buttons: emphasis* | "Run the agent" is the only filled button; "Check with Decider only" is secondary |
-| Readable line length | Butterick, *Practical Typography* (45–90 characters) | Prose capped at about 70ch |
+| Make the value clear in the first seconds; most attention lands on the first screen | Nielsen, *How Long Do Users Stay on Web Pages?* (NN/g, 2011; users often leave within 10–20 s); NN/g eye-tracking on above-the-fold attention | Impact headline, the live catch and both calls to action are above the fold; three proof numbers below them |
+| Lead with one big idea | Knaflic, *Storytelling with Data* (2015) | Each section opens with a one-sentence claim headline ("A gate that cries wolf gets switched off"), then evidence |
+| Direct attention with preattentive attributes, used sparingly | Knaflic, ch. 4 | One accent colour in the chart (Decider) against grey (Claude); a red/amber gradient only on the hero's key phrase; large numerals for the four chain numbers |
+| Emphasis chart, not categorical colour, when one series is the point | dataviz method (`choosing-a-form`) | Accent bar vs de-emphasis grey, values at the bar tips, tooltip on each bar, table view kept, 24 px bars with 4 px rounded ends |
+| Validate colour, don't eyeball it | dataviz `validate_palette.js` | Accent `#2a78d6` (light) and `#3987e5` (dark) pass every check in both modes. The grey's contrast warning is covered by visible value labels and the table |
+| Visibility of system status | Nielsen, *10 Usability Heuristics* #1 | Sentences colour one at a time; progress counter; queue position; where-the-time-went bar |
+| Match the real world; recognition over recall | Nielsen #2, #6 | Plain words first, technical term inside an ⓘ; real examples one click away |
+| Help in context | Nielsen #10 | An ⓘ on every control, label, score and number; 30-second guided tour; FAQ |
+| Progressive disclosure | NN/g, *Progressive Disclosure* | Full results table and architecture diagram live in disclosures; the headline numbers are always visible |
+| Content on hover/focus: dismissible, hoverable, persistent | WCAG 2.2 SC 1.4.13 | Tooltips open on hover, focus or tap; Esc closes them; they stay while hovered |
+| Don't rely on colour alone | WCAG 2.2 SC 1.4.1 | BLOCK ✕ / REVIEW ! / OK ✓ text chips; chart bars labelled with names and values |
+| User-selectable theme, respecting system preference | WCAG 2.2 SC 1.4.3 (contrast in each theme); `prefers-color-scheme` | ☾/☀ toggle on both pages. It starts from the system setting, remembers the choice, and is applied before first paint (no flash). Dark mode is its own palette, not an inversion |
+| Respect reduced motion | WCAG 2.2 SC 2.3.3 | The hero replay and bar growth are skipped under `prefers-reduced-motion`, which shows the final state instead |
+
+## Verified
+
+- **axe-core, WCAG 2.2 AA plus best practice:** 0 violations on the home page and on HypeWatch,
+  in both light and dark themes.
+- **Mobile:** no horizontal overflow at 390 px.
+- **Check script:** `tests/ui/a11y_check.py`.
