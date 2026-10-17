@@ -13,8 +13,8 @@ published system, which was trained on the task.
 |---|---|
 | **Live demo** | https://d174bz5yly61n4.cloudfront.net (click *New here? 30-second tour*) |
 | **Decision pattern** | [`decision_pattern/`](decision_pattern/README.md): a claim-fidelity gate, `#guardrails` |
-| **Article** | [ARTICLE.md](ARTICLE.md) (also on AWS Builder Center) |
-| **Video** | *(YouTube link)* |
+| **Article** | [ARTICLE.md](ARTICLE.md) |
+| **Video** | *(YouTube link)* — generated reproducibly by [`video/make_video.py`](video/make_video.py) |
 | **Tags** | `#strands-decider-2b` `#guardrails` |
 
 ![Round 1 blocks "is saving lives" at 0.80; round 2 publishes the rewrite](docs/demo.jpg)

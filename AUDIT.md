@@ -35,7 +35,7 @@ Status key:
 | A first-time visitor doesn't understand what they're looking at | 🔧 Rebuilt the page using the principles in `DESIGN.md`. Changes:<br>• hero sentence and a 4-step "how it works" strip<br>• **ⓘ on every control, score, label and number** (hover, keyboard focus, or tap), in plain language<br>• glossary and FAQ |
 | The CPU demo takes ~20 s with no feedback, so it looks broken | 🔧 Sentences now colour **live, one at a time** as Decider reads them, with a progress counter. The judge sees the decision model working |
 | A second judge gets "another run in progress" | 🔧 Runs are now **queued** and show their position, never rejected |
-| Colour-only red/green is inaccessible | 🔧 Each sentence has a text label and icon (BLOCK / REVIEW / OK). Contrast was checked for WCAG AA |
+| Colour-only red/green is inaccessible | ✅ Each sentence has a text label and icon (BLOCK / REVIEW / OK). **axe-core reports 0 violations** (WCAG 2.2 AA and best practice) in light and dark themes, with no horizontal overflow at 390 px. `tests/ui/a11y_check.py` checks this |
 
 ### Effective use of Decider with Bedrock + pattern quality (30%)
 
@@ -53,7 +53,7 @@ Status key:
 |---|---|
 | Wall of text, no "60-second tour" | 🔧 The README opens with a judge-first summary: tagline, two numbers, links, screenshot. Detail sits below the fold |
 | Jargon (AUROC, conformal, macro-F1) | 🔧 Each term has a ⓘ on the site and a one-line plain-English gloss in the article |
-| No video | ⏳ The script with timings is in `VIDEO.md` |
+| No video | ✅ A 2:34 narrated video exists, made by `video/make_video.py` (live site, Amazon Polly voice, no music). ⏳ The author uploads it to YouTube |
 | Learnings missing | ✅ The article has a "What we learned" section, including the two failed pre-registered experiments |
 
 ### Originality (15%)
