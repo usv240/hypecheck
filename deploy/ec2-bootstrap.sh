@@ -30,7 +30,7 @@ Description=Strands Decider 2B
 After=network-online.target
 [Service]
 Environment=HF_HOME=/opt/hf
-ExecStart=/opt/decider/bin/strands-decider serve $CKPT --device $DEVICE --host 127.0.0.1 --port 8099
+ExecStart=/opt/decider/bin/strands-decider serve $CKPT --device $DEVICE --port 8099
 Restart=always
 RestartSec=5
 [Install]
