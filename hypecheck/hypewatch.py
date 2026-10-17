@@ -163,16 +163,20 @@ REWRITE_PROMPT = (
 )
 
 
-def suggest(bedrock, decider: Decider, paper: str, p_paper: list[float], sentence: str, threshold: float) -> dict:
-    """Claude proposes a rewrite; Decider checks it. Up to two attempts."""
+def suggest(bedrock, decider: Decider, paper: str, p_paper: list[float], sentence: str, threshold: float,
+            usage: dict | None = None) -> dict:
+    """Claude proposes a rewrite; Decider checks it. Up to two attempts. Token use is added to `usage`."""
     feedback = ""
     for attempt in (1, 2):
         resp = bedrock.converse(
             modelId=MODEL,
             messages=[{"role": "user", "content": [{"text": REWRITE_PROMPT.format(paper=paper, sentence=sentence) + feedback}]}],
             inferenceConfig={"maxTokens": 200, "temperature": 0})
+        if usage is not None:
+            usage["input_tokens"] = usage.get("input_tokens", 0) + resp["usage"]["inputTokens"]
+            usage["output_tokens"] = usage.get("output_tokens", 0) + resp["usage"]["outputTokens"]
         text = "".join(b.get("text", "") for b in resp["output"]["message"]["content"]).strip().strip('"')
-        text = re.sub(r"[*_]{1,2}([^*_]+)[*_]{1,2}", r"", text)  # plain text, no markdown emphasis
+        text = re.sub(r"[*_]{1,2}([^*_]+)[*_]{1,2}", r"\1", text)  # plain text, no markdown emphasis
         p = overclaim_probability(strength(decider, text), p_paper)
         if p <= threshold:
             return {"suggestion": text, "suggestion_p": round(p, 4), "suggestion_ok": True, "attempts": attempt}

@@ -241,7 +241,7 @@ footer a{color:#cfe0ff}
   <a class="brand" href="#top"><img src="/favicon.svg" alt="">HypeCheck</a>
   <div class="links">
     <a href="#impact">Why it matters</a><a href="#try">Try it</a><a href="#proof">Evidence</a>
-    <a href="/hypewatch">HypeWatch</a><a href="#builders">For builders</a><a href="https://github.com/usv240/hypecheck">GitHub</a>
+    <a href="/hypewatch">HypeWatch</a><a href="/developers">Developers</a><a href="https://github.com/usv240/hypecheck">GitHub</a>
   </div>
   <button id="themeBtn" type="button" aria-label="Switch colour theme"><span aria-hidden="true">☾</span></button>
   <button id="tourBtn" type="button"><span class="long">New here? 30-second tour</span><span class="short">Take the tour</span></button>
@@ -405,7 +405,7 @@ footer a{color:#cfe0ff}
 <section id="builders" style="padding-top:0"><div class="wrap">
   <p class="eyebrow">For builders</p>
   <h2>Drop the same gate into any agent.</h2>
-  <p class="sub">Anything that must not say more than its source: summaries, RAG answers, patient leaflets, release notes. The same code runs a patient-leaflet writer unchanged. <a href="https://github.com/usv240/hypecheck/tree/main/decision_pattern">decision_pattern/</a></p>
+  <p class="sub">Anything that must not say more than its source: summaries, RAG answers, patient leaflets, release notes. Use the open-source gate below, call the <b>free REST API</b>, connect over <b>MCP</b>, calibrate on <b>your own data</b>, or deploy into <b>your own AWS account</b>. <a href="/developers">Get a free API key →</a></p>
 <div class="code"><span class="c"># pip install strands-agents · strands-decider serve … --port 8099</span>
 from decision_pattern import Decider, ClaimFidelityGate, load_threshold
 
@@ -488,7 +488,8 @@ $$('.i').forEach(b=>b.setAttribute('aria-label','What does this mean?'));
 
 /* data */
 fetch('/api/examples').then(r=>r.json()).then(list=>{examples=list; list.forEach((e,i)=>{const o=document.createElement('option'); o.value=i; o.textContent=e.title; $('#ex').appendChild(o);});});
-fetch('/api/health').then(r=>r.json()).then(h=>{thr={b:h.threshold,r:h.review_threshold}; $$('.thrB').forEach(x=>x.textContent=h.threshold.toFixed(2)); $$('.thrR').forEach(x=>x.textContent=h.review_threshold.toFixed(2));
+fetch('/api/health').then(r=>r.json()).then(h=>{thr={b:h.threshold,r:h.review_threshold};
+  if(h.agentcore===false){const ac=document.querySelector('input[value=agentcore]'); ac.disabled=true; ac.parentElement.style.opacity=.55; document.querySelector('input[value=local]').checked=true;} $$('.thrB').forEach(x=>x.textContent=h.threshold.toFixed(2)); $$('.thrR').forEach(x=>x.textContent=h.review_threshold.toFixed(2));
   $('#sys').textContent=`Live: ${h.decider.model} on ${h.decider.device}; block threshold ${h.threshold.toFixed(3)}, review ${h.review_threshold.toFixed(3)}; queue ${h.queue}.`;}).catch(()=>{$('#sys').textContent='Decider server not reachable right now.'});
 fetch('/api/hypewatch').then(r=>r.json()).then(d=>{const s=d.summary||{}; if(s.releases){$('#hw_n').textContent=s.releases; $('#hw_s').textContent=s.sentences; $('#hw_b').textContent=Math.round(100*s.releases_with_block)+'%';}}).catch(()=>{});
 

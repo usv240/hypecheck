@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HypeCheck for developers — API, MCP connector, bring your own data or AWS</title>
+<meta name="description" content="Put a claim-fidelity gate in any app or agent: a free REST API with instant keys, an MCP connector, bring-your-own calibration, or a one-click deploy into your own AWS account.">
+<script>(function(){try{var t=localStorage.getItem('hc-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+:root{--bg:#f5f6f8;--fg:#101318;--muted:#56606c;--card:#fff;--line:#e1e5ea;--soft:#eef1f5;--accent:#1f63d6;--accent-fg:#fff;
+  --ok:#12683f;--okbg:#e3f3ea;--bad:#a3221a;--badbg:#fde7e4;--rev:#8a5300;--revbg:#fff1d9;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;--r:14px;
+  --shadow:0 1px 2px rgba(16,19,24,.06),0 8px 24px rgba(16,19,24,.06)}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0d1014;--fg:#e9ecf1;--muted:#a3acb8;--card:#161a20;--line:#2a3039;--soft:#1d222a;--accent:#8ab4f8;--accent-fg:#0b1a33;
+  --ok:#6fd49d;--okbg:#0f2a1c;--bad:#ff9a90;--badbg:#3a1714;--rev:#f2b766;--revbg:#2d2110;--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25)}}
+:root[data-theme=dark]{--bg:#0d1014;--fg:#e9ecf1;--muted:#a3acb8;--card:#161a20;--line:#2a3039;--soft:#1d222a;--accent:#8ab4f8;--accent-fg:#0b1a33;
+  --ok:#6fd49d;--okbg:#0f2a1c;--bad:#ff9a90;--badbg:#3a1714;--rev:#f2b766;--revbg:#2d2110;--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);color-scheme:dark}
+:root[data-theme=light]{color-scheme:light}
+*{box-sizing:border-box}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)} :focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+nav{position:sticky;top:0;z-index:30;background:rgba(10,21,48,.94);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.08)}
+nav .wrap{display:flex;align-items:center;gap:20px;height:58px}
+.brand{font-weight:800;font-size:18px;display:flex;gap:9px;align-items:center;text-decoration:none;color:#fff} .brand img{width:24px;height:24px}
+nav .links{display:flex;gap:18px;margin-left:auto;font-size:14.5px} nav .links a{color:#b9c6e2;text-decoration:none} nav .links a:hover,nav .links a[aria-current]{color:#fff}
+@media (max-width:760px){nav .links{display:none} #themeBtn{margin-left:auto}}
+#themeBtn{all:unset;cursor:pointer;display:inline-grid;place-items:center;width:36px;height:36px;border-radius:999px;border:1px solid rgba(255,255,255,.25);color:#fff;font-size:16px;flex:none}
+#themeBtn:hover{background:rgba(255,255,255,.08)} #themeBtn:focus-visible{outline:3px solid #9cc0ff;outline-offset:2px}
+header.band{background:radial-gradient(1100px 460px at 85% -10%,rgba(80,140,255,.35),transparent 60%),linear-gradient(180deg,#0a1530,#132a5c);color:#f3f6fc;padding:56px 0 60px}
+.eyebrow{font-size:13px;font-weight:750;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0 0 10px}
+header .eyebrow{color:#9cc0ff}
+h1{font-size:clamp(32px,4.6vw,52px);line-height:1.06;margin:0 0 16px;letter-spacing:-.03em;max-width:20ch;font-weight:800}
+h1 em{font-style:normal;background:linear-gradient(90deg,#9cc0ff,#b8f0d2);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-size:18.5px;color:#b9c6e2;max-width:64ch;margin:0 0 26px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:30px}
+@media (max-width:900px){.grid4{grid-template-columns:1fr 1fr}} @media (max-width:520px){.grid4{grid-template-columns:1fr}}
+.way{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:16px;color:#f3f6fc;text-decoration:none;display:block}
+.way:hover{background:rgba(255,255,255,.1)} .way b{display:block;font-size:16px;margin-bottom:4px} .way span{font-size:14px;color:#b9c6e2}
+.keybox{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:16px 18px;max-width:720px}
+.keyrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{font:inherit;font-weight:700;padding:12px 18px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.btn.primary{background:var(--accent);color:var(--accent-fg);border-color:transparent}
+header .btn.primary{background:#fff;color:#0a1530} header .btn.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.3)}
+button:disabled{opacity:.55;cursor:default}
+code.key{font-family:var(--mono);font-size:15px;background:#0f1520;color:#b8f0d2;padding:8px 12px;border-radius:9px;word-break:break-all;flex:1;min-width:240px}
+.keynote{font-size:13.5px;color:#b9c6e2;margin:10px 0 0}
+section{padding:56px 0 0}
+h2{font-size:clamp(24px,3vw,32px);line-height:1.15;letter-spacing:-.02em;margin:0 0 8px}
+.sub{color:var(--muted);font-size:16.5px;max-width:70ch;margin:0 0 20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:-1px}
+.tabs button{all:unset;cursor:pointer;padding:9px 14px;border:1px solid var(--line);border-bottom:none;border-radius:10px 10px 0 0;font-weight:650;font-size:14px;color:var(--muted);background:var(--soft)}
+.tabs button[aria-selected=true]{background:#0f1520;color:#fff;border-color:#0f1520}
+.tabs button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.codewrap{position:relative}
+pre.code{margin:0;font-family:var(--mono);font-size:13.5px;line-height:1.55;background:#0f1520;color:#dfe7f7;border-radius:0 12px 12px 12px;padding:18px 20px;overflow:auto;white-space:pre}
+pre.code .c{color:#8aa0c8}
+.copy{position:absolute;top:10px;right:10px;font:inherit;font-size:12.5px;font-weight:700;padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;cursor:pointer}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+td code{font-family:var(--mono);font-size:13px;background:var(--soft);padding:2px 6px;border-radius:6px;white-space:nowrap}
+.pill{display:inline-block;font-size:12px;font-weight:800;padding:2px 9px;border-radius:999px}
+.pill.free{background:var(--okbg);color:var(--ok)} .pill.capped{background:var(--revbg);color:var(--rev)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px} @media (max-width:900px){.two{grid-template-columns:1fr}}
+.pad{padding:22px}
+.try textarea{width:100%;font:inherit;color:inherit;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:70px;resize:vertical}
+.try label{display:flex;gap:6px;align-items:center;font-weight:650;margin:12px 0 6px}
+.out{font-family:var(--mono);font-size:13px;background:var(--soft);border-radius:10px;padding:12px;white-space:pre-wrap;max-height:340px;overflow:auto;margin-top:12px;min-height:60px}
+.muted{color:var(--muted);font-size:14px}
+ul.check{padding-left:20px;margin:8px 0;color:var(--muted)} ul.check li{margin:4px 0}
+.i{all:unset;cursor:help;display:inline-grid;place-items:center;width:20px;height:20px;margin:2px;border-radius:50%;border:1.5px solid currentColor;opacity:.7;font:700 11px/1 Georgia,serif;font-style:italic;flex:none;vertical-align:middle}
+.i:hover,.i:focus-visible,.i[aria-expanded=true]{opacity:1;color:var(--accent)} header .i:hover,header .i:focus-visible{color:#fff}
+.i:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+#tip{position:absolute;z-index:60;max-width:330px;background:#0f1520;color:#f1f4f9;padding:11px 13px;border-radius:10px;font-size:13.5px;line-height:1.5;box-shadow:0 12px 30px rgba(0,0,0,.25);display:none}
+#tip.show{display:block} #tip b{color:#fff}
+footer{background:#0a1530;color:#b9c6e2;padding:32px 0 46px;font-size:14px;margin-top:60px} footer a{color:#cfe0ff}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <a class="brand" href="/"><img src="/favicon.svg" alt="">HypeCheck</a>
+  <div class="links"><a href="/">Try it</a><a href="/hypewatch">HypeWatch</a><a href="/developers" aria-current="page">Developers</a><a href="/docs">API reference</a><a href="https://github.com/usv240/hypecheck">GitHub</a></div>
+  <button id="themeBtn" type="button" aria-label="Switch colour theme"><span aria-hidden="true">☾</span></button>
+</div></nav>
+
+<header class="band"><div class="wrap">
+  <p class="eyebrow">For developers</p>
+  <h1>Put a claim-fidelity gate in <em>any app or agent.</em></h1>
+  <p class="lead">Anything that must not say more than its source — summaries, RAG answers, patient leaflets, press releases — can be checked sentence by sentence in one call. Free key, no signup.</p>
+  <div class="keybox" id="keybox">
+    <div class="keyrow">
+      <button class="btn primary" id="getKey" type="button">Get a free API key</button>
+      <button class="i" type="button" data-tip="Issued instantly. No signup and nothing personal is stored: only a one-way hash of your key, so even we can't read it back. Keep it somewhere safe; it is shown once.">i</button>
+      <span class="keynote" id="keyNote" style="margin:0">Instant · no email · works for the REST API and the MCP connector</span>
+    </div>
+  </div>
+  <div class="grid4">
+    <a class="way" href="#rest"><b>REST API</b><span>One POST, sentence-by-sentence verdicts</span></a>
+    <a class="way" href="#mcp"><b>MCP connector</b><span>A tool for Claude, Kiro, Strands and other agents</span></a>
+    <a class="way" href="#byod"><b>Bring your own data</b><span>Calibrate the threshold on your own pairs</span></a>
+    <a class="way" href="#byoa"><b>Bring your own AWS</b><span>One-click deploy into your account</span></a>
+  </div>
+</div></header>
+
+<main class="wrap">
+<section id="rest">
+  <p class="eyebrow">REST API</p>
+  <h2>Check text against its source in one call.</h2>
+  <p class="sub">Send the source (what the text must not exceed) and the text. You get each sentence's claim strength, an overclaim probability, and a zone — block, review or ok — using the same calibrated thresholds as the live demo. <button class="i" type="button" data-tip="<b>Zones.</b> Block: above the strict threshold (conformal α = 0.10). Review: between that and the lenient threshold (α = 0.20). OK: below both. The thresholds were fitted on expert-labelled press-release pairs; for your own domain, see Bring your own data.">i</button></p>
+  <div class="tabs" role="tablist" data-group="rest">
+    <button role="tab" aria-selected="true" data-pane="rest-curl">curl</button><button role="tab" aria-selected="false" data-pane="rest-py">Python</button><button role="tab" aria-selected="false" data-pane="rest-js">JavaScript</button>
+  </div>
+  <div class="codewrap"><pre class="code" id="rest-curl">curl -s https://d174bz5yly61n4.cloudfront.net/v1/check \
+  -H "Authorization: Bearer <span class="k">YOUR_KEY</span>" -H "content-type: application/json" \
+  -d '{"source": "Statin use was associated with a lower incidence of dementia.",
+       "text":   "Statins prevent dementia. Researchers studied 30,000 adults."}'</pre>
+  <pre class="code" id="rest-py" hidden>import requests
+
+r = requests.post("https://d174bz5yly61n4.cloudfront.net/v1/check",
+    headers={"Authorization": "Bearer <span class="k">YOUR_KEY</span>"},
+    json={"source": "Statin use was associated with a lower incidence of dementia.",
+          "text": "Statins prevent dementia. Researchers studied 30,000 adults."})
+for s in r.json()["sentences"]:
+    print(s["zone"], s["overclaim"], s["sentence"])   <span class="c"># block 0.8 Statins prevent dementia.</span></pre>
+  <pre class="code" id="rest-js" hidden>const r = await fetch("https://d174bz5yly61n4.cloudfront.net/v1/check", {
+  method: "POST",
+  headers: { "Authorization": "Bearer <span class="k">YOUR_KEY</span>", "content-type": "application/json" },
+  body: JSON.stringify({ source: "Statin use was associated with a lower incidence of dementia.",
+                         text: "Statins prevent dementia. Researchers studied 30,000 adults." }) });
+const { verdict, sentences } = await r.json();</pre>
+  <button class="copy" type="button">Copy</button></div>
+
+  <div class="two" style="margin-top:20px">
+    <div class="card pad try">
+      <h3 style="margin:0 0 4px">Try your key right here <button class="i" type="button" data-tip="Calls the real /v1/check endpoint with the key you just got. Counts against your free daily checks.">i</button></h3>
+      <p class="muted" style="margin:0">Get a key above first.</p>
+      <label for="tSource">Source</label><textarea id="tSource">Statin use was associated with a lower incidence of dementia in this observational cohort.</textarea>
+      <label for="tText">Text to check</label><textarea id="tText">Statins prevent dementia. The researchers followed 30,000 adults for ten years.</textarea>
+      <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap"><button class="btn primary" id="tCheck" type="button" disabled>Run /v1/check</button><button class="btn" id="tRewrite" type="button" disabled>Run /v1/rewrite</button><button class="i" type="button" data-tip="<b>/v1/rewrite</b> also asks Claude on Amazon Bedrock to rewrite each blocked sentence, then Decider re-checks every rewrite. It uses one of your 20 daily rewrites.">i</button></div>
+      <div class="out" id="tOut" aria-live="polite">Results appear here.</div>
+    </div>
+    <div class="card pad">
+      <h3 style="margin:0 0 10px">Endpoints and limits</h3>
+      <table>
+        <tr><th>Endpoint</th><th>Does</th><th>Per key per day</th></tr>
+        <tr><td><code>POST /v1/check</code></td><td>Decider verdict per sentence, no language model</td><td><span class="pill free">300 · free</span></td></tr>
+        <tr><td><code>POST /v1/rewrite</code></td><td>Check, then Claude fixes blocked sentences; Decider verifies each fix</td><td><span class="pill capped">20</span> <button class="i" type="button" data-tip="Claude calls cost real money on Amazon Bedrock, so rewrites are capped per key and by a shared daily budget. If the budget runs out, /v1/check keeps working.">i</button></td></tr>
+        <tr><td><code>POST /v1/calibrate</code></td><td>Your labelled pairs → a threshold with a stated false-flag rate</td><td><span class="pill capped">3 jobs</span></td></tr>
+        <tr><td><code>GET /v1/jobs/{id}</code></td><td>Calibration result</td><td>—</td></tr>
+        <tr><td><code>GET /v1/usage</code></td><td>Your usage today</td><td>—</td></tr>
+      </table>
+      <p class="muted">Up to 25 sentences per check, 12 per rewrite. Full schema in the <a href="/docs">interactive API reference</a>. Limits reset at 00:00 UTC.</p>
+    </div>
+  </div>
+</section>
+
+<section id="mcp">
+  <p class="eyebrow">MCP connector</p>
+  <h2>Give your agent a claim-fidelity tool.</h2>
+  <p class="sub">HypeCheck speaks the Model Context Protocol at <code>https://d174bz5yly61n4.cloudfront.net/mcp</code> with two tools: <b>check_claims</b> and <b>suggest_rewrites</b>. Use the same key. <button class="i" type="button" data-tip="<b>MCP</b> is an open standard that lets AI agents call external tools. Point any MCP-capable agent at this URL with your key and it can check its own drafts against their sources before it answers or publishes.">i</button></p>
+  <div class="tabs" role="tablist" data-group="mcp">
+    <button role="tab" aria-selected="true" data-pane="mcp-strands">Strands Agents</button><button role="tab" aria-selected="false" data-pane="mcp-claude">Claude Desktop</button><button role="tab" aria-selected="false" data-pane="mcp-kiro">Kiro / Cursor</button>
+  </div>
+  <div class="codewrap"><pre class="code" id="mcp-strands"><span class="c"># pip install strands-agents httpx   (tested with strands-agents 1.61, mcp 2.1)</span>
+import httpx
+from mcp.client.streamable_http import streamable_http_client
+from strands import Agent
+from strands.tools.mcp import MCPClient
+
+hypecheck = MCPClient(lambda: streamable_http_client(
+    "https://d174bz5yly61n4.cloudfront.net/mcp",
+    http_client=httpx.AsyncClient(headers={"Authorization": "Bearer <span class="k">YOUR_KEY</span>"}, timeout=120)))
+
+with hypecheck:
+    agent = Agent(tools=hypecheck.list_tools_sync(),
+                  system_prompt="Before you publish a summary, call check_claims with the source and your draft.")
+    agent("Source: 'Statin use was associated with less dementia.' Draft: 'Statins prevent dementia.' Check it.")
+    <span class="c"># → "Verdict: BLOCKED. The draft jumps from an association to direct causation…"</span></pre>
+  <pre class="code" id="mcp-claude" hidden><span class="c">// claude_desktop_config.json  (uses the mcp-remote bridge for header auth)</span>
+{
+  "mcpServers": {
+    "hypecheck": {
+      "command": "npx",
+      "args": ["mcp-remote", "https://d174bz5yly61n4.cloudfront.net/mcp",
+               "--header", "Authorization: Bearer <span class="k">YOUR_KEY</span>"]
+    }
+  }
+}</pre>
+  <pre class="code" id="mcp-kiro" hidden><span class="c">// .kiro/settings/mcp.json  or  .cursor/mcp.json</span>
+{
+  "mcpServers": {
+    "hypecheck": {
+      "url": "https://d174bz5yly61n4.cloudfront.net/mcp",
+      "headers": { "Authorization": "Bearer <span class="k">YOUR_KEY</span>" }
+    }
+  }
+}</pre>
+  <button class="copy" type="button">Copy</button></div>
+</section>
+
+<section id="byod">
+  <p class="eyebrow">Bring your own data</p>
+  <h2>Calibrate the gate on your own domain.</h2>
+  <p class="sub">Our thresholds were fitted on health press releases. If your text is different — legal summaries, product docs, clinical notes — send 10 to 60 of your own labelled pairs and get a threshold with a stated false-flag rate, computed by split conformal prediction. <button class="i" type="button" data-tip="<b>The promise:</b> if new pairs resemble yours, at most α of faithful sentences are flagged. The threshold is the ⌈(n+1)(1−α)⌉-th smallest overclaim score among your n faithful pairs. α = 0.10 needs at least 10 faithful pairs; α = 0.20 needs 5.">i</button></p>
+  <div class="codewrap"><pre class="code">curl -s https://d174bz5yly61n4.cloudfront.net/v1/calibrate \
+  -H "Authorization: Bearer <span class="k">YOUR_KEY</span>" -H "content-type: application/json" \
+  -d '{"alpha": 0.2, "pairs": [
+        {"source": "Use was associated with lower risk.", "derived": "Users had lower risk.",  "label": "faithful"},
+        {"source": "Use was associated with lower risk.", "derived": "It prevents disease.",   "label": "overclaim"},
+        ... 10 to 60 pairs ... ]}'
+<span class="c"># → {"job": "…", "poll": "/v1/jobs/…"}   then GET the poll URL:</span>
+<span class="c"># → {"status": "done", "result": {"threshold": 0.44, "guarantee": "…at most 20% of faithful sentences are flagged", …}}</span></pre>
+  <button class="copy" type="button">Copy</button></div>
+  <p class="muted">Use the threshold with the open-source gate: <code>ClaimFidelityGate(..., threshold=0.44)</code> — see <a href="https://github.com/usv240/hypecheck/tree/main/decision_pattern">decision_pattern/</a>.</p>
+</section>
+
+<section id="byoa">
+  <p class="eyebrow">Bring your own AWS</p>
+  <h2>Run the whole thing in your own account.</h2>
+  <div class="two">
+    <div class="card pad">
+      <p style="margin-top:0">For sensitive text that shouldn't leave your account, deploy HypeCheck with one click. Your drafts, your Amazon Bedrock, your Strands Decider. <button class="i" type="button" data-tip="We never ask for your AWS credentials. The button opens the AWS CloudFormation console in your own account; you review the stack and click Create.">i</button></p>
+      <a class="btn primary" id="launch" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://hypecheck-public-957325809861.s3.amazonaws.com/templates/hypecheck-stack.yaml&amp;stackName=hypecheck" target="_blank" rel="noopener">Launch stack in AWS ↗</a>
+      <p class="muted" style="margin-bottom:0">Template: <a href="https://github.com/usv240/hypecheck/blob/main/deploy/hypecheck-stack.yaml">deploy/hypecheck-stack.yaml</a> · about 15 minutes to first page</p>
+    </div>
+    <div class="card pad">
+      <b>What it creates</b>
+      <ul class="check">
+        <li>One EC2 instance (CPU by default, GPU if you choose) running Strands Decider and the web app</li>
+        <li>An IAM role limited to invoking Anthropic models on Bedrock, plus Systems Manager access (no SSH key needed)</li>
+        <li>A security group open on port 80 only</li>
+        <li>The daily HypeWatch job and the same API and MCP endpoints, on your own URL</li>
+      </ul>
+      <p class="muted" style="margin:0">You need Claude model access enabled in Amazon Bedrock. The instance bills by the hour (c7i.4xlarge ≈ $0.71/h); delete the stack to stop it.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <p class="eyebrow">Fair use</p>
+  <h2>Privacy and limits</h2>
+  <ul class="check">
+    <li>We store a one-way hash of each key and daily counters. No email, no name, no IP address (a short hash is kept for one day to limit key creation).</li>
+    <li>Text you send is processed and discarded; it is not logged or used for training.</li>
+    <li>Rewrites use Claude on Amazon Bedrock under AWS's terms; checks never leave our server.</li>
+    <li>This is a hackathon service with no uptime guarantee. For anything important, use Bring your own AWS.</li>
+  </ul>
+</section>
+</main>
+
+<footer><div class="wrap">HypeCheck · Strands Decider 2B judges, Claude on Amazon Bedrock writes · <a href="/docs">API reference</a> · <a href="https://github.com/usv240/hypecheck">source (Apache-2.0)</a></div></footer>
+<div id="tip" role="tooltip"></div>
+
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=t=>String(t??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/* tooltips (WCAG 1.4.13) */
+const tip=$('#tip'); let tipFor=null, hideT=null;
+function showTip(el){clearTimeout(hideT); tipFor?.setAttribute('aria-expanded','false'); tipFor=el; el.setAttribute('aria-expanded','true'); tip.innerHTML=el.dataset.tip; tip.classList.add('show');
+  const r=el.getBoundingClientRect(), w=Math.min(330,innerWidth-24); tip.style.maxWidth=w+'px'; tip.style.left=Math.max(12,Math.min(r.left+scrollX-w/2+9,scrollX+innerWidth-w-12))+'px';
+  tip.style.top=(r.bottom+scrollY+8)+'px'; const th=tip.offsetHeight; if(r.bottom+8+th>innerHeight&&r.top-th-8>0) tip.style.top=(r.top+scrollY-th-8)+'px';}
+function hideTip(now){const f=()=>{tip.classList.remove('show'); tipFor?.setAttribute('aria-expanded','false'); tipFor=null}; clearTimeout(hideT); now?f():hideT=setTimeout(f,180);}
+document.addEventListener('mouseover',e=>{const b=e.target.closest('[data-tip]'); if(b) showTip(b); else if(e.target.closest('#tip')) clearTimeout(hideT);});
+document.addEventListener('mouseout',e=>{if(e.target.closest('[data-tip]')||e.target.closest('#tip')) hideTip();});
+document.addEventListener('focusin',e=>{const b=e.target.closest('[data-tip]'); if(b) showTip(b);});
+document.addEventListener('focusout',e=>{if(e.target.closest('[data-tip]')) hideTip();});
+document.addEventListener('click',e=>{const b=e.target.closest('.i'); if(b){e.preventDefault(); tipFor===b&&tip.classList.contains('show')?hideTip(true):showTip(b);} else if(!e.target.closest('#tip')) hideTip(true);});
+document.addEventListener('keydown',e=>{if(e.key==='Escape') hideTip(true);});
+$$('.i').forEach(b=>b.setAttribute('aria-label','What does this mean?'));
+
+/* tabs */
+$$('.tabs').forEach(tabs=>tabs.addEventListener('click',e=>{const b=e.target.closest('button[role=tab]'); if(!b) return;
+  tabs.querySelectorAll('button').forEach(x=>{x.setAttribute('aria-selected',x===b); $('#'+x.dataset.pane).hidden=x!==b;});}));
+/* copy buttons copy the visible code block */
+$$('.copy').forEach(btn=>btn.addEventListener('click',async()=>{const pre=[...btn.parentElement.querySelectorAll('pre')].find(p=>!p.hidden);
+  try{await navigator.clipboard.writeText(pre.innerText); btn.textContent='Copied';}catch(e){btn.textContent='Select and copy';} setTimeout(()=>btn.textContent='Copy',1500);}));
+
+/* key issuance: shown once, kept only in this tab, and dropped into the code samples */
+let KEY='';
+$('#getKey').onclick=async()=>{
+  const b=$('#getKey'); b.disabled=true; b.textContent='Creating…';
+  try{const r=await fetch('/v1/keys',{method:'POST'}); const d=await r.json(); if(!r.ok) throw new Error(d.detail||r.statusText);
+    KEY=d.api_key;
+    $('#keybox').innerHTML=`<div class="keyrow"><code class="key" id="keyText">${esc(KEY)}</code><button class="btn primary" id="copyKey" type="button">Copy key</button></div>
+      <p class="keynote"><b>Shown once.</b> We only keep a one-way hash, so we can't show it again. It's now filled into the examples below. Free: 300 checks, 20 rewrites and 3 calibrations a day.</p>`;
+    $('#copyKey').onclick=async()=>{try{await navigator.clipboard.writeText(KEY); $('#copyKey').textContent='Copied';}catch(e){}};
+    $$('.k').forEach(x=>x.textContent=KEY); $('#tCheck').disabled=false; $('#tRewrite').disabled=false;
+  }catch(err){b.disabled=false; b.textContent='Get a free API key'; $('#keyNote').textContent=String(err.message||err);}
+};
+async function tryCall(path){
+  const out=$('#tOut'); out.textContent='Calling '+path+'…';
+  try{const r=await fetch(path,{method:'POST',headers:{'Authorization':'Bearer '+KEY,'content-type':'application/json'},
+      body:JSON.stringify({source:$('#tSource').value,text:$('#tText').value})});
+    const d=await r.json(); out.textContent=JSON.stringify(d,null,2);}catch(err){out.textContent=String(err.message||err);}
+}
+$('#tCheck').onclick=()=>tryCall('/v1/check'); $('#tRewrite').onclick=()=>tryCall('/v1/rewrite');
+
+/* light / dark toggle */
+(function(){const btn=$('#themeBtn'), root=document.documentElement, mq=matchMedia('(prefers-color-scheme: dark)');
+  const cur=()=>root.getAttribute('data-theme')||(mq.matches?'dark':'light');
+  const paint=()=>{const d=cur()==='dark'; btn.firstElementChild.textContent=d?'☀':'☾'; btn.setAttribute('aria-label',d?'Switch to light mode':'Switch to dark mode'); btn.title=d?'Light mode':'Dark mode';};
+  btn.onclick=()=>{const n=cur()==='dark'?'light':'dark'; root.setAttribute('data-theme',n); try{localStorage.setItem('hc-theme',n);}catch(e){} paint();};
+  mq.addEventListener?.('change',paint); paint();})();
+</script>
+</body>
+</html>

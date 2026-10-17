@@ -29,6 +29,7 @@ cat >/etc/systemd/system/hypecheck.service.d/key.conf <<'EOF'
 ExecStartPre=/usr/local/bin/hypecheck-env
 EnvironmentFile=-/run/hypecheck/env
 Environment=HYPEWATCH_DATA=/var/lib/hypecheck/hypewatch.json
+Environment=HYPECHECK_STATE=/var/lib/hypecheck
 EOF
 
 # HypeWatch: seed from the repo's backfill once, then check new NIH releases every morning.
@@ -43,6 +44,7 @@ Type=oneshot
 WorkingDirectory=/opt/hypecheck
 Environment=AWS_DEFAULT_REGION=us-east-1
 Environment=HYPEWATCH_DATA=/var/lib/hypecheck/hypewatch.json
+Environment=HYPECHECK_STATE=/var/lib/hypecheck
 ExecStart=/opt/hypecheck/.venv/bin/python -m hypecheck.hypewatch update
 UNIT
 cat >/etc/systemd/system/hypewatch.timer <<'UNIT'

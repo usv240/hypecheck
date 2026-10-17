@@ -6,3 +6,4 @@ __pycache__/
 build/
 video/build/
 video/*.mp4
+state/

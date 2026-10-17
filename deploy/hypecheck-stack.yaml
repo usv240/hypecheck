@@ -1,0 +1,93 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  HypeCheck in your own AWS account: Strands Decider 2B and the HypeCheck web app, API and MCP
+  endpoint on one EC2 instance, with Claude on Amazon Bedrock through a least-privilege role.
+  Requires Claude model access in Amazon Bedrock. Billed by the hour; delete the stack to stop.
+
+Parameters:
+  InstanceType:
+    Type: String
+    Default: c7i.4xlarge
+    AllowedValues: [c7i.2xlarge, c7i.4xlarge, g6.xlarge, g5.xlarge]
+    Description: CPU (c7i) works anywhere; GPU (g6/g5) is about 6x faster per decision but needs G-instance quota.
+  RepoUrl:
+    Type: String
+    Default: https://github.com/usv240/hypecheck
+    Description: Git repository to deploy (a fork works too).
+  LatestUbuntuAmi:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/canonical/ubuntu/server/24.04/stable/current/amd64/hvm/ebs-gp3/ami-id
+    Description: Ubuntu 24.04 LTS, resolved from Canonical's public SSM parameter.
+
+Resources:
+  WebSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: HypeCheck web app (HTTP only; administer through Systems Manager, no SSH)
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+
+  InstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: { Service: ec2.amazonaws.com }
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+      Policies:
+        - PolicyName: invoke-claude-on-bedrock
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: [bedrock:InvokeModel, bedrock:InvokeModelWithResponseStream]
+                Resource:
+                  - arn:aws:bedrock:*::foundation-model/anthropic.*
+                  - !Sub arn:aws:bedrock:*:${AWS::AccountId}:inference-profile/us.anthropic.*
+
+  InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles: [!Ref InstanceRole]
+
+  HypeCheckInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref LatestUbuntuAmi
+      InstanceType: !Ref InstanceType
+      IamInstanceProfile: !Ref InstanceProfile
+      SecurityGroupIds: [!GetAtt WebSecurityGroup.GroupId]
+      MetadataOptions:
+        HttpTokens: required
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs: { VolumeSize: 60, VolumeType: gp3, Encrypted: true }
+      Tags:
+        - { Key: Name, Value: hypecheck }
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          set -euxo pipefail
+          export HYPECHECK_REPO="${RepoUrl}"
+          curl -fsSL "${RepoUrl}/raw/main/deploy/ec2-bootstrap.sh" -o /root/ec2-bootstrap.sh
+          bash /root/ec2-bootstrap.sh
+          mkdir -p /etc/systemd/system/hypecheck.service.d
+          printf '[Service]\nEnvironment=HYPECHECK_AGENTCORE=off\n' > /etc/systemd/system/hypecheck.service.d/byo.conf
+          bash /opt/hypecheck/deploy/update-ec2.sh
+
+Outputs:
+  Url:
+    Description: Open this once the instance has finished setting up (about 15 minutes).
+    Value: !Sub http://${HypeCheckInstance.PublicDnsName}
+  Developers:
+    Description: API keys, MCP connector and examples on your own deployment.
+    Value: !Sub http://${HypeCheckInstance.PublicDnsName}/developers
+  InstanceId:
+    Value: !Ref HypeCheckInstance

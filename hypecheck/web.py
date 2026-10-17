@@ -28,6 +28,8 @@ from collections import defaultdict, deque
 from pathlib import Path
 from typing import Any, Literal
 
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse, Response, StreamingResponse
 from pydantic import BaseModel, Field
@@ -35,6 +37,7 @@ from pydantic import BaseModel, Field
 from decision_pattern.decider import Decider
 from decision_pattern.fidelity import check_document, split_sentences
 
+from . import public_api
 from .agentcore_client import stream_events as agentcore_events
 from .hypewatch import summarize
 from .agent import ROOT, europepmc_conclusion, run_hypecheck, sentence_dict, thresholds, verdict_event
@@ -46,9 +49,22 @@ MAX_SENTENCES = 25
 RUNS_PER_IP_PER_HOUR = 20
 DECIDER_KEY = os.environ.get("HYPECHECK_DECIDER_KEY", "")
 
-app = FastAPI(title="HypeCheck")
 decider = Decider()
 threshold, review_threshold = thresholds()
+public_api.engine = public_api.Engine(decider, threshold, review_threshold)
+AGENTCORE_ENABLED = os.environ.get("HYPECHECK_AGENTCORE", "on") != "off" and (Path(__file__).parent / "agentcore.json").exists()
+
+
+@asynccontextmanager
+async def lifespan(_app):
+    async with public_api.lifespan_context():  # the MCP session manager lives as long as the server
+        yield
+
+
+app = FastAPI(title="HypeCheck API", version="1.0", lifespan=lifespan,
+              description="Claim-fidelity checks for text derived from a source: Strands Decider 2B judges, "
+                          "Claude on Amazon Bedrock rewrites. Get a key at /developers. MCP endpoint: /mcp.")
+app.include_router(public_api.router)
 
 work: queue.Queue = queue.Queue()
 jobs: dict[str, queue.Queue] = {}
@@ -141,7 +157,7 @@ def _worker() -> None:
         try:
             if kind == "check":
                 _check_job(body, q.put)
-            elif body.engine == "agentcore":
+            elif body.engine == "agentcore" and AGENTCORE_ENABLED:
                 _agentcore_job(body, q.put)
             else:
                 run_hypecheck(body.draft, conclusion=body.conclusion, pmid=body.pmid, emit=q.put,
@@ -174,6 +190,11 @@ def index() -> FileResponse:
 HYPEWATCH = Path(os.environ.get("HYPEWATCH_DATA", Path(__file__).resolve().parent / "hypewatch.json"))
 
 
+@app.get("/developers")
+def developers_page() -> FileResponse:
+    return FileResponse(STATIC / "developers.html")
+
+
 @app.get("/hypewatch")
 def hypewatch_page() -> FileResponse:
     return FileResponse(STATIC / "hypewatch.html")
@@ -201,6 +222,7 @@ def favicon() -> FileResponse:
 @app.get("/api/health")
 def health() -> dict:
     return {"decider": decider.health(), "threshold": threshold, "review_threshold": review_threshold,
+            "agentcore": AGENTCORE_ENABLED,
             "queue": len(waiting)}
 
 
@@ -267,3 +289,7 @@ async def decider_proxy(request: Request) -> Response:
     req = urllib.request.Request(f"{decider.url}/v1/systemone", body, {"content-type": "application/json"})
     with urllib.request.urlopen(req, timeout=120) as r:
         return Response(r.read(), media_type="application/json")
+
+
+# Key check in front of the MCP endpoint; everything else goes straight to FastAPI.
+app = public_api.MCPGateway(app)
