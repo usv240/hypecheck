@@ -78,3 +78,19 @@ Status key:
 | 10 | Shipped surface | ✅ HTTPS URL |
 | 11 | Limits as measured properties | ✅ Recall 39%; animal check AUROC 0.61; CPU latency; CI widths |
 | 12 | Inspect and rerun | ✅ Pre-registrations, per-item CSVs, `research/README.md` commands, tests |
+
+
+## D. Second pass (after HypeWatch), scored 4 or 5 per rubric line
+
+| Criterion | Before | Now | What moved it |
+|---|---|---|---|
+| Creativity & cool factor (30%) | 4 | **5** | **HypeWatch.** The same gate runs on 85 real NIH releases that cite their papers. Each flagged release shows the paper's own words, Claude's suggested rewrite and Decider's check of it. The page updates every morning. It is something a judge can browse, and it is about the real world, not a benchmark |
+| Effective use of Decider + Bedrock (30%) | 5 | **5** | Adds Decider checking Claude's rewrites at scale (18 rewrites, 67% pass, reported against a missed prediction). Adds a second, stricter decision rule for public flags, built from Decider probabilities (min of two overclaim scores), with the calibrated false-flag rate kept as an upper bound |
+| Communication (25%) | 4 | **5** | Article cut from 1,717 to about 930 words of plain language, with every number in one table. The video gains a HypeWatch scene. The README leads with the two numbers and the live links |
+| Originality (15%) | 5 | **5** | No public tool checks real releases against their papers this way |
+
+**Still out of our hands:**
+- the GPU quota for the live demo's speed;
+- posting the article;
+- uploading the video;
+- adding the submission tags.

@@ -12,6 +12,7 @@ published system, which was trained on the task.
 | | |
 |---|---|
 | **Live demo** | https://d174bz5yly61n4.cloudfront.net (click *New here? 30-second tour*) |
+| **HypeWatch** | https://d174bz5yly61n4.cloudfront.net/hypewatch: 85 real NIH releases checked against their papers, updated daily |
 | **Decision pattern** | [`decision_pattern/`](decision_pattern/README.md): a claim-fidelity gate, `#guardrails` |
 | **Article** | [ARTICLE.md](ARTICLE.md) |
 | **Video** | *(YouTube link)* — generated reproducibly by [`video/make_video.py`](video/make_video.py) |
@@ -79,6 +80,26 @@ Cost basis:
 - The animal-to-human hint is weak: AUROC 0.61 on 45 releases, so it never blocks.
 - 563 pairs give wide intervals.
 - The demo server runs Decider on CPU, because a GPU quota request was still pending.
+
+## HypeWatch: the same check on real releases
+
+Benchmarks are curated, so we also pointed HypeCheck at text nobody chose for us: every NIH news
+release from February 2023 to October 2026 that cites its paper by DOI. These releases are
+public domain. That is 85 releases and 615 sentences. Each headline, subtitle and opening
+sentence was checked against the paper's abstract, and Claude suggested a rewrite for every
+blocked sentence.
+
+| Pre-registered measure | Result |
+|---|---|
+| Releases with a sentence the gate would block, strict public rule | **15.3%** (13 of 85; predicted 3–20%) |
+| Same under the benchmark rule (conclusion only) | 43.5% (predicted 20–50%) |
+| Headlines vs body, mean overclaim score | 0.20 vs 0.19, no meaningful gap |
+| Claude's suggested rewrites that pass Decider's check | 66.7% (**missed** the 85% prediction, so they are shown as suggestions) |
+
+The public rule only flags a sentence that claims more than the conclusion *and* more than the
+strongest claim anywhere in the abstract. That avoids flagging an animal result reported earlier
+in the abstract, and since it can only remove flags, the calibrated false-flag bound still holds.
+A systemd timer on EC2 checks new releases every morning (`hypecheck/hypewatch.py`).
 
 ## Architecture on AWS
 

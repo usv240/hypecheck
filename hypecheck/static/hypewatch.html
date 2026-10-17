@@ -66,7 +66,7 @@ button.btn{font:inherit;font-weight:650;padding:10px 16px;border-radius:9px;bord
 <main class="wrap">
 <div class="hero">
   <h1>HypeWatch: real NIH news releases, checked against their papers.</h1>
-  <p class="lead">Every research release the US National Institutes of Health published in the period below, with its headline and opening sentences compared with the conclusion of the paper it cites. Where a sentence says more than the paper, Claude suggests a faithful rewrite and Decider checks it.</p>
+  <p class="lead">Every US National Institutes of Health news release since February 2023 that cites its paper by DOI, with its headline and opening sentences compared with the paper's conclusion. Where a sentence says more than the paper, Claude suggests a faithful rewrite and Decider checks it.</p>
   <div class="stats">
     <div class="stat"><div class="num" id="s_rel">–</div><div class="lbl">releases checked <button class="i" data-tip="Research news releases from nih.gov that cite a paper whose abstract we could retrieve. Announcements without a study are skipped and counted separately.">i</button></div></div>
     <div class="stat"><div class="num" id="s_block">–</div><div class="lbl">with a sentence the gate would block <button class="i" data-tip="Share of releases where at least one sentence claims a stronger relationship than both the paper's conclusion and the strongest claim anywhere in its abstract. This is stricter than the benchmark rule, so it under-counts rather than over-counts.">i</button></div></div>

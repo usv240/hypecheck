@@ -73,15 +73,15 @@ predictions included, before it ran, and the two that failed are in the repo.
 ## HypeWatch: the same check on real releases
 
 To test it on text nobody chose for us, HypeWatch runs HypeCheck over every research release from
-the US National Institutes of Health in the last year. These releases are public domain, and each
+the US National Institutes of Health since February 2023 that cites its paper by DOI. These releases are public domain, and each
 one cites its paper.
 
-- **Coverage.** {N} releases were checked against their papers' abstracts.
-- **Flags.** {B}% had a headline or opening sentence the gate would block, under a stricter rule
+- **Coverage.** 85 releases (February 2023 to October 2026) were checked against their papers' abstracts.
+- **Flags.** 15% had a headline or opening sentence the gate would block, under a stricter rule
   for public flags (a sentence must exceed the paper's conclusion *and* the strongest claim
   anywhere in the abstract).
-- **Headlines.** Average overclaim score {H} for headlines, against {O} for the sentences below them.
-- **Rewrites.** Claude's rewrites passed Decider's check {R}% of the time.
+- **Headlines.** Headlines averaged 0.20, against 0.19 for the sentences below them. That gap is too small to matter: NIH headlines turned out no hotter than their body text.
+- **Rewrites.** Claude's suggested rewrites passed Decider's check 67% of the time. That is below the 85% we predicted, so the page labels them suggestions, not fixes.
 
 Every flag sits next to the paper's own words, so a reader can judge. The page updates every
 morning.

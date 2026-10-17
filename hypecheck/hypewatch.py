@@ -172,6 +172,7 @@ def suggest(bedrock, decider: Decider, paper: str, p_paper: list[float], sentenc
             messages=[{"role": "user", "content": [{"text": REWRITE_PROMPT.format(paper=paper, sentence=sentence) + feedback}]}],
             inferenceConfig={"maxTokens": 200, "temperature": 0})
         text = "".join(b.get("text", "") for b in resp["output"]["message"]["content"]).strip().strip('"')
+        text = re.sub(r"[*_]{1,2}([^*_]+)[*_]{1,2}", r"", text)  # plain text, no markdown emphasis
         p = overclaim_probability(strength(decider, text), p_paper)
         if p <= threshold:
             return {"suggestion": text, "suggestion_p": round(p, 4), "suggestion_ok": True, "attempts": attempt}

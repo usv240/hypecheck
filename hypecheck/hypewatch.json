@@ -7316,7 +7316,7 @@
      "p_vs_conclusion": 0.7568,
      "p_vs_abstract": 0.7664,
      "zone": "block",
-     "suggestion": "Their findings, published in *Nature Communications*, may offer insights into how lipids are transported across the blood-brain barrier and into disruptions in this process that have been associated with birth defects or neurological conditions.",
+     "suggestion": "Their findings, published in Nature Communications, may offer insights into how lipids are transported across the blood-brain barrier and into disruptions in this process that have been associated with birth defects or neurological conditions.",
      "suggestion_p": 0.4738,
      "suggestion_ok": true,
      "attempts": 2
