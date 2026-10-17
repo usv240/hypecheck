@@ -1,0 +1,12 @@
+{
+ "model": "us.anthropic.claude-opus-4-6-v1",
+ "n": 563,
+ "macro_f1": 0.4597,
+ "auroc_exag": 0.6632,
+ "false_flag_on_same": 0.4,
+ "unparsed": 8,
+ "latency_median_ms": 5264.5,
+ "latency_p95_ms": 8530.8,
+ "input_tokens": 120974,
+ "output_tokens": 103017
+}

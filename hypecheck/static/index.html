@@ -70,6 +70,11 @@ button,.btn{font:inherit;font-weight:650;padding:10px 16px;border-radius:9px;bor
 button.primary,.btn.primary{background:var(--accent);color:var(--accent-fg);border-color:transparent}
 button:disabled{opacity:.55;cursor:default}
 .btnwrap{display:inline-flex;align-items:center;gap:4px}
+fieldset.engine{border:1px solid var(--line);border-radius:9px;margin:14px 0 0;padding:8px 12px 10px}
+fieldset.engine legend{font-weight:650;font-size:14px;display:flex;gap:6px;align-items:center;padding:0 4px}
+label.radio{font-weight:400;margin:4px 0;font-size:14.5px;gap:8px}
+label.radio input{width:auto;margin:0}
+.host{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:650;background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:2px 10px;margin-bottom:8px}
 /* info buttons and tooltip */
 .i{all:unset;cursor:help;display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;border:1.5px solid var(--muted);color:var(--muted);font:700 11px/1 Georgia,serif;font-style:italic;flex:none;vertical-align:middle}
 .i:hover,.i:focus-visible,.i[aria-expanded=true]{border-color:var(--accent);color:var(--accent)}
@@ -193,6 +198,10 @@ footer{border-top:1px solid var(--line);padding:24px 0 50px;color:var(--muted);f
         <span class="btnwrap"><button class="primary" id="run">Run the agent</button><button class="i" type="button" data-tip="<b>The full loop.</b> Claude on Amazon Bedrock tries to publish; Decider checks each sentence; Claude rewrites anything blocked; Decider checks again. Takes 10–30 seconds on this server.">i</button></span>
         <span class="btnwrap"><button id="check">Check with Decider only</button><button class="i" type="button" data-tip="<b>Just the judge.</b> Decider scores each sentence; no language model is called and nothing is rewritten. Fast, free, and it still works if Bedrock is unavailable.">i</button></span>
       </div>
+      <fieldset class="engine"><legend>Where the agent runs <button class="i" type="button" data-tip="<b>Amazon Bedrock AgentCore Runtime</b> is AWS's serverless, session-isolated host for agents. The same Strands agent is deployed there and calls Decider on this server over a key-protected HTTPS endpoint. <b>This demo server</b> runs the identical agent in-process. If AgentCore is unavailable, the run falls back to this server automatically.">i</button></legend>
+        <label class="radio"><input type="radio" name="engine" value="agentcore" checked> Amazon Bedrock AgentCore Runtime</label>
+        <label class="radio"><input type="radio" name="engine" value="local"> This demo server (EC2)</label>
+      </fieldset>
       <div class="status" id="status"><span class="spin"></span><span id="statusText"></span></div>
     </div>
 
@@ -331,7 +340,7 @@ $('#ex').onchange=e=>loadExample(e.target.value);
 $('#heroTry').onclick=()=>{loadExample(0); $('#try').scrollIntoView(); setTimeout(()=>$('#run').focus(),400);};
 
 /* ---------- running ---------- */
-function body(){const b={draft:$('#draft').value.trim()}; const p=$('#pmid').value.trim(); if(p) b.pmid=p; else b.conclusion=$('#concl').value.trim(); return b;}
+function body(){const b={draft:$('#draft').value.trim(), engine:(document.querySelector('input[name=engine]:checked')||{}).value||'agentcore'}; const p=$('#pmid').value.trim(); if(p) b.pmid=p; else b.conclusion=$('#concl').value.trim(); return b;}
 function validate(b){if(!b.draft) return 'Paste a draft press release, or choose an example.'; if(!b.pmid&&!b.conclusion) return "Add the paper's conclusion, or a PubMed ID."; if(b.pmid&&!/^\d{1,9}$/.test(b.pmid)) return 'A PubMed ID is digits only, e.g. 25498121.'; return '';}
 function busy(on,t){$('#run').disabled=on; $('#check').disabled=on; $('#status').classList.toggle('busy',on); $('#statusText').textContent=t||'';}
 function sentRow(s,pending){const z=pending?'wait':s.zone; return `<div class="sent ${pending?'pending':s.zone}">
@@ -353,6 +362,7 @@ async function start(kind){
     const j=await r.json(); if(!r.ok) throw new Error(j.detail?.[0]?.msg||j.detail||r.statusText);
     const es=new EventSource('/api/stream/'+j.job);
     es.onmessage=m=>{const e=JSON.parse(m.data);
+      if(e.type==='host') R.insertAdjacentHTML('beforeend',`<div class="host">${e.host==='agentcore-runtime'?'☁ Agent hosted on Amazon Bedrock AgentCore Runtime':'▣ Agent running on the demo server'} ${iBtn(e.note?esc(e.note):(e.host==='agentcore-runtime'?'This run is executing in AgentCore Runtime: Claude via Bedrock, Decider via the key-protected endpoint on the EC2 server.':'This run is executing in-process on the EC2 demo server.'))}</div>`);
       if(e.type==='queued') busy(true, e.position>1?`Waiting in line: position ${e.position}`:'Starting…');
       if(e.type==='started') busy(true, kind==='run'?'Claude is reading the draft…':'Decider is reading…');
       if(e.type==='paper') R.insertAdjacentHTML('beforeend',`<p class="muted"><b>Paper${e.pmid?' (PMID '+esc(e.pmid)+')':''}</b>${e.title?': '+esc(e.title):''} ${iBtn('This is the yardstick. Its claim strength is rated once, and every sentence is compared with it.')}<br>“${esc(e.conclusion)}”</p>`);

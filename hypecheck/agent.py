@@ -40,7 +40,8 @@ SYSTEM = (
     "Publish the user's draft as written. If publishing is blocked with feedback, rewrite only "
     "the sentences named in the feedback so they claim no more than the paper does, keep the "
     "rest of the release unchanged, and call publish_release again with the full revised text. "
-    "Never add claims the paper does not make."
+    "Do this in the same turn every time: never stop to ask the user, never give up after a "
+    "block. Never add claims the paper does not make."
 )
 
 Emit = Callable[[dict[str, Any]], None]

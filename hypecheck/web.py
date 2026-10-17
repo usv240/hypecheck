@@ -26,7 +26,7 @@ import urllib.request
 import uuid
 from collections import defaultdict, deque
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse, Response, StreamingResponse
@@ -35,6 +35,7 @@ from pydantic import BaseModel, Field
 from decision_pattern.decider import Decider
 from decision_pattern.fidelity import check_document, split_sentences
 
+from .agentcore_client import stream_events as agentcore_events
 from .agent import ROOT, europepmc_conclusion, run_hypecheck, sentence_dict, thresholds, verdict_event
 
 STATIC = Path(__file__).parent / "static"
@@ -57,6 +58,7 @@ recent: dict[str, deque] = defaultdict(deque)
 
 class CheckIn(BaseModel):
     draft: str = Field(..., max_length=MAX_CHARS)
+    engine: Literal["agentcore", "local"] = "agentcore"
     conclusion: str | None = Field(None, max_length=MAX_CHARS)
     pmid: str | None = Field(None, pattern=r"^\d{1,9}$")
 
@@ -105,6 +107,23 @@ def _check_job(body: CheckIn, emit) -> None:
           "published": False, "review": [s["sentence"] for s in ev["sentences"] if s["zone"] == "review"]})
 
 
+def _agentcore_job(body: CheckIn, emit) -> None:
+    """Run on the AgentCore-hosted copy; fall back to this box if AgentCore fails before any event."""
+    payload = {"draft": body.draft, **({"pmid": body.pmid} if body.pmid else {"conclusion": body.conclusion})}
+    got_any = False
+    try:
+        emit({"type": "host", "host": "agentcore-runtime"})
+        for e in agentcore_events(payload):
+            got_any = True
+            emit(e)
+    except Exception as exc:
+        if got_any:
+            raise
+        emit({"type": "host", "host": "local", "note": f"AgentCore unavailable ({type(exc).__name__}); ran on the demo server instead"})
+        run_hypecheck(body.draft, conclusion=body.conclusion, pmid=body.pmid, emit=emit,
+                      decider=decider, threshold=threshold, review_threshold=review_threshold)
+
+
 def _worker() -> None:
     while True:
         job, kind, body = work.get()
@@ -121,6 +140,8 @@ def _worker() -> None:
         try:
             if kind == "check":
                 _check_job(body, q.put)
+            elif body.engine == "agentcore":
+                _agentcore_job(body, q.put)
             else:
                 run_hypecheck(body.draft, conclusion=body.conclusion, pmid=body.pmid, emit=q.put,
                               decider=decider, threshold=threshold, review_threshold=review_threshold)
