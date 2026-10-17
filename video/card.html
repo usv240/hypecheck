@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>HypeCheck</title>
+<style>
+  html,body{margin:0;height:100%;background:#0b57d0;color:#fff;font-family:system-ui,"Segoe UI",Roboto,sans-serif}
+  .c{height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 90px;box-sizing:border-box}
+  h1{font-size:58px;line-height:1.1;margin:0 0 18px;letter-spacing:-.02em;max-width:18ch}
+  p{font-size:26px;line-height:1.45;margin:0 0 12px;max-width:42ch;opacity:.95}
+  .q{font-size:30px;background:rgba(255,255,255,.12);border-radius:14px;padding:18px 24px;margin:8px 0;max-width:40ch}
+  .q b{color:#ffd166}
+  small{font-size:18px;opacity:.85}
+  .row{display:flex;gap:16px;align-items:center;margin-bottom:26px;font-size:22px;font-weight:700}
+  .logo{width:44px;height:44px;border-radius:10px;background:#fff;display:grid;place-items:center}
+</style></head>
+<body><div class="c" id="c"></div>
+<script>
+const s = new URLSearchParams(location.search).get('s') || 'intro';
+const logo = `<div class="row"><div class="logo"><svg width="28" height="28" viewBox="0 0 32 32"><path d="M9 16.5l4.5 4.5L23 11" fill="none" stroke="#0b57d0" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>HypeCheck</div>`;
+const cards = {
+  intro: `${logo}
+    <div class="q">Paper: “Use of the urgent referral pathway <b>could be efficacious</b>.”</div>
+    <div class="q">Press release: “The urgent referral pathway <b>is saving lives</b>.”</div>
+    <p style="margin-top:22px">In 462 university press releases, a third turned an association into a cause. When the release exaggerated, most of the news did too.</p>
+    <small>Sumner et al., BMJ 2014</small>`,
+  outro: `${logo}<h1>Spell-check for hype in health press releases.</h1>
+    <p>Strands Decider 2B judges · Claude on Amazon Bedrock writes · hosted on Amazon Bedrock AgentCore Runtime</p>
+    <p style="margin-top:20px">github.com/usv240/hypecheck<br>d174bz5yly61n4.cloudfront.net</p>`
+};
+document.getElementById('c').innerHTML = cards[s];
+</script></body></html>
