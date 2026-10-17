@@ -1,0 +1,75 @@
+{
+ "model": "StrandsAgents/strands-decider-2B-qwen3.5-v1-2610",
+ "wa": {
+  "n": 563,
+  "label_counts": {
+   "same": 345,
+   "exaggerates": 122,
+   "downplays": 96
+  },
+  "v1_macro_f1": 0.4084,
+  "v2_macro_f1": 0.4983,
+  "v1_auroc_exag": 0.6761,
+  "v2_auroc_exag": 0.716,
+  "v3_auroc_exag": 0.629,
+  "false_flag_on_same": {
+   "v1_argmax": 0.0754,
+   "v2_argmax": 0.1449,
+   "v3_at_0.5": 0.0638
+  },
+  "strength_macro_f1_on_wa_sentences": 0.5326,
+  "latency_pair_request": {
+   "median_ms": 323.1,
+   "p95_ms": 523.9
+  },
+  "latency_sentence_request": {
+   "median_ms": 159.8,
+   "p95_ms": 263.7
+  }
+ },
+ "yu19": {
+  "n": 3061,
+  "macro_f1_4class": 0.3171,
+  "accuracy_4class": 0.3724,
+  "direct_vs_correlational_f1": 0.0351,
+  "direct_vs_correlational_auroc": 0.1062,
+  "latency": {
+   "median_ms": 150.6,
+   "p95_ms": 249.0
+  }
+ },
+ "yu19_corrected": {
+  "n": 3061,
+  "macro_f1_4class": 0.5386,
+  "accuracy_4class": 0.6194,
+  "direct_vs_correlational_f1": 0.6258,
+  "direct_vs_correlational_auroc": 0.8938,
+  "confusion_rows_gold_cols_pred_order_none_corr_cond_direct": [
+   [
+    871,
+    293,
+    167,
+    25
+   ],
+   [
+    200,
+    778,
+    11,
+    9
+   ],
+   [
+    26,
+    52,
+    131,
+    4
+   ],
+   [
+    180,
+    129,
+    69,
+    116
+   ]
+  ]
+ },
+ "yu19_note": "yu19 block scored with wrong label map (Yu uses 1=direct causal, 3=correlational); yu19_corrected rescored from the same per-item predictions"
+}

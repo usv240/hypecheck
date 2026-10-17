@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HypeCheck — spell-check for hype in health press releases</title>
+<style>
+  :root { --bg:#f7f7f5; --fg:#1b1b1b; --muted:#6b6b6b; --card:#fff; --line:#e3e3df;
+          --ok:#1f7a4d; --okbg:#e6f4ec; --warn:#b26a00; --warnbg:#fff3df; --bad:#b3261e; --badbg:#fde9e7;
+          --accent:#0b57d0; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#141414; --fg:#ececec; --muted:#a0a0a0; --card:#1e1e1e; --line:#333;
+            --ok:#5fd39a; --okbg:#10291c; --warn:#f0b35b; --warnbg:#2e2310; --bad:#ff8a80; --badbg:#3a1613; --accent:#8ab4f8; }
+  }
+  * { box-sizing:border-box }
+  body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.5 system-ui,Segoe UI,Roboto,sans-serif }
+  header { padding:28px 24px 8px; max-width:1100px; margin:0 auto }
+  h1 { margin:0; font-size:28px; letter-spacing:-.01em }
+  h1 small { font-weight:400; color:var(--muted); font-size:15px; display:block; margin-top:4px }
+  main { max-width:1100px; margin:0 auto; padding:12px 24px 60px; display:grid; gap:18px; grid-template-columns:1fr 1fr }
+  @media (max-width:860px) { main { grid-template-columns:1fr } }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px }
+  label { display:block; font-weight:600; margin:10px 0 6px }
+  textarea, input, select { width:100%; font:inherit; color:inherit; background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:10px }
+  textarea { min-height:150px; resize:vertical }
+  .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:14px }
+  button { font:inherit; font-weight:600; padding:10px 16px; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--fg); cursor:pointer }
+  button.primary { background:var(--accent); color:#fff; border-color:transparent }
+  button:disabled { opacity:.5; cursor:default }
+  .muted { color:var(--muted); font-size:13px }
+  .sent { padding:8px 10px; border-radius:8px; margin:6px 0; border-left:4px solid var(--line); display:grid; grid-template-columns:auto 1fr; gap:10px; align-items:start }
+  .sent.flag { background:var(--badbg); border-left-color:var(--bad) }
+  .sent.near { background:var(--warnbg); border-left-color:var(--warn) }
+  .sent.ok { background:var(--okbg); border-left-color:var(--ok) }
+  .score { font-family:var(--mono); font-size:12px; white-space:nowrap; padding-top:2px }
+  .tag { display:inline-block; font-size:11px; padding:1px 6px; border-radius:999px; border:1px solid var(--line); margin-left:6px; color:var(--muted) }
+  .round { margin-top:14px; padding-top:10px; border-top:1px dashed var(--line) }
+  .round h3 { margin:0 0 4px; font-size:15px }
+  .action { font-weight:700 }
+  .action.guide { color:var(--bad) } .action.proceed { color:var(--ok) } .action.confirm { color:var(--warn) }
+  .bar { display:flex; height:14px; border-radius:7px; overflow:hidden; border:1px solid var(--line); margin:8px 0 4px }
+  .bar div { height:100% }
+  .bar .d { background:var(--ok) } .bar .l { background:var(--accent) }
+  pre { white-space:pre-wrap; font:inherit; background:var(--bg); padding:10px; border-radius:8px; border:1px solid var(--line); margin:6px 0 }
+  .diff del { background:var(--badbg); color:var(--bad); text-decoration:line-through }
+  .diff ins { background:var(--okbg); color:var(--ok); text-decoration:none }
+  footer { max-width:1100px; margin:0 auto; padding:0 24px 40px; color:var(--muted); font-size:13px }
+  a { color:var(--accent) }
+</style>
+</head>
+<body>
+<header>
+  <h1>HypeCheck <small>Checks a draft health press release against the paper it reports, flags every claim that says more than the study found, has Claude rewrite it, and re-checks the rewrite before anything is published.</small></h1>
+</header>
+<main>
+  <section class="card">
+    <label for="ex">Try a real example</label>
+    <select id="ex"><option value="">— choose a press release from the benchmark —</option></select>
+    <label for="draft">Draft press release</label>
+    <textarea id="draft" placeholder="Paste the draft here…"></textarea>
+    <label for="concl">The paper's conclusion <span class="muted">(or give a PubMed ID below and leave this empty)</span></label>
+    <textarea id="concl" style="min-height:70px" placeholder="e.g. Coffee intake was associated with lower risk of…"></textarea>
+    <label for="pmid">PubMed ID <span class="muted">(optional; fetched from Europe PMC)</span></label>
+    <input id="pmid" placeholder="e.g. 25498121">
+    <div class="row">
+      <button id="check">Check with Decider only</button>
+      <button id="run" class="primary">Run the agent (Decider + Claude on Bedrock)</button>
+      <span id="status" class="muted"></span>
+    </div>
+    <p class="muted">Threshold is calibrated, not hand-picked: at most 10% of faithful sentences are flagged (measured 7.7% on 441 held-out expert-labelled pairs). <span id="thr"></span></p>
+  </section>
+  <section class="card" id="out">
+    <p class="muted">Results appear here. Red = claims more than the paper. Green = within what the paper supports.</p>
+  </section>
+</main>
+<footer>
+  Built for the AWS Agent Experience Hackathon. Decision model: <a href="https://github.com/strands-labs/strands-decider">Strands Decider 2B</a>, pattern <code>#guardrails</code>. Generative model: Claude on Amazon Bedrock. Evidence: Sumner et&nbsp;al. 2014 (BMJ), Adams et&nbsp;al. 2019 (BMC Medicine, RCT).
+</footer>
+<script>
+const $ = s => document.querySelector(s);
+const out = $('#out'), status = $('#status');
+const READ = {no_relationship:'no relationship', correlational:'association', conditional_causal:'hedged cause', direct_causal:'definite cause'};
+let examples = [];
+
+fetch('/api/examples').then(r=>r.json()).then(list=>{
+  examples = list;
+  for (const [i,e] of list.entries()) { const o=document.createElement('option'); o.value=i; o.textContent=e.title; $('#ex').appendChild(o); }
+});
+fetch('/api/health').then(r=>r.json()).then(h=>{ $('#thr').textContent = `Current threshold: ${h.threshold.toFixed(3)}. Decider: ${h.decider.model} on ${h.decider.device}.`; }).catch(()=>{});
+$('#ex').onchange = e => { const x = examples[e.target.value]; if (!x) return; $('#draft').value = x.draft; $('#concl').value = x.conclusion; $('#pmid').value = ''; };
+
+function body() {
+  const b = { draft: $('#draft').value.trim() };
+  if ($('#pmid').value.trim()) b.pmid = $('#pmid').value.trim(); else b.conclusion = $('#concl').value.trim();
+  return b;
+}
+function cls(s, thr) { return s.flagged ? 'flag' : (s.p_overclaim > thr*0.7 ? 'near' : 'ok'); }
+function sentencesHtml(ev) {
+  return ev.sentences.map(s => `<div class="sent ${cls(s, ev.threshold)}"><span class="score">${s.p_overclaim.toFixed(2)}</span><span>${esc(s.sentence)}<span class="tag">${READ[s.strength]}</span>${advis(s)}</span></div>`).join('');
+}
+function advis(s) {
+  const a = s.advisory || {}; let t = '';
+  if (a.unsupported_advice >= 0.5) t += `<span class="tag">advice not in paper (${a.unsupported_advice.toFixed(2)})</span>`;
+  if (a.animal_to_human >= 0.5) t += `<span class="tag">animal → human? (${a.animal_to_human.toFixed(2)})</span>`;
+  return t;
+}
+function esc(t) { return t.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+function paperLine(ev) { return `<p class="muted">Paper claims: <b>${READ[ev.paper_strength]}</b>${ev.conclusion ? ' — “' + esc(ev.conclusion) + '”' : ''}</p>`; }
+
+$('#check').onclick = async () => {
+  setBusy(true, 'Decider is reading…');
+  try {
+    const r = await fetch('/api/check', { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify(body()) });
+    const ev = await r.json();
+    if (!r.ok) throw new Error(ev.detail || r.statusText);
+    const flagged = ev.sentences.filter(s=>s.flagged).length;
+    out.innerHTML = `<h3 style="margin:0 0 6px">${flagged ? flagged + ' sentence(s) claim more than the paper' : 'Nothing claims more than the paper'}</h3>
+      ${paperLine(ev)}${sentencesHtml(ev)}<p class="muted">${ev.decider_calls} decider calls, ${ev.ms} ms total, no LLM involved.</p>`;
+  } catch (e) { out.innerHTML = `<p style="color:var(--bad)">${esc(String(e.message||e))}</p>`; }
+  setBusy(false);
+};
+
+$('#run').onclick = async () => {
+  setBusy(true, 'Starting agent…');
+  out.innerHTML = '';
+  let prevText = null;
+  try {
+    const r = await fetch('/api/run', { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify(body()) });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.detail || r.statusText);
+    const es = new EventSource('/api/stream/' + j.job);
+    es.onmessage = m => {
+      const ev = JSON.parse(m.data);
+      if (ev.type === 'paper') { out.insertAdjacentHTML('beforeend', `<p class="muted">Paper${ev.pmid ? ' (PMID ' + ev.pmid + ')' : ''}${ev.title ? ': <b>' + esc(ev.title) + '</b>' : ''}<br>“${esc(ev.conclusion)}”</p>`); status.textContent = 'Claude is drafting the publish call…'; }
+      if (ev.type === 'verdict') {
+        const flagged = ev.sentences.filter(s=>s.flagged).length;
+        let diff = '';
+        if (prevText !== null && prevText !== ev.text) diff = `<details open><summary class="muted">What Claude changed</summary><pre class="diff">${wordDiff(prevText, ev.text)}</pre></details>`;
+        prevText = ev.text;
+        out.insertAdjacentHTML('beforeend', `<div class="round"><h3>Round ${ev.round}: Decider reads the ${ev.round>1?'rewrite':'draft'} → <span class="action ${ev.action}">${label(ev.action, flagged)}</span></h3>${diff}${sentencesHtml(ev)}</div>`);
+        status.textContent = ev.action === 'guide' ? 'Claude is rewriting the flagged sentences…' : ev.action === 'confirm' ? 'Waiting for a person' : 'Publishing…';
+      }
+      if (ev.type === 'published') out.insertAdjacentHTML('beforeend', `<div class="round"><h3 style="color:var(--ok)">Published</h3><pre>${esc(ev.text)}</pre></div>`);
+      if (ev.type === 'error') out.insertAdjacentHTML('beforeend', `<p style="color:var(--bad)">${esc(ev.message)}</p>`);
+      if (ev.type === 'done') {
+        const d = ev.decider_ms, l = Math.max(0, ev.llm_ms), tot = d + l;
+        out.insertAdjacentHTML('beforeend', `<div class="round"><h3>Where the time went</h3>
+          <div class="bar"><div class="d" style="width:${100*d/tot}%" title="Decider"></div><div class="l" style="width:${100*l/tot}%" title="Claude"></div></div>
+          <p class="muted">Decider: ${ev.decider_calls} decisions in ${d} ms (${(d/ev.decider_calls).toFixed(0)} ms each, local). Claude on Bedrock: ${l} ms${ev.usage.inputTokens ? ', ' + ev.usage.inputTokens + ' in / ' + ev.usage.outputTokens + ' out tokens' : ''}. ${ev.rounds} round(s).</p></div>`);
+        setBusy(false, ev.published ? 'Done' : 'Not published');
+      }
+    };
+    es.addEventListener('end', () => { es.close(); setBusy(false); });
+    es.onerror = () => { es.close(); setBusy(false, 'stream closed'); };
+  } catch (e) { out.innerHTML = `<p style="color:var(--bad)">${esc(String(e.message||e))}</p>`; setBusy(false); }
+};
+
+function label(a, n) { return a === 'guide' ? `blocked, ${n} sentence(s) overclaim` : a === 'proceed' ? 'clean, publish' : 'asks a person'; }
+function setBusy(b, t) { $('#run').disabled = b; $('#check').disabled = b; status.textContent = t || ''; }
+
+function wordDiff(a, b) {   // small LCS word diff, enough for a few changed sentences
+  const A = a.split(/\s+/), B = b.split(/\s+/), n = A.length, m = B.length;
+  const L = Array.from({length:n+1}, () => new Uint16Array(m+1));
+  for (let i=n-1;i>=0;i--) for (let j=m-1;j>=0;j--) L[i][j] = A[i]===B[j] ? L[i+1][j+1]+1 : Math.max(L[i+1][j], L[i][j+1]);
+  let i=0,j=0,outp=[];
+  while (i<n && j<m) {
+    if (A[i]===B[j]) { outp.push(esc(A[i])); i++; j++; }
+    else if (L[i+1][j] >= L[i][j+1]) { outp.push('<del>'+esc(A[i])+'</del>'); i++; }
+    else { outp.push('<ins>'+esc(B[j])+'</ins>'); j++; }
+  }
+  while (i<n) outp.push('<del>'+esc(A[i++])+'</del>');
+  while (j<m) outp.push('<ins>'+esc(B[j++])+'</ins>');
+  return outp.join(' ');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+ "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+ "n": 563,
+ "macro_f1": 0.3578,
+ "auroc_exag": 0.5704,
+ "false_flag_on_same": 0.4493,
+ "unparsed": 0,
+ "latency_median_ms": 1971.6,
+ "latency_p95_ms": 16842.6,
+ "input_tokens": 120411,
+ "output_tokens": 33780
+}

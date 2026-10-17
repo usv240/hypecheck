@@ -1,0 +1,28 @@
+{
+ "animal": {
+  "n": 45,
+  "n_human_inferred": 23,
+  "auroc": 0.6087,
+  "at_0.5": {
+   "recall": 0.0,
+   "recall_95ci": [
+    -0.0,
+    0.1431
+   ],
+   "false_flag": 0.0,
+   "false_flag_95ci": [
+    0.0,
+    0.1487
+   ]
+  }
+ },
+ "advice": {
+  "n": 116,
+  "macro_f1_4class": 0.4459,
+  "auroc_explicit": 0.7671,
+  "auroc_inflated": 0.8409,
+  "n_inflated": 50
+ },
+ "decider_calls": 161,
+ "decider_median_ms": 268.0
+}

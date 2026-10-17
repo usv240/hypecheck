@@ -1,0 +1,12 @@
+{
+ "model": "us.anthropic.claude-sonnet-4-6",
+ "n": 563,
+ "macro_f1": 0.4007,
+ "auroc_exag": 0.5796,
+ "false_flag_on_same": 0.2957,
+ "unparsed": 3,
+ "latency_median_ms": 944.5,
+ "latency_p95_ms": 1912.3,
+ "input_tokens": 120974,
+ "output_tokens": 12300
+}
