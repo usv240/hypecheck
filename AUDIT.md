@@ -94,3 +94,19 @@ Status key:
 - posting the article;
 - uploading the video;
 - adding the submission tags.
+
+
+## E. Third pass: reuse without cloning
+
+Checked against "quality of your reusable decision pattern" (part of the 30% Effective use
+criterion) and the announced recognition for the most-reused pattern:
+
+- **Before:** the pattern could only be reused by copying `decision_pattern/` into your own code.
+- **Now there are four routes, each verified live:**
+  - **REST API** with instant hashed keys. Its limits protect the Bedrock budget.
+  - **MCP connector.** A real Strands agent on Bedrock used it.
+  - **Hosted calibration** on your own labelled pairs. In-sample on 12 pairs: threshold 0.44, 0% false flags, 100% recall.
+  - **CloudFormation stack.** Test-launched in our own account.
+- **Not done:** a true one-click "Launch stack" button. It needs a public S3 bucket, which means
+  changing an S3 security setting. That is left to the author; the page offers download plus
+  console instead.

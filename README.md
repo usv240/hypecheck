@@ -13,6 +13,7 @@ published system, which was trained on the task.
 |---|---|
 | **Live demo** | https://d174bz5yly61n4.cloudfront.net (click *New here? 30-second tour*) |
 | **HypeWatch** | https://d174bz5yly61n4.cloudfront.net/hypewatch: 85 real NIH releases checked against their papers, updated daily |
+| **Developers** | https://d174bz5yly61n4.cloudfront.net/developers: free API key in one click, REST API, MCP connector, bring your own data or AWS |
 | **Decision pattern** | [`decision_pattern/`](decision_pattern/README.md): a claim-fidelity gate, `#guardrails` |
 | **Article** | [ARTICLE.md](ARTICLE.md) |
 | **Video** | *(YouTube link)* — generated reproducibly by [`video/make_video.py`](video/make_video.py) |
@@ -134,6 +135,18 @@ agent = Agent(model="us.anthropic.claude-sonnet-4-6", tools=[publish_release], i
 `examples/leaflet_gate.py` runs the identical gate on a patient-leaflet writer: it caught "less
 likely to develop dementia" stated as fact. `pytest -q` runs the offline tests (fake decider, no
 Bedrock).
+
+## Use it from your own app or agent
+
+| Way in | What you get |
+|---|---|
+| **REST API** | `POST /v1/check` (free, 300 a day per key): every sentence's claim strength, overclaim probability and zone. `POST /v1/rewrite` (20 a day): Claude fixes the blocked sentences, and Decider verifies each fix. Keys are issued instantly at `/developers`, with no signup; only a SHA-256 hash is stored. OpenAPI reference at `/docs` |
+| **MCP connector** | `https://d174bz5yly61n4.cloudfront.net/mcp` exposes `check_claims` and `suggest_rewrites` to any MCP client: Strands, Claude Desktop (via `mcp-remote`), Kiro, Cursor. A Strands agent on Bedrock has been verified using it to block "Statins prevent dementia" (0.73) |
+| **Bring your own data** | `POST /v1/calibrate` with 10–60 of your labelled pairs returns a split-conformal threshold with a stated false-flag rate for your domain |
+| **Bring your own AWS** | `deploy/hypecheck-stack.yaml` deploys the whole stack into your account: one EC2 instance, a least-privilege Bedrock role, access through SSM, no SSH. Test-launched end to end |
+
+Claude rewrites spend real Bedrock money, so they also have a shared ceiling of $2 per day. Checks
+never call a language model.
 
 ## Run it yourself
 

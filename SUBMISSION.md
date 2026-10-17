@@ -12,6 +12,7 @@ HypeCheck reads a draft health press release next to the paper it reports, flags
 **Links**
 - Repository (Apache-2.0): https://github.com/usv240/hypecheck
 - Reusable pattern: https://github.com/usv240/hypecheck/tree/main/decision_pattern
+- Developers (free API key, REST, MCP, bring your own data or AWS): https://d174bz5yly61n4.cloudfront.net/developers
 - Live demo: https://d174bz5yly61n4.cloudfront.net
 - HypeWatch (real NIH releases, daily): https://d174bz5yly61n4.cloudfront.net/hypewatch
 - Article: *(Builder Center URL after posting ARTICLE.md)*

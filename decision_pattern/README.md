@@ -86,7 +86,11 @@ the calibration set, at most α of faithful sentences are flagged. On the press-
 α = 0.10 fitted on 78 pairs gave 7.7% on 441 unseen pairs. That α only works with
 n ≥ 1/α − 1 faithful pairs.
 
-## 5. Notes for reuse
+## 5. Without writing code
+
+The same gate is a hosted API and an MCP tool, and you can calibrate it on your own pairs. Instructions and a free key are at https://d174bz5yly61n4.cloudfront.net/developers.
+
+## 6. Notes for reuse
 
 - It works for any "derived text must not exceed its source" job: summaries, RAG answers,
   patient leaflets, changelogs. `examples/leaflet_gate.py` runs it unchanged on a leaflet writer.

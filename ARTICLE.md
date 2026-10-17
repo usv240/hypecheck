@@ -111,6 +111,14 @@ morning.
 
 ## Reuse it
 
+There are four ways in, all on the Developers page (https://d174bz5yly61n4.cloudfront.net/developers):
+- **A free REST API** with instant keys and no signup.
+- **An MCP connector**, so any agent can call `check_claims` before it publishes. We tested it with a Strands agent on Bedrock.
+- **Calibration on your own labelled pairs.**
+- **A CloudFormation stack** that runs everything in your own AWS account.
+
+For code:
+
 `decision_pattern/` contains the question, the gate, the calibration script and tests. The same
 gate runs unchanged on a patient-leaflet writer, where it caught "statin users were less likely to
 develop dementia" stated as fact from an observational study. Use it anywhere text must not say

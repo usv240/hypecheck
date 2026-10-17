@@ -223,8 +223,14 @@ with hypecheck:
   <div class="two">
     <div class="card pad">
       <p style="margin-top:0">For sensitive text that shouldn't leave your account, deploy HypeCheck with one click. Your drafts, your Amazon Bedrock, your Strands Decider. <button class="i" type="button" data-tip="We never ask for your AWS credentials. The button opens the AWS CloudFormation console in your own account; you review the stack and click Create.">i</button></p>
-      <a class="btn primary" id="launch" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://hypecheck-public-957325809861.s3.amazonaws.com/templates/hypecheck-stack.yaml&amp;stackName=hypecheck" target="_blank" rel="noopener">Launch stack in AWS ↗</a>
-      <p class="muted" style="margin-bottom:0">Template: <a href="https://github.com/usv240/hypecheck/blob/main/deploy/hypecheck-stack.yaml">deploy/hypecheck-stack.yaml</a> · about 15 minutes to first page</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a class="btn primary" href="/deploy/hypecheck-stack.yaml" download>1 · Download the template</a>
+        <a class="btn" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create" target="_blank" rel="noopener">2 · Open CloudFormation ↗</a>
+      </div>
+      <p class="muted">In the console choose <b>Upload a template file</b>, pick the file, keep the defaults and create. Or from a terminal: <button class="i" type="button" data-tip="Needs the AWS CLI signed in to your account. CAPABILITY_IAM is required because the stack creates one least-privilege role for the instance.">i</button></p>
+      <div class="codewrap"><pre class="code" style="border-radius:12px">aws cloudformation create-stack --stack-name hypecheck   --template-body file://hypecheck-stack.yaml --capabilities CAPABILITY_IAM
+aws cloudformation describe-stacks --stack-name hypecheck --query "Stacks[0].Outputs"</pre><button class="copy" type="button">Copy</button></div>
+      <p class="muted" style="margin-bottom:0">Tested end to end on 2026-10-17: stack created, page and API healthy about 15 minutes later. <a href="https://github.com/usv240/hypecheck/blob/main/deploy/hypecheck-stack.yaml">View the template</a></p>
     </div>
     <div class="card pad">
       <b>What it creates</b>

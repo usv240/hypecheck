@@ -190,6 +190,11 @@ def index() -> FileResponse:
 HYPEWATCH = Path(os.environ.get("HYPEWATCH_DATA", Path(__file__).resolve().parent / "hypewatch.json"))
 
 
+@app.get("/deploy/hypecheck-stack.yaml")
+def stack_template() -> FileResponse:
+    return FileResponse(ROOT / "deploy" / "hypecheck-stack.yaml", media_type="text/yaml", filename="hypecheck-stack.yaml")
+
+
 @app.get("/developers")
 def developers_page() -> FileResponse:
     return FileResponse(STATIC / "developers.html")
