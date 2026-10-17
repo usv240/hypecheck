@@ -52,7 +52,7 @@ nav .links a{color:var(--onink-muted);text-decoration:none} nav .links a:hover{c
 .hero .grid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
 @media (max-width:960px){.hero .grid{grid-template-columns:1fr;gap:36px}}
 .hero .eyebrow{color:#9cc0ff}
-.hero h1{font-size:clamp(36px,5.4vw,62px);line-height:1.04;letter-spacing:-.03em;margin:0 0 20px;font-weight:800}
+.hero h1{font-size:clamp(34px,4.5vw,54px);line-height:1.04;letter-spacing:-.03em;margin:0 0 20px;font-weight:800}
 .hero h1 em{font-style:normal;background:linear-gradient(90deg,#ff9a8b,#ffd0a1);-webkit-background-clip:text;background-clip:text;color:transparent}
 .hero .lead{font-size:19px;color:var(--onink-muted);max-width:56ch;margin:0 0 30px}
 .hero .lead b{color:#fff;font-weight:650}
@@ -63,7 +63,8 @@ nav .links a{color:var(--onink-muted);text-decoration:none} nav .links a:hover{c
 .hero .btn.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.3)}
 .hero .btn.ghost:hover{background:rgba(255,255,255,.08)}
 button:disabled{opacity:.55;cursor:default}
-.proof{display:flex;gap:28px;flex-wrap:wrap;margin-top:34px;font-size:14px;color:var(--onink-muted)}
+.proof{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:34px;font-size:14px;color:var(--onink-muted);max-width:600px}
+@media (max-width:520px){.proof{grid-template-columns:1fr}}
 .proof b{display:block;font-size:26px;color:#fff;letter-spacing:-.02em}
 
 /* hero live card */
@@ -95,8 +96,9 @@ button:disabled{opacity:.55;cursor:default}
 .hop .big.red{color:var(--bad)}
 .hop p{margin:0;color:var(--muted);font-size:15px}
 .hop q{display:block;margin:10px 0 0;font-size:14px;color:var(--fg);font-style:italic;quotes:"“" "”"}
-.gate{position:absolute;top:50%;left:25%;transform:translate(-50%,-50%);z-index:2;background:var(--accent);color:var(--accent-fg);border-radius:999px;padding:8px 14px;font-size:13px;font-weight:800;box-shadow:0 6px 18px rgba(31,99,214,.35);white-space:nowrap}
-@media (max-width:900px){.gate{display:none}}
+.hop.gated{box-shadow:inset 0 4px 0 var(--accent)}
+.gate{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:var(--accent-fg);border-radius:999px;padding:4px 11px;font-size:12px;font-weight:800;margin:0 0 10px;white-space:nowrap}
+.hop .big.quote{font-size:clamp(26px,2.6vw,34px);padding:6px 0 4px}
 .callout{margin-top:22px;display:flex;gap:16px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:var(--r);padding:18px 20px;box-shadow:var(--shadow)}
 .callout b{font-size:17px}
 .callout p{margin:4px 0 0;color:var(--muted)}
@@ -262,11 +264,10 @@ footer a{color:#cfe0ff}
   <h2>One overclaim travels from a press office to millions of readers.</h2>
   <p class="sub">The research is clear about where health hype starts, and that fixing it at the release works. HypeCheck sits at the one point where a single correction changes everything downstream.</p>
   <div class="chain">
-    <div class="hop"><div class="step">1 · The paper</div><div class="big">“could be”</div><p>The study finds an association or a possible effect.</p></div>
-    <div class="hop"><div class="step">2 · The press release</div><div class="big red">33%</div><p>of 462 university releases turned correlation into causation. <button class="i" type="button" data-tip="Sumner et al., BMJ 2014: 462 press releases from 20 UK universities. 33% exaggerated causal claims, 36% presented animal results as human, 40% gave advice the paper did not.">i</button></p><q>is saving lives</q></div>
+    <div class="hop"><div class="step">1 · The paper</div><div class="big quote">“could be”</div><p>The study finds an association or a possible effect.</p></div>
+    <div class="hop gated"><div class="gate">✓ HypeCheck checks here</div><div class="step">2 · The press release</div><div class="big red">33%</div><p>of 462 university releases turned correlation into causation. <button class="i" type="button" data-tip="Sumner et al., BMJ 2014: 462 press releases from 20 UK universities. 33% exaggerated causal claims, 36% presented animal results as human, 40% gave advice the paper did not.">i</button></p><q>is saving lives</q></div>
     <div class="hop"><div class="step">3 · The news</div><div class="big red">81%</div><p>of news stories repeated the causal claim when the release made it, vs 18% when it didn't. <button class="i" type="button" data-tip="Sumner et al., BMJ 2014. Exaggeration in news was strongly associated with exaggeration in the press release, and exaggerated releases did not get more coverage.">i</button></p></div>
     <div class="hop"><div class="step">4 · The public</div><div class="big">≈219,000</div><p>UK patients estimated to have stopped statins after one news storm. <button class="i" type="button" data-tip="Matthews et al., BMJ 2016: after intense media coverage of a statin debate, stopping rose (OR ≈1.11). The authors estimated about 219,000 people stopped, with 2,200–6,400 avoidable cardiovascular events, but say the study cannot prove the coverage caused it. It shows that health news changes what people do.">i</button></p></div>
-    <div class="gate">HypeCheck gate</div>
   </div>
   <div class="callout">
     <div style="font-size:26px">✓</div>
