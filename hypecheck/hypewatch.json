@@ -1,0 +1,445 @@
+{
+ "releases": [
+  {
+   "url": "https://www.nih.gov/news-events/news-releases/blood-pressure-drug-may-activate-health-promoting-brown-fat",
+   "title": "A blood-pressure drug may activate health-promoting brown fat",
+   "date": "Wednesday, October 14, 2026",
+   "date_iso": "2026-10-14",
+   "institute": "National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK)",
+   "doi": "10.1038/s41586-026-11162-7",
+   "paper_title": "Artificial intelligence-enabled clinical phenotyping of human brown fat",
+   "paper_conclusion": "Altogether, our studies harnessing artificial intelligence and big data identify new clinical phenotypes linked to BAT and serve as a platform for drug repurposing to activate this tissue in humans. Artificial intelligence-enabled quantification and analyses of brown adipose tissue (BAT) activity uncover links between BAT and a healthier metabolic profile along with lower rates of psychiatric disease, and can identify pharmacologic agents that could be repurposed to activate this tissue in humans.",
+   "conclusion_source": "OpenAlex",
+   "paper_strength": "correlational",
+   "abstract_strongest": "no_relationship",
+   "sentences": [
+    {
+     "text": "A blood-pressure drug may activate health-promoting brown fat.",
+     "role": "headline",
+     "strength": "conditional_causal",
+     "p": 0.449,
+     "p_vs_conclusion": 0.6758,
+     "p_vs_abstract": 0.449,
+     "zone": "review"
+    },
+    {
+     "text": "Large retrospective study suggests the tissue deters more than cardiovascular disease.",
+     "role": "subtitle",
+     "strength": "correlational",
+     "p": 0.4356,
+     "p_vs_conclusion": 0.4642,
+     "p_vs_abstract": 0.4356,
+     "zone": "review"
+    },
+    {
+     "text": "In a National Institutes of Health (NIH)-funded study, scientists have demonstrated that the drug losartan, commonly prescribed for high blood pressure, boosts brown adipose tissue activity in mice, enhancing their metabolism.",
+     "role": "body",
+     "strength": "direct_causal",
+     "p": 0.4195,
+     "p_vs_conclusion": 0.5665,
+     "p_vs_abstract": 0.4195,
+     "zone": "review"
+    },
+    {
+     "text": "Researchers initially discovered the connection between brown fat and the drug class to which losartan belongs, known as angiotensin receptor blockers (ARBs), through an analysis of over 100,000 patients.",
+     "role": "body",
+     "strength": "correlational",
+     "p": 0.1701,
+     "p_vs_conclusion": 0.1701,
+     "p_vs_abstract": 0.3975,
+     "zone": "ok"
+    },
+    {
+     "text": "This indicates that repurposing a widely used drug, with a well-known safety profile, may be a clinically viable method of stimulating brown fat, which has been linked to improved cardiovascular health and, identified for the first time in this study, psychiatric health. “The unique reverse translational approach of this study, enabled by large clinical datasets and next-generation analytical tools, provides a much-needed clinical rationale for exploring brown adipose tissue as a therapeutic target in humans across a spectrum of diseases,” said Griffin P.",
+     "role": "body",
+     "strength": "conditional_causal",
+     "p": 0.3932,
+     "p_vs_conclusion": 0.4337,
+     "p_vs_abstract": 0.3932,
+     "zone": "ok"
+    },
+    {
+     "text": "Rodgers, M.D., director of NIH’s National Institute of Diabetes and Digestive and Kidney Disease (NIDDK).",
+     "role": "quote",
+     "strength": "no_relationship",
+     "p": 0.1855,
+     "p_vs_conclusion": 0.1918,
+     "p_vs_abstract": 0.1855,
+     "zone": "ok"
+    },
+    {
+     "text": "While white fat stores energy in the body, brown fat burns through it to produce heat.",
+     "role": "body",
+     "strength": "no_relationship",
+     "p": 0.3591,
+     "p_vs_conclusion": 0.4574,
+     "p_vs_abstract": 0.3591,
+     "zone": "ok"
+    }
+   ],
+   "advisory": {
+    "advice_inflated": 0.3049,
+    "advice_level": 1,
+    "animal_to_human": 0.3625
+   },
+   "max_p": 0.449,
+   "flagged": 0,
+   "review": 3,
+   "checked_at": "2026-10-17T17:47:29+00:00"
+  },
+  {
+   "url": "https://www.nih.gov/news-events/news-releases/patients-engage-epilepsy-monitor-real-time-improving-seizure-detection",
+   "title": "Patients engage with epilepsy monitor in real time, improving seizure detection",
+   "date": "Tuesday, October 13, 2026",
+   "date_iso": "2026-10-13",
+   "institute": "National Institute of Neurological Disorders and Stroke (NINDS)",
+   "doi": "10.1038/s41591-026-04680-4",
+   "paper_title": "Human–artificial intelligence collaboration for comanaging epilepsy in real time",
+   "paper_conclusion": "We propose this system as a scalable, safeguarded platform for medical devices that can rapidly adapt to patient and provider needs across epilepsy and other medical conditions. A small epilepsy monitoring study shows that a moderated, large language model-based chat interface lets patients converse with their electroencephalography monitoring in real time, using a smartphone, and patient feedback cut seizure-detector false alarms by about 80% without clinician input.",
+   "conclusion_source": "OpenAlex",
+   "paper_strength": "no_relationship",
+   "abstract_strongest": "direct_causal",
+   "sentences": [
+    {
+     "text": "Patients engage with epilepsy monitor in real time, improving seizure detection.",
+     "role": "headline",
+     "strength": "no_relationship",
+     "p": 0.236,
+     "p_vs_conclusion": 0.4265,
+     "p_vs_abstract": 0.236,
+     "zone": "ok"
+    },
+    {
+     "text": "NIH-funded clinical study shows that conversational SI can facilitate two-way communication.",
+     "role": "subtitle",
+     "strength": "no_relationship",
+     "p": 0.1148,
+     "p_vs_conclusion": 0.2109,
+     "p_vs_abstract": 0.1148,
+     "zone": "ok"
+    },
+    {
+     "text": "A scientific team funded by the National Institutes of Health (NIH) has built a super intelligence (SI)-based interface that enables real-time communication between patients and epilepsy monitoring devices.",
+     "role": "body",
+     "strength": "no_relationship",
+     "p": 0.0704,
+     "p_vs_conclusion": 0.1267,
+     "p_vs_abstract": 0.0704,
+     "zone": "ok"
+    },
+    {
+     "text": "As part of a small clinical study at the University of Pennsylvania, Philadelphia, patients used a smart-phone application to inquire about their own physiological data and received accurate information in response.",
+     "role": "body",
+     "strength": "no_relationship",
+     "p": 0.0317,
+     "p_vs_conclusion": 0.0637,
+     "p_vs_abstract": 0.0317,
+     "zone": "ok"
+    },
+    {
+     "text": "Conversely, the system learned from patient feedback to improve seizure detection, ultimately reducing its false alarms by about 80%. “This proof-of-concept showcases a technology with the exciting potential to shift management of epilepsy and possibly other diseases in a more adaptive direction that puts patients in the driver’s seat,” said Amy Bany Adams, Ph.D., acting director of the NIH’s National Institute of Neurological Disorders and Stroke (NINDS).",
+     "role": "body",
+     "strength": "direct_causal",
+     "p": 0.3143,
+     "p_vs_conclusion": 0.5252,
+     "p_vs_abstract": 0.3143,
+     "zone": "ok"
+    },
+    {
+     "text": "Electroencephalography (EEG) devices are useful for diagnosing epilepsy, as their electrodes, usually placed on or implanted beneath the scalp, can record brain activity indicative of an active seizure or high risk for one.",
+     "role": "quote",
+     "strength": "no_relationship",
+     "p": 0.1205,
+     "p_vs_conclusion": 0.2625,
+     "p_vs_abstract": 0.1205,
+     "zone": "ok"
+    },
+    {
+     "text": "They acquire continuous streams of activity but in practice people only see a trickle, as devices generally share data with expert reviewers on a daily or multi-day basis.",
+     "role": "body",
+     "strength": "no_relationship",
+     "p": 0.0646,
+     "p_vs_conclusion": 0.1455,
+     "p_vs_abstract": 0.0646,
+     "zone": "ok"
+    }
+   ],
+   "advisory": {
+    "advice_inflated": 0.309,
+    "advice_level": 1,
+    "animal_to_human": 0.3632
+   },
+   "max_p": 0.3143,
+   "flagged": 0,
+   "review": 0,
+   "checked_at": "2026-10-17T17:47:36+00:00"
+  },
+  {
+   "url": "https://www.nih.gov/news-events/news-releases/deep-learning-model-using-ecgs-during-sleep-studies-can-predict-cardiovascular-outcomes",
+   "title": "Deep learning model using ECGs during sleep studies can predict cardiovascular outcomes",
+   "date": "Friday, October 9, 2026",
+   "date_iso": "2026-10-09",
+   "institute": "National Heart, Lung, and Blood Institute (NHLBI)",
+   "doi": "10.1093/sleep/zsag229",
+   "paper_title": "Prediction of cardiovascular outcomes using electrocardiography from overnight polysomnography.",
+   "paper_conclusion": "Deep learning applied to nocturnal ECGs with sleep stage information captures cardiac abnormalities, offering a tool for cardiovascular risk stratification. Integrating such prediction into PSG could enhance detection and support personalized clinical decision-making.",
+   "conclusion_source": "Europe PMC",
+   "paper_strength": "conditional_causal",
+   "abstract_strongest": "conditional_causal",
+   "sentences": [
+    {
+     "text": "Deep learning model using ECGs during sleep studies can predict cardiovascular outcomes.",
+     "role": "headline",
+     "strength": "correlational",
+     "p": 0.0801,
+     "p_vs_conclusion": 0.2134,
+     "p_vs_abstract": 0.0801,
+     "zone": "ok"
+    },
+    {
+     "text": "Integrating ECGs into sleep disorder screening could enhance detection and guide clinical decision-making.",
+     "role": "subtitle",
+     "strength": "conditional_causal",
+     "p": 0.105,
+     "p_vs_conclusion": 0.3385,
+     "p_vs_abstract": 0.105,
+     "zone": "ok"
+    },
+    {
+     "text": "A research team supported by the National Institutes of Health (NIH) has found that electrocardiograms (ECGs) administered during sleep and paired with sleep stage information can be used to determine risk for future adverse cardiac events.",
+     "role": "body",
+     "strength": "correlational",
+     "p": 0.0651,
+     "p_vs_conclusion": 0.1841,
+     "p_vs_abstract": 0.0651,
+     "zone": "ok"
+    },
+    {
+     "text": "The study, which used a deep learning approach, suggests that using ECGs to predict which patients have a greater risk for poor heart-related outcomes could help guide clinical decision-making.",
+     "role": "body",
+     "strength": "conditional_causal",
+     "p": 0.0927,
+     "p_vs_conclusion": 0.2758,
+     "p_vs_abstract": 0.0927,
+     "zone": "ok"
+    },
+    {
+     "text": "The findings were published in the journal Sleep. “This new approach has the potential to identify individuals at risk for cardiovascular disease years before clinical symptoms arise,” said David Goff, M.D., Ph.D., acting director of NIH’s National Heart, Lung, and Blood Institute (NHLBI). “Evaluating whether this information improves traditional risk prediction is an important next step.",
+     "role": "body",
+     "strength": "conditional_causal",
+     "p": 0.1031,
+     "p_vs_conclusion": 0.2762,
+     "p_vs_abstract": 0.1031,
+     "zone": "ok"
+    },
+    {
+     "text": "In the future, proven analytical approaches like this could be integrated into existing diagnostic tests for patients undergoing sleep studies as a screening tool for multiple adverse cardiovascular outcomes.”.",
+     "role": "quote",
+     "strength": "conditional_causal",
+     "p": 0.1342,
+     "p_vs_conclusion": 0.3333,
+     "p_vs_abstract": 0.1342,
+     "zone": "ok"
+    },
+    {
+     "text": "Testing conducted overnight during sleep, known as polysomnography, is the standard method of diagnosing sleep disorders such as insomnia and obstructive sleep apnea, which are recognized as cardiovascular risk factors.",
+     "role": "body",
+     "strength": "no_relationship",
+     "p": 0.0805,
+     "p_vs_conclusion": 0.1257,
+     "p_vs_abstract": 0.0805,
+     "zone": "ok"
+    }
+   ],
+   "advisory": {
+    "advice_inflated": 0.1067,
+    "advice_level": 1,
+    "animal_to_human": 0.2507
+   },
+   "max_p": 0.1342,
+   "flagged": 0,
+   "review": 0,
+   "checked_at": "2026-10-17T17:47:46+00:00"
+  },
+  {
+   "url": "https://www.nih.gov/news-events/news-releases/human-lung-organoids-built-immune-system-could-transform-respiratory-disease-research",
+   "title": "Human lung organoids with a built-in immune system could transform respiratory disease research",
+   "date": "Wednesday, October 7, 2026",
+   "date_iso": "2026-10-07",
+   "institute": "National Institute of Allergy and Infectious Diseases (NIAID)",
+   "doi": "10.1038/s41586-026-11114-1",
+   "paper_title": "Human lung organoid modelling of tissue-resident antiviral T cell responses.",
+   "paper_conclusion": "Furthermore, boosting T cells within intact organoids with SARS-CoV-2 peptide pools blunted subsequent SARS-CoV-2 infection, consistent with a component of virus-specific protective T RM cell function in the absence of secondary lymphoid tissues. Overall, this immunocompetent lung organoid system demonstrates functional control of viral infection by lung-intrinsic memory T cell responses, provides a rationale for local vaccination strategies and validates a general platform for investigation of human tissue-resident immunity in health and disease.",
+   "conclusion_source": "Europe PMC",
+   "paper_strength": "direct_causal",
+   "abstract_strongest": "conditional_causal",
+   "sentences": [
+    {
+     "text": "Human lung organoids with a built-in immune system could transform respiratory disease research.",
+     "role": "headline",
+     "strength": "conditional_causal",
+     "p": 0.2694,
+     "p_vs_conclusion": 0.2694,
+     "p_vs_abstract": 0.2917,
+     "zone": "ok"
+    },
+    {
+     "text": "In NIH-funded study, the models orchestrated adaptive immune responses to viral infection.",
+     "role": "subtitle",
+     "strength": "no_relationship",
+     "p": 0.1364,
+     "p_vs_conclusion": 0.1364,
+     "p_vs_abstract": 0.1432,
+     "zone": "ok"
+    },
+    {
+     "text": "A new organoid model built with human lung fragments may help us answer key questions about one of the body’s first lines of defense against respiratory pathogens.",
+     "role": "body",
+     "strength": "no_relationship",
+     "p": 0.1358,
+     "p_vs_conclusion": 0.1358,
+     "p_vs_abstract": 0.1452,
+     "zone": "ok"
+    },
+    {
+     "text": "In a National Institutes of Health (NIH)-supported study, researchers at the Stanford University School of Medicine elicited virus-specific immune responses from these organoids and showed that administering a virus booster weakened subsequent infections.",
+     "role": "body",
+     "strength": "no_relationship",
+     "p": 0.2798,
+     "p_vs_conclusion": 0.2798,
+     "p_vs_abstract": 0.2946,
+     "zone": "ok"
+    },
+    {
+     "text": "The findings suggest the lung mucosa’s immune system alone may provide significant protection, which adds to growing evidence that vaccination strategies designed to train up the body’s frontline defenses are a worthwhile pursuit.",
+     "role": "body",
+     "strength": "conditional_causal",
+     "p": 0.2549,
+     "p_vs_conclusion": 0.2549,
+     "p_vs_abstract": 0.2717,
+     "zone": "ok"
+    },
+    {
+     "text": "The models may also be ideal testing grounds for such interventions. “These organoids retain key immune cells and functions of lung mucosa long-term, allowing investigators to examine local tissue immunity separately from the other parts of the body’s immune system,” said John H.",
+     "role": "body",
+     "strength": "no_relationship",
+     "p": 0.107,
+     "p_vs_conclusion": 0.107,
+     "p_vs_abstract": 0.1133,
+     "zone": "ok"
+    },
+    {
+     "text": "Powers III, M.D., acting director of NIH’s National Institute of Allergy and Infectious Diseases (NIAID). “This platform may provide a replacement for animal models for some types of evaluations and may provide insights that tests in animal models could not capture.”.",
+     "role": "quote",
+     "strength": "conditional_causal",
+     "p": 0.2349,
+     "p_vs_conclusion": 0.2349,
+     "p_vs_abstract": 0.2533,
+     "zone": "ok"
+    }
+   ],
+   "advisory": {
+    "advice_inflated": 0.192,
+    "advice_level": 1,
+    "animal_to_human": 0.1987
+   },
+   "max_p": 0.2798,
+   "flagged": 0,
+   "review": 0,
+   "checked_at": "2026-10-17T17:47:58+00:00"
+  },
+  {
+   "url": "https://www.nih.gov/news-events/news-releases/modified-hiv-drug-reverses-vision-loss-paralysis-multiple-sclerosis-model",
+   "title": "Modified HIV drug reverses vision loss and paralysis in multiple sclerosis model",
+   "date": "Wednesday, September 23, 2026",
+   "date_iso": "2026-09-23",
+   "institute": "National Eye Institute (NEI)",
+   "doi": "10.1126/scitranslmed.aei2870",
+   "paper_title": "The nucleoside analog kamuvudine-9 shows protective and therapeutic efficacy in a mouse model of multiple sclerosis.",
+   "paper_conclusion": "NRTI use was also associated with a reduction in relapse rate in individuals with MS. These findings provide a rationale for further investigating K-9 for treating MS.",
+   "conclusion_source": "Europe PMC",
+   "paper_strength": "correlational",
+   "abstract_strongest": "direct_causal",
+   "sentences": [
+    {
+     "text": "Modified HIV drug reverses vision loss and paralysis in multiple sclerosis model.",
+     "role": "headline",
+     "strength": "no_relationship",
+     "p": 0.2148,
+     "p_vs_conclusion": 0.5856,
+     "p_vs_abstract": 0.2148,
+     "zone": "ok"
+    },
+    {
+     "text": "Modified HIV drug reverses vision loss and paralysis in multiple sclerosis model.",
+     "role": "subtitle",
+     "strength": "no_relationship",
+     "p": 0.2148,
+     "p_vs_conclusion": 0.5856,
+     "p_vs_abstract": 0.2148,
+     "zone": "ok"
+    },
+    {
+     "text": "A new National Institutes of Health (NIH)-funded study indicates that the experimental drug kamuvudine-9 (K-9) facilitates recovery from pre-existing vision loss and paralysis in animal models of multiple sclerosis (MS).",
+     "role": "body",
+     "strength": "conditional_causal",
+     "p": 0.2281,
+     "p_vs_conclusion": 0.629,
+     "p_vs_abstract": 0.2281,
+     "zone": "ok"
+    },
+    {
+     "text": "Researchers at the University of Virginia found that these benefits were likely the result of K-9 preventing the inflammasome, a cell-killing alarm system native to the brain and spinal cord, from activating.",
+     "role": "body",
+     "strength": "conditional_causal",
+     "p": 0.2448,
+     "p_vs_conclusion": 0.6385,
+     "p_vs_abstract": 0.2448,
+     "zone": "ok"
+    },
+    {
+     "text": "A nationwide analysis of more than 3 million patients showed reduced rates of MS and MS relapses among those receiving common antiviral medications called NRTIs, of which K-9 is a non-toxic derivative. “The remarkable reversal of some of MS’s most severe complications in animals, taken together with this drug’s promising safety profile, present a very compelling translational pathway,” said Michael F.",
+     "role": "body",
+     "strength": "direct_causal",
+     "p": 0.2822,
+     "p_vs_conclusion": 0.6916,
+     "p_vs_abstract": 0.2822,
+     "zone": "ok"
+    },
+    {
+     "text": "Chiang, M.D., director of NIH’s National Eye Institute (NEI).",
+     "role": "quote",
+     "strength": "no_relationship",
+     "p": 0.1049,
+     "p_vs_conclusion": 0.2052,
+     "p_vs_abstract": 0.1049,
+     "zone": "ok"
+    },
+    {
+     "text": "MS-induced neurodegeneration is conventionally understood by scientists to be a result of the adaptive immune system’s B and T cells mistakenly targeting healthy tissue.",
+     "role": "body",
+     "strength": "direct_causal",
+     "p": 0.222,
+     "p_vs_conclusion": 0.5028,
+     "p_vs_abstract": 0.222,
+     "zone": "ok"
+    }
+   ],
+   "advisory": {
+    "advice_inflated": 0.2546,
+    "advice_level": 1,
+    "animal_to_human": 0.3796
+   },
+   "max_p": 0.2822,
+   "flagged": 0,
+   "review": 0,
+   "checked_at": "2026-10-17T17:48:15+00:00"
+  }
+ ],
+ "skipped": {
+  "https://www.nih.gov/news-events/news-releases/nih-announces-record-number-grants-support-early-career-investigators-launches-new-recruitment-initiative-intramural-research": "no paper reference (announcement, not a study)",
+  "https://www.nih.gov/news-events/news-releases/nih-joins-effort-build-si-ready-data-predictive-models-human-biology": "no paper reference (announcement, not a study)",
+  "https://www.nih.gov/news-events/news-releases/nih-launches-new-pubmed-tool-strengthen-research-replication-reproducibility": "no paper reference (announcement, not a study)"
+ },
+ "updated": "2026-10-17T17:48:15+00:00"
+}

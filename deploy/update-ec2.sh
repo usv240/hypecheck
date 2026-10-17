@@ -28,8 +28,34 @@ cat >/etc/systemd/system/hypecheck.service.d/key.conf <<'EOF'
 [Service]
 ExecStartPre=/usr/local/bin/hypecheck-env
 EnvironmentFile=-/run/hypecheck/env
+Environment=HYPEWATCH_DATA=/var/lib/hypecheck/hypewatch.json
 EOF
+
+# HypeWatch: seed from the repo's backfill once, then check new NIH releases every morning.
+mkdir -p /var/lib/hypecheck
+[ -f /var/lib/hypecheck/hypewatch.json ] || cp /opt/hypecheck/hypecheck/hypewatch.json /var/lib/hypecheck/hypewatch.json 2>/dev/null || true
+cat >/etc/systemd/system/hypewatch.service <<'UNIT'
+[Unit]
+Description=HypeWatch daily check of new NIH news releases
+After=decider.service
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/hypecheck
+Environment=AWS_DEFAULT_REGION=us-east-1
+Environment=HYPEWATCH_DATA=/var/lib/hypecheck/hypewatch.json
+ExecStart=/opt/hypecheck/.venv/bin/python -m hypecheck.hypewatch update
+UNIT
+cat >/etc/systemd/system/hypewatch.timer <<'UNIT'
+[Unit]
+Description=Run HypeWatch every morning
+[Timer]
+OnCalendar=*-*-* 13:17:00 UTC
+Persistent=true
+[Install]
+WantedBy=timers.target
+UNIT
 systemctl daemon-reload
+systemctl enable --now hypewatch.timer
 systemctl restart hypecheck
 sleep 5
 systemctl is-active decider hypecheck

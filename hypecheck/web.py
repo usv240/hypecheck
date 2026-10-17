@@ -170,6 +170,46 @@ def index() -> FileResponse:
     return FileResponse(STATIC / "index.html")
 
 
+HYPEWATCH = Path(os.environ.get("HYPEWATCH_DATA", Path(__file__).resolve().parent / "hypewatch.json"))
+
+
+@app.get("/hypewatch")
+def hypewatch_page() -> FileResponse:
+    return FileResponse(STATIC / "hypewatch.html")
+
+
+@app.get("/api/hypewatch")
+def hypewatch_data() -> dict:
+    """Releases checked so far, plus summary numbers computed here so the page and article agree."""
+    if not HYPEWATCH.exists():
+        return {"releases": [], "summary": {}}
+    store = json.loads(HYPEWATCH.read_text(encoding="utf-8"))
+    rel = store["releases"]
+    sents = [s for r in rel for s in r["sentences"]]
+    heads = [s for s in sents if s["role"] == "headline"]
+    body = [s for s in sents if s["role"] != "headline"]
+    sugg = [s for s in sents if "suggestion_ok" in s]
+    share = lambda xs, f: round(sum(map(f, xs)) / len(xs), 4) if xs else None  # noqa: E731
+    summary = {
+        "releases": len(rel), "sentences": len(sents),
+        "skipped_no_paper": sum("no paper" in v for v in store.get("skipped", {}).values()),
+        "skipped_no_abstract": sum("abstract" in v for v in store.get("skipped", {}).values()),
+        "releases_with_block": share(rel, lambda r: r["flagged"] > 0),
+        "releases_with_block_benchmark_rule": share(rel, lambda r: any(s["p_vs_conclusion"] > threshold for s in r["sentences"])),
+        "releases_with_review": share(rel, lambda r: r["review"] > 0),
+        "headline_block_rate": share(heads, lambda s: s["zone"] == "block"),
+        "body_block_rate": share(body, lambda s: s["zone"] == "block"),
+        "headline_mean_p": round(sum(s["p"] for s in heads) / len(heads), 4) if heads else None,
+        "body_mean_p": round(sum(s["p"] for s in body) / len(body), 4) if body else None,
+        "rewrites": len(sugg), "rewrites_verified": share(sugg, lambda s: s["suggestion_ok"]),
+        "rewrites_first_try": share(sugg, lambda s: s["suggestion_ok"] and s["attempts"] == 1),
+        "first_date": min((r["date_iso"] for r in rel if r.get("date_iso")), default=None),
+        "last_date": max((r["date_iso"] for r in rel if r.get("date_iso")), default=None),
+        "updated": store.get("updated"), "threshold": threshold, "review_threshold": review_threshold,
+    }
+    return {"summary": summary, "releases": rel}
+
+
 @app.get("/architecture.svg")
 def architecture() -> FileResponse:
     return FileResponse(STATIC / "architecture.svg", media_type="image/svg+xml")
