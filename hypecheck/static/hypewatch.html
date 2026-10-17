@@ -16,13 +16,20 @@
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,"Segoe UI",Roboto,sans-serif}
 a{color:var(--accent)} :focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
 .wrap{max-width:1140px;margin:0 auto;padding:0 24px}
-nav{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav{position:sticky;top:0;z-index:20;background:rgba(10,21,48,.94);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.08)}
 nav .wrap{display:flex;align-items:center;gap:20px;height:56px}
-.brand{font-weight:800;font-size:18px;display:flex;gap:8px;align-items:center;text-decoration:none;color:var(--fg)} .brand img{width:22px;height:22px}
-nav .links{display:flex;gap:16px;margin-left:auto;font-size:14px} nav .links a{color:var(--muted);text-decoration:none} nav .links a:hover,nav .links a[aria-current]{color:var(--fg)}
-.hero{padding-top:40px;padding-bottom:10px}
-h1{font-size:clamp(28px,4vw,40px);line-height:1.15;margin:0 0 12px;letter-spacing:-.02em;max-width:26ch}
-.lead{font-size:18px;color:var(--muted);max-width:70ch;margin:0 0 8px}
+.brand{font-weight:800;font-size:18px;display:flex;gap:8px;align-items:center;text-decoration:none;color:#fff} .brand img{width:22px;height:22px}
+nav .links{display:flex;gap:18px;margin-left:auto;font-size:14.5px} nav .links a{color:#b9c6e2;text-decoration:none} nav .links a:hover,nav .links a[aria-current]{color:#fff}
+.band{background:radial-gradient(1100px 460px at 85% -10%,rgba(80,140,255,.35),transparent 60%),linear-gradient(180deg,#0a1530,#132a5c);color:#f3f6fc;padding:56px 0 64px}
+.band .eyebrow{font-size:13px;font-weight:750;letter-spacing:.08em;text-transform:uppercase;color:#9cc0ff;margin:0 0 10px}
+h1{font-size:clamp(32px,4.6vw,52px);line-height:1.06;margin:0 0 16px;letter-spacing:-.03em;max-width:22ch;font-weight:800}
+h1 em{font-style:normal;background:linear-gradient(90deg,#ff9a8b,#ffd0a1);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-size:18.5px;color:#b9c6e2;max-width:66ch;margin:0}
+.band .stats{margin-top:30px}
+.band .stat{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.14);color:#f3f6fc}
+.band .stat .lbl{color:#b9c6e2}
+.band .i{border-color:#b9c6e2;color:#b9c6e2}
+.band .i:hover,.band .i:focus-visible{border-color:#fff;color:#fff}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0 8px}
 @media (max-width:900px){.stats{grid-template-columns:1fr 1fr}} @media (max-width:520px){.stats{grid-template-columns:1fr}}
 .stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
@@ -60,12 +67,12 @@ button.btn{font:inherit;font-weight:650;padding:10px 16px;border-radius:9px;bord
 <body>
 <nav><div class="wrap">
   <a class="brand" href="/"><img src="/favicon.svg" alt="">HypeCheck</a>
-  <div class="links"><a href="/">Try it</a><a href="/hypewatch" aria-current="page">HypeWatch</a><a href="/#evidence">Evidence</a><a href="https://github.com/usv240/hypecheck">GitHub</a></div>
+  <div class="links"><a href="/">Try it</a><a href="/hypewatch" aria-current="page">HypeWatch</a><a href="/#proof">Evidence</a><a href="https://github.com/usv240/hypecheck">GitHub</a></div>
 </div></nav>
 
-<main class="wrap">
-<div class="hero">
-  <h1>HypeWatch: real NIH news releases, checked against their papers.</h1>
+<div class="band"><div class="wrap">
+  <p class="eyebrow">HypeWatch · the real world</p>
+  <h1>Does a press release say more than its study? <em>We checked the NIH's.</em></h1>
   <p class="lead">Every US National Institutes of Health news release since February 2023 that cites its paper by DOI, with its headline and opening sentences compared with the paper's conclusion. Where a sentence says more than the paper, Claude suggests a faithful rewrite and Decider checks it.</p>
   <div class="stats">
     <div class="stat"><div class="num" id="s_rel">–</div><div class="lbl">releases checked <button class="i" data-tip="Research news releases from nih.gov that cite a paper whose abstract we could retrieve. Announcements without a study are skipped and counted separately.">i</button></div></div>
@@ -73,7 +80,9 @@ button.btn{font:inherit;font-weight:650;padding:10px 16px;border-radius:9px;bord
     <div class="stat"><div class="num" id="s_head">–</div><div class="lbl">headlines vs body: average overclaim score <button class="i" data-tip="Mean overclaim score for headlines compared with the other checked sentences. Research on health news finds headlines are where exaggeration concentrates; this shows whether that holds here.">i</button></div></div>
     <div class="stat"><div class="num" id="s_rw">–</div><div class="lbl">of Claude's suggested rewrites pass Decider's check <button class="i" data-tip="For each blocked sentence Claude on Amazon Bedrock suggested a faithful rewrite (two tries at most); Decider then scored it against the paper's conclusion. We pre-registered that if fewer than 70% passed, rewrites would be shown as suggestions, not fixes. They are: check each one's own result.">i</button></div></div>
   </div>
-  <div class="note"><b>How to read this.</b> A flag is a 2-billion-parameter model's reading of claim strength, not a finding of wrongdoing. The paper's own words sit beside every flag so you can judge. NIH releases are US-government works in the public domain; papers are linked by DOI. <span id="s_meta"></span></div>
+</div></div>
+<main class="wrap">
+  <div class="note" style="margin-top:28px"><b>How to read this.</b> A flag is a 2-billion-parameter model's reading of claim strength, not a finding of wrongdoing. The paper's own words sit beside every flag so you can judge. NIH releases are US-government works in the public domain; papers are linked by DOI. <span id="s_meta"></span></div>
 </div>
 
 <div class="controls">
