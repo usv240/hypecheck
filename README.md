@@ -9,6 +9,8 @@ Built for the AWS Agent Experience Hackathon: Strands Decider. Tags: `#strands-d
 
 **Live demo:** https://d174bz5yly61n4.cloudfront.net (Decider on an EC2 CPU instance, Claude on Bedrock via the instance role). **Article:** [ARTICLE.md](ARTICLE.md). **Video script:** [VIDEO.md](VIDEO.md).
 
+![Round 1 blocks "is saving lives" at 0.80; round 2 publishes the rewrite](docs/demo.jpg)
+
 - Decision model: [Strands Decider 2B](https://github.com/strands-labs/strands-decider), local, ~160 ms per sentence.
 - Generative model: Claude on Amazon Bedrock, driven by the Strands Agents SDK.
 - The decision handed to Decider: *does this sentence claim a stronger relationship than the paper's conclusion?*
