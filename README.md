@@ -4,6 +4,8 @@
 that claims more than the study found, has Claude rewrite it, and re-checks the rewrite before
 anything is published.**
 
+**Every 1,000 honest press-release sentences: Claude Sonnet as the judge wrongly blocks 296 and costs $0.97. HypeCheck wrongly blocks 67 and costs $0.18 ($0 on your own GPU).**
+
 On 345 press releases that experts judged faithful to their paper, HypeCheck wrongly flagged
 **6.7%**. Claude asked the same question flagged 29.6% (Sonnet 4.6) to 44.9% (Haiku 4.5). On the
 full 563-pair benchmark it scores macro-F1 **0.498 zero-shot**, against 0.4735 for the best
@@ -142,7 +144,7 @@ Bedrock).
 |---|---|
 | **REST API** | `POST /v1/check` (free, 300 a day per key): every sentence's claim strength, overclaim probability and zone. `POST /v1/rewrite` (20 a day): Claude fixes the blocked sentences, and Decider verifies each fix. Keys are issued instantly at `/developers`, with no signup; only a SHA-256 hash is stored. OpenAPI reference at `/docs` |
 | **MCP connector** | `https://d174bz5yly61n4.cloudfront.net/mcp` exposes `check_claims` and `suggest_rewrites` to any MCP client: Strands, Claude Desktop (via `mcp-remote`), Kiro, Cursor. A Strands agent on Bedrock has been verified using it to block "Statins prevent dementia" (0.73) |
-| **Bring your own data** | `POST /v1/calibrate` with 10–60 of your labelled pairs returns a split-conformal threshold with a stated false-flag rate for your domain |
+| **Bring your own data** | A form on `/developers` (paste or upload a CSV, or load a sample from a non-health domain) or `POST /v1/calibrate` with 10–60 of your labelled pairs returns a split-conformal threshold with a stated false-flag rate for your domain |
 | **Bring your own AWS** | `deploy/hypecheck-stack.yaml` deploys the whole stack into your account: one EC2 instance, a least-privilege Bedrock role, access through SSM, no SSH. Test-launched end to end |
 
 Claude rewrites spend real Bedrock money, so they also have a shared ceiling of $2 per day. Checks

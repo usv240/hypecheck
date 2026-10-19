@@ -14,6 +14,8 @@ anything is published.**
 - **Code (Apache-2.0):** https://github.com/usv240/hypecheck
 - **Video:** *(YouTube link)*
 
+**In one line:** for every 1,000 honest press-release sentences, Claude Sonnet as the judge wrongly blocks 296 and costs $0.97; HypeCheck wrongly blocks 67 and costs $0.18, or nothing on your own GPU.
+
 ## Why it matters
 
 In 2014, researchers read 462 university press releases next to their papers. A third turned "is
@@ -114,7 +116,7 @@ morning.
 There are four ways in, all on the Developers page (https://d174bz5yly61n4.cloudfront.net/developers):
 - **A free REST API** with instant keys and no signup.
 - **An MCP connector**, so any agent can call `check_claims` before it publishes. We tested it with a Strands agent on Bedrock.
-- **Calibration on your own labelled pairs.**
+- **Calibration on your own labelled pairs**, in a form on the page: paste or upload them, get your threshold and a chart, then test new text against it.
 - **A CloudFormation stack** that runs everything in your own AWS account.
 
 For code:

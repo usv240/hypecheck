@@ -19,6 +19,7 @@ HypeCheck reads a draft health press release next to the paper it reports, flags
 - Video: *(YouTube URL)*. Upload `video/hypecheck-demo.mp4` (2:34, narrated, no music)
 
 **Headline numbers (all on public expert-labelled data, pre-registered):**
+- Per 1,000 honest sentences: Claude Sonnet as the judge wrongly blocks 296 for $0.97; HypeCheck blocks 67 for $0.18 ($0 on your own GPU).
 - Exaggeration detection macro-F1 0.498 zero-shot on 563 pairs (published best 0.4735, trained; Claude Opus 4.6 0.460).
 - Faithful releases wrongly flagged: 6.7%, against Claude 29.6–44.9% (Sonnet 4.6, Opus 4.6, Haiku 4.5). The calibrated promise is ≤10%, and the measured rate on 441 unseen pairs is 7.7%.
 - The agent is hosted on Amazon Bedrock AgentCore Runtime; Decider runs on EC2 behind CloudFront.
