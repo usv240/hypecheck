@@ -70,6 +70,26 @@ td code{font-family:var(--mono);font-size:13px;background:var(--soft);padding:2p
 .try label{display:flex;gap:6px;align-items:center;font-weight:650;margin:12px 0 6px}
 .out{font-family:var(--mono);font-size:13px;background:var(--soft);border-radius:10px;padding:12px;white-space:pre-wrap;max-height:340px;overflow:auto;margin-top:12px;min-height:60px}
 .muted{color:var(--muted);font-size:14px}
+.cal textarea{width:100%;font:13.5px/1.5 var(--mono);color:inherit;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;resize:vertical}
+.cal select{font:inherit;color:inherit;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 10px}
+.calempty{height:100%;min-height:220px;display:grid;place-items:center;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px;padding:20px}
+.calhead{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.calnum{font-size:34px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.promise{background:var(--okbg);color:var(--fg);border-radius:10px;padding:10px 12px;margin:12px 0}
+.strip{width:100%;height:auto;margin-top:4px}
+.strip .rail{stroke:var(--line);stroke-width:1}
+.strip .zone{fill:var(--badbg);opacity:.6}
+.strip .thr{stroke:var(--bad);stroke-width:2}
+.strip .tl{fill:var(--bad);font-size:12px;font-weight:700}
+.strip .lb,.strip .tk{fill:var(--muted);font-size:12px}
+.strip circle{stroke:var(--card);stroke-width:2}
+.dotf{fill:var(--ok)} .dotff{fill:var(--rev)} .dotc{fill:var(--bad)} .dotm{fill:#8a929c}
+.legendrow{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin-top:4px}
+.legendrow .sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.legendrow .sw.dotf{background:var(--ok)} .legendrow .sw.dotff{background:var(--rev)} .legendrow .sw.dotc{background:var(--bad)} .legendrow .sw.dotm{background:#8a929c}
+.calTest{margin-top:16px;padding-top:14px;border-top:1px dashed var(--line)}
+.calTest label{display:block;font-weight:650;font-size:14px;margin:10px 0 4px}
+.pill.flag{background:var(--badbg);color:var(--bad)}
 ul.check{padding-left:20px;margin:8px 0;color:var(--muted)} ul.check li{margin:4px 0}
 .i{all:unset;cursor:help;display:inline-grid;place-items:center;width:20px;height:20px;margin:2px;border-radius:50%;border:1.5px solid currentColor;opacity:.7;font:700 11px/1 Georgia,serif;font-style:italic;flex:none;vertical-align:middle}
 .i:hover,.i:focus-visible,.i[aria-expanded=true]{opacity:1;color:var(--accent)} header .i:hover,header .i:focus-visible{color:#fff}
@@ -205,7 +225,31 @@ with hypecheck:
   <p class="eyebrow">Bring your own data</p>
   <h2>Calibrate the gate on your own domain.</h2>
   <p class="sub">Our thresholds were fitted on health press releases. If your text is different — legal summaries, product docs, clinical notes — send 10 to 60 of your own labelled pairs and get a threshold with a stated false-flag rate, computed by split conformal prediction. <button class="i" type="button" data-tip="<b>The promise:</b> if new pairs resemble yours, at most α of faithful sentences are flagged. The threshold is the ⌈(n+1)(1−α)⌉-th smallest overclaim score among your n faithful pairs. α = 0.10 needs at least 10 faithful pairs; α = 0.20 needs 5.">i</button></p>
-  <div class="codewrap"><pre class="code">curl -s https://d174bz5yly61n4.cloudfront.net/v1/calibrate \
+  <div class="card pad cal" id="calCard">
+    <div class="two" style="gap:24px">
+      <div>
+        <h3 style="margin:0 0 4px">Try it with your own pairs <button class="i" type="button" data-tip="Each line is one example: the source, the text written from it, and whether that text is faithful or overclaims. You need at least 5 faithful lines for a 20% promise, or 10 for a 10% promise. Nothing you paste is stored.">i</button></h3>
+        <p class="muted" style="margin:0 0 10px">One pair per line: <code>source | text | faithful</code> or <code>overclaim</code>. Or upload a CSV with those three columns.</p>
+        <textarea id="calIn" rows="9" spellcheck="false" aria-label="Your labelled pairs"></textarea>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px">
+          <button class="btn" id="calSample" type="button">Load a sample</button>
+          <label class="btn" style="margin:0;cursor:pointer">Upload CSV<input type="file" id="calFile" accept=".csv,.txt,.tsv" hidden></label>
+          <span class="muted" id="calCount">0 pairs</span>
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:14px">
+          <label for="calAlpha" style="margin:0">Promise <button class="i" type="button" data-tip="The largest share of your faithful sentences you are willing to see flagged. 10% is strict; 20% catches more overclaims and needs fewer examples.">i</button></label>
+          <select id="calAlpha" style="width:auto"><option value="0.1">at most 10% false alarms</option><option value="0.2" selected>at most 20% false alarms</option></select>
+          <button class="btn primary" id="calRun" type="button">Calibrate</button>
+        </div>
+        <p class="muted" id="calMsg" aria-live="polite" style="min-height:22px;margin:10px 0 0"></p>
+      </div>
+      <div id="calOut" aria-live="polite">
+        <div class="calempty">Your threshold, its promise and a chart of your pairs will appear here.</div>
+      </div>
+    </div>
+  </div>
+  <details class="card pad" style="margin-top:14px"><summary style="cursor:pointer;font-weight:650">Prefer the API? Same thing with curl</summary>
+  <div class="codewrap" style="margin-top:12px"><pre class="code">curl -s https://d174bz5yly61n4.cloudfront.net/v1/calibrate \
   -H "Authorization: Bearer <span class="k">YOUR_KEY</span>" -H "content-type: application/json" \
   -d '{"alpha": 0.2, "pairs": [
         {"source": "Use was associated with lower risk.", "derived": "Users had lower risk.",  "label": "faithful"},
@@ -213,7 +257,7 @@ with hypecheck:
         ... 10 to 60 pairs ... ]}'
 <span class="c"># → {"job": "…", "poll": "/v1/jobs/…"}   then GET the poll URL:</span>
 <span class="c"># → {"status": "done", "result": {"threshold": 0.44, "guarantee": "…at most 20% of faithful sentences are flagged", …}}</span></pre>
-  <button class="copy" type="button">Copy</button></div>
+  <button class="copy" type="button">Copy</button></div></details>
   <p class="muted">Use the threshold with the open-source gate: <code>ClaimFidelityGate(..., threshold=0.44)</code> — see <a href="https://github.com/usv240/hypecheck/tree/main/decision_pattern">decision_pattern/</a>.</p>
 </section>
 
@@ -286,16 +330,117 @@ $$('.copy').forEach(btn=>btn.addEventListener('click',async()=>{const pre=[...bt
 
 /* key issuance: shown once, kept only in this tab, and dropped into the code samples */
 let KEY='';
+async function issueKey(){
+  if(KEY) return KEY;
+  const r=await fetch('/v1/keys',{method:'POST'}); const d=await r.json(); if(!r.ok) throw new Error(d.detail||r.statusText);
+  KEY=d.api_key;
+  $('#keybox').innerHTML=`<div class="keyrow"><code class="key" id="keyText">${esc(KEY)}</code><button class="btn primary" id="copyKey" type="button">Copy key</button></div>
+    <p class="keynote"><b>Shown once.</b> We only keep a one-way hash, so we can't show it again. It's now filled into the examples below. Free: 300 checks, 20 rewrites and 3 calibrations a day.</p>`;
+  $('#copyKey').onclick=async()=>{try{await navigator.clipboard.writeText(KEY); $('#copyKey').textContent='Copied';}catch(e){}};
+  $$('.k').forEach(x=>x.textContent=KEY); $('#tCheck').disabled=false; $('#tRewrite').disabled=false;
+  return KEY;
+}
 $('#getKey').onclick=async()=>{
   const b=$('#getKey'); b.disabled=true; b.textContent='Creating…';
-  try{const r=await fetch('/v1/keys',{method:'POST'}); const d=await r.json(); if(!r.ok) throw new Error(d.detail||r.statusText);
-    KEY=d.api_key;
-    $('#keybox').innerHTML=`<div class="keyrow"><code class="key" id="keyText">${esc(KEY)}</code><button class="btn primary" id="copyKey" type="button">Copy key</button></div>
-      <p class="keynote"><b>Shown once.</b> We only keep a one-way hash, so we can't show it again. It's now filled into the examples below. Free: 300 checks, 20 rewrites and 3 calibrations a day.</p>`;
-    $('#copyKey').onclick=async()=>{try{await navigator.clipboard.writeText(KEY); $('#copyKey').textContent='Copied';}catch(e){}};
-    $$('.k').forEach(x=>x.textContent=KEY); $('#tCheck').disabled=false; $('#tRewrite').disabled=false;
-  }catch(err){b.disabled=false; b.textContent='Get a free API key'; $('#keyNote').textContent=String(err.message||err);}
+  try{await issueKey();}catch(err){b.disabled=false; b.textContent='Get a free API key'; $('#keyNote').textContent=String(err.message||err);}
 };
+
+/* bring your own data: calibrate a threshold on the visitor's own labelled pairs */
+const SAMPLE=[
+ ['In the A/B test, users shown the new checkout converted 3% more often than those shown the old one.','Users who saw the new checkout converted slightly more often in the test.','faithful'],
+ ['In the A/B test, users shown the new checkout converted 3% more often than those shown the old one.','The new checkout was associated with a small rise in conversion during the test.','faithful'],
+ ['In the A/B test, users shown the new checkout converted 3% more often than those shown the old one.','Conversion was about 3% higher for the new checkout group.','faithful'],
+ ['In the A/B test, users shown the new checkout converted 3% more often than those shown the old one.','The new checkout boosts sales.','overclaim'],
+ ['In the A/B test, users shown the new checkout converted 3% more often than those shown the old one.','Switching to the new checkout will grow revenue across every market.','overclaim'],
+ ['Customers who used the help centre were less likely to cancel in the following quarter.','Help-centre users cancelled less often in the next quarter.','faithful'],
+ ['Customers who used the help centre were less likely to cancel in the following quarter.','Help-centre use was linked to lower cancellation.','faithful'],
+ ['Customers who used the help centre were less likely to cancel in the following quarter.','There was an association between help-centre use and fewer cancellations.','faithful'],
+ ['Customers who used the help centre were less likely to cancel in the following quarter.','The help centre prevents cancellations.','overclaim'],
+ ['Customers who used the help centre were less likely to cancel in the following quarter.','Investing in the help centre will cut churn.','overclaim'],
+ ['Teams that adopted the new code-review tool shipped with fewer reported bugs, though they were also more senior.','Teams using the new review tool reported fewer bugs.','faithful'],
+ ['Teams that adopted the new code-review tool shipped with fewer reported bugs, though they were also more senior.','Fewer bugs were reported by teams on the new tool, which were also more senior.','faithful'],
+ ['Teams that adopted the new code-review tool shipped with fewer reported bugs, though they were also more senior.','The new review tool eliminates bugs.','overclaim'],
+ ['Teams that adopted the new code-review tool shipped with fewer reported bugs, though they were also more senior.','Adopting the review tool makes every team ship better code.','overclaim'],
+];
+function parsePairs(raw){
+  const rows=[]; const lines=raw.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+  for(const line of lines){
+    let cells;
+    if(line.includes('|')) cells=line.split('|');
+    else if(line.includes('\t')) cells=line.split('\t');
+    else {cells=[]; let cur='', q=false; for(const ch of line){ if(ch==='"'){q=!q;} else if(ch===','&&!q){cells.push(cur); cur='';} else cur+=ch; } cells.push(cur);}
+    cells=cells.map(c=>c.trim().replace(/^"|"$/g,''));
+    if(cells.length<3) continue;
+    const label=cells[cells.length-1].toLowerCase();
+    if(!/^(faithful|overclaim)$/.test(label)) continue;  // skips a header row and anything malformed
+    rows.push({source:cells[0], derived:cells.slice(1,-1).join(', '), label});
+  }
+  return rows;
+}
+function countPairs(){const p=parsePairs($('#calIn').value); const f=p.filter(x=>x.label==='faithful').length;
+  $('#calCount').textContent=`${p.length} pairs · ${f} faithful · ${p.length-f} overclaim`; return p;}
+$('#calIn').addEventListener('input',countPairs);
+$('#calSample').onclick=()=>{$('#calIn').value=SAMPLE.map(r=>r.join(' | ')).join('\n'); countPairs();
+  $('#calMsg').textContent='Sample loaded: product and business claims, a different domain from health news.';};
+$('#calFile').onchange=e=>{const f=e.target.files[0]; if(!f) return; if(f.size>200000){$('#calMsg').textContent='That file is over 200 KB; use 10 to 60 pairs.'; return;}
+  const rd=new FileReader(); rd.onload=()=>{$('#calIn').value=rd.result; const p=countPairs(); $('#calMsg').textContent=p.length?`Read ${p.length} pairs from ${f.name}.`:'No rows ending in faithful or overclaim were found.';}; rd.readAsText(f);};
+
+function stripChart(scores,thr){
+  const W=520,H=150,L=86,R=16,x=v=>L+v*(W-L-R), rows={faithful:52,overclaim:104};
+  const dots=scores.map(s=>{const over=s.overclaim>thr; return `<circle cx="${x(s.overclaim).toFixed(1)}" cy="${rows[s.label]}" r="7" class="${s.label==='faithful'?(over?'dotff':'dotf'):(over?'dotc':'dotm')}"><title>${s.label}, overclaim score ${s.overclaim.toFixed(2)}: ${over?'flagged':'passes'}</title></circle>`;}).join('');
+  const ticks=[0,.25,.5,.75,1].map(v=>`<text x="${x(v)}" y="${H-8}" text-anchor="middle" class="tk">${v}</text>`).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" class="strip" role="img" aria-label="Overclaim scores of your pairs with the threshold at ${thr.toFixed(2)}">
+    <text x="${L-10}" y="${rows.faithful+4}" text-anchor="end" class="lb">faithful</text><text x="${L-10}" y="${rows.overclaim+4}" text-anchor="end" class="lb">overclaim</text>
+    <line x1="${L}" x2="${W-R}" y1="${rows.faithful}" y2="${rows.faithful}" class="rail"/><line x1="${L}" x2="${W-R}" y1="${rows.overclaim}" y2="${rows.overclaim}" class="rail"/>
+    <rect x="${x(thr)}" y="20" width="${(W-R)-x(thr)}" height="${H-46}" class="zone"/>
+    <line x1="${x(thr)}" x2="${x(thr)}" y1="16" y2="${H-26}" class="thr"/><text x="${x(thr)+6}" y="16" class="tl">your threshold ${thr.toFixed(2)} → flagged</text>
+    ${dots}${ticks}</svg>`;}
+
+let CAL=null;
+$('#calRun').onclick=async()=>{
+  const pairs=countPairs(), alpha=parseFloat($('#calAlpha').value), faithful=pairs.filter(p=>p.label==='faithful').length, need=Math.round(1/alpha);
+  const msg=$('#calMsg');
+  if(pairs.length<10){msg.textContent=`Add at least 10 pairs (you have ${pairs.length}). "Load a sample" shows the format.`; return;}
+  if(pairs.length>60){msg.textContent=`At most 60 pairs per run (you have ${pairs.length}).`; return;}
+  if(faithful<need){msg.textContent=`A ${Math.round(alpha*100)}% promise needs at least ${need} faithful pairs; you have ${faithful}.`; return;}
+  const b=$('#calRun'); b.disabled=true;
+  try{
+    msg.textContent='Getting a free key…'; await issueKey();
+    const r=await fetch('/v1/calibrate',{method:'POST',headers:{'Authorization':'Bearer '+KEY,'content-type':'application/json'},body:JSON.stringify({alpha,pairs})});
+    const j=await r.json(); if(!r.ok) throw new Error(j.detail?.[0]?.msg||j.detail||r.statusText);
+    const t0=Date.now(); let d;
+    while(true){ await new Promise(s=>setTimeout(s,2000));
+      d=await (await fetch(j.poll,{headers:{'Authorization':'Bearer '+KEY}})).json();
+      if(d.status!=='running') break;
+      msg.textContent=`Strands Decider is scoring your pairs… ${Math.round((Date.now()-t0)/1000)} s (about ${j.eta_seconds} s)`; }
+    if(d.status!=='done') throw new Error(d.error||'calibration failed');
+    CAL=d.result; msg.textContent='Done.'; renderCal(CAL);
+  }catch(err){msg.textContent=String(err.message||err);}
+  b.disabled=false;
+};
+function renderCal(c){
+  const pct=v=>v==null?'–':Math.round(100*v)+'%';
+  $('#calOut').innerHTML=`
+    <div class="calhead"><div><span class="muted">Your threshold</span><div class="calnum">${c.threshold.toFixed(2)}</div></div>
+      <div><span class="muted">Your faithful pairs flagged</span><div class="calnum">${pct(c.in_sample_false_flag)}</div></div>
+      <div><span class="muted">Your overclaims caught</span><div class="calnum">${pct(c.in_sample_recall)}</div></div></div>
+    <p class="promise"><b>The promise:</b> if new text resembles your examples, at most ${pct(c.alpha)} of faithful sentences will be flagged. ${iBtn('Split conformal prediction on your '+c.n_faithful+' faithful pairs. The two percentages above are measured on the same pairs used to set the threshold, so they are optimistic; the promise is the number that carries over to new text.')}</p>
+    ${stripChart(c.scores,c.threshold)}
+    <div class="legendrow"><span><i class="sw dotf"></i>faithful, passes</span><span><i class="sw dotff"></i>faithful, flagged</span><span><i class="sw dotc"></i>overclaim, caught</span><span><i class="sw dotm"></i>overclaim, missed</span></div>
+    <div class="calTest">
+      <b>Test a new sentence against your threshold</b> ${iBtn('Uses /v1/check for the scores, then applies your threshold instead of ours. Counts as one free check.')}
+      <label for="ctSource">Source</label><textarea id="ctSource" rows="2">${esc(SAMPLE[0][0])}</textarea>
+      <label for="ctText">Text</label><textarea id="ctText" rows="2">The new checkout will double our sales.</textarea>
+      <div style="display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap"><button class="btn primary" id="ctRun" type="button">Check with your threshold</button><span id="ctOut" class="muted" aria-live="polite"></span></div>
+    </div>
+    <p class="muted" style="margin-top:14px">In code: <code>ClaimFidelityGate(..., threshold=${c.threshold.toFixed(4)})</code></p>`;
+  $('#ctRun').onclick=async()=>{const o=$('#ctOut'); o.textContent='Checking…';
+    try{const r=await fetch('/v1/check',{method:'POST',headers:{'Authorization':'Bearer '+KEY,'content-type':'application/json'},body:JSON.stringify({source:$('#ctSource').value,text:$('#ctText').value})});
+      const d=await r.json(); if(!r.ok) throw new Error(d.detail?.[0]?.msg||d.detail||r.statusText);
+      o.innerHTML=d.sentences.map(s=>{const f=s.overclaim>c.threshold; return `<span class="pill ${f?'flag':'free'}">${f?'✕ FLAGGED':'✓ OK'}</span> ${s.overclaim.toFixed(2)} ${f?'>':'≤'} ${c.threshold.toFixed(2)} · ${esc(s.sentence)}`;}).join('<br>');
+    }catch(err){o.textContent=String(err.message||err);}};
+}
+const iBtn=t=>`<button class="i" type="button" aria-label="What does this mean?" data-tip="${esc(t)}">i</button>`;
 async function tryCall(path){
   const out=$('#tOut'); out.textContent='Calling '+path+'…';
   try{const r=await fetch(path,{method:'POST',headers:{'Authorization':'Bearer '+KEY,'content-type':'application/json'},

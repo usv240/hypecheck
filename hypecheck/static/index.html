@@ -108,6 +108,7 @@ button:disabled{opacity:.55;cursor:default}
 .hop.gated{box-shadow:inset 0 4px 0 var(--accent)}
 .gate{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:var(--accent-fg);border-radius:999px;padding:4px 11px;font-size:12px;font-weight:800;margin:0 0 10px;white-space:nowrap}
 .hop .big.quote{font-size:clamp(26px,2.6vw,34px);padding:6px 0 4px}
+.human{font-size:19px;line-height:1.5;max-width:62ch;margin:-6px 0 26px;padding-left:16px;border-left:4px solid var(--bad);color:var(--fg);font-style:italic}
 .callout{margin-top:22px;display:flex;gap:16px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:var(--r);padding:18px 20px;box-shadow:var(--shadow)}
 .callout b{font-size:17px}
 .callout p{margin:4px 0 0;color:var(--muted)}
@@ -260,7 +261,7 @@ footer a{color:#cfe0ff}
     <div class="proof">
       <div><b>6.7%</b>false alarms, vs 30–45% for Claude <button class="i" type="button" data-tip="<b>False alarms</b> on 345 press releases experts judged faithful to their paper. Asked the same question, Claude Haiku 4.5 flagged 44.9%, Sonnet 4.6 29.6% and Opus 4.6 40.0%.">i</button></div>
       <div><b>0.498</b>accuracy, above the best published <button class="i" type="button" data-tip="<b>Macro-F1</b> on 563 expert-labelled pairs (Wright &amp; Augenstein 2021). The best published system scores 0.4735 and was trained on the task; Decider was not. One run, so a narrow edge.">i</button></div>
-      <div><b>0 tokens</b>to judge a sentence <button class="i" type="button" data-tip="Strands Decider answers in one forward pass without generating text: about 160 ms on a laptop GPU, no LLM tokens spent on judging.">i</button></div>
+      <div><b>5× cheaper</b>than Claude Sonnet as the judge <button class="i" type="button" data-tip="Per 1,000 sentences checked: $0.18 for Strands Decider on our CPU server (0.9 s × $0.714/h, fully used; $0 on a GPU you already own) vs $0.97 for Claude Sonnet 4.6 on Bedrock (tokens we measured × list price). Decider spends no LLM tokens: it answers in one forward pass without writing text.">i</button></div>
     </div>
   </div>
 
@@ -278,6 +279,7 @@ footer a{color:#cfe0ff}
   <p class="eyebrow">Why it matters</p>
   <h2>One overclaim travels from a press office to millions of readers.</h2>
   <p class="sub">The research is clear about where health hype starts, and that fixing it at the release works. HypeCheck sits at the one point where a single correction changes everything downstream.</p>
+  <p class="human">At the end of this chain is someone at a kitchen table who reads that their pills might do more harm than good and quietly stops taking them. Fix the sentence before it leaves the press office, and that reader never sees it.</p>
   <div class="chain">
     <div class="hop"><div class="step">1 · The paper</div><div class="big quote">“could be”</div><p>The study finds an association or a possible effect.</p></div>
     <div class="hop gated"><div class="gate">✓ HypeCheck checks here</div><div class="step">2 · The press release</div><div class="big red">33%</div><p>of 462 university releases turned correlation into causation. <button class="i" type="button" data-tip="Sumner et al., BMJ 2014: 462 press releases from 20 UK universities. 33% exaggerated causal claims, 36% presented animal results as human, 40% gave advice the paper did not.">i</button></p><q>is saving lives</q></div>
@@ -355,7 +357,7 @@ footer a{color:#cfe0ff}
       <p class="cap">345 releases experts judged faithful to their paper · lower is better · hover a bar for detail</p>
       <div id="bars"></div>
       <div class="axis"><span></span><div class="ticks"><span>0%</span><span>20%</span><span>40%</span><span>60%</span></div></div>
-      <div class="takeaway"><b>4.4–6.7× fewer false alarms</b> than any Claude model asked the same question. <button class="i" type="button" data-tip="29.6% ÷ 6.7% = 4.4× (Sonnet 4.6) up to 44.9% ÷ 6.7% = 6.7× (Haiku 4.5). In press-office terms: of every 100 accurate releases, Claude would wrongly stop 30 to 45; HypeCheck about 7.">i</button></div>
+      <div class="takeaway"><b>Every 1,000 honest sentences:</b> Claude Sonnet wrongly blocks <b>296</b> and costs <b>$0.97</b>. HypeCheck wrongly blocks <b>67</b> and costs <b>$0.18</b> ($0 on your own GPU). <button class="i" type="button" data-tip="Measured rates scaled to 1,000: false alarms on 345 expert-judged faithful releases (Sonnet 4.6 29.6%, HypeCheck 6.7%; Opus 4.6 40.0% and $5.65; Haiku 4.5 44.9% and $0.51). Claude cost = tokens used in our runs × Bedrock list price; Decider cost = 0.9 s per decision on a c7i.4xlarge at $0.714/h. That is 4.4–6.7× fewer false alarms than any Claude model.">i</button></div>
     </div>
     <div class="kpis">
       <div class="card kpi"><div class="n" id="k_prom">7.7% <small>vs ≤10% promised</small></div><p>Calibrated threshold, checked on 441 pairs it had never seen. <button class="i" type="button" data-tip="<b>Conformal calibration:</b> the cut-off is set on 78 training pairs so that at most 10% of non-exaggerating sentences should be flagged. Measured 7.7% (95% CI 5.6–10.6%) on unseen pairs.">i</button></p></div>
