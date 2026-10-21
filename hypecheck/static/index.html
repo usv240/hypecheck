@@ -534,7 +534,7 @@ fetch('/api/evidence').then(r=>r.json()).then(ev=>{
 
 function loadExample(i){const x=examples[i]; if(!x) return; $('#ex').value=i; $('#draft').value=x.draft; $('#concl').value=x.conclusion; $('#pmid').value='';}
 $('#ex').onchange=e=>loadExample(e.target.value);
-$('#heroTry').onclick=()=>{loadExample(0); $('#out').scrollIntoView({block:'start'}); scrollBy(0,-80); start('check');};
+$('#heroTry').onclick=()=>{loadExample(0); window.scrollTo({top:$('#try').getBoundingClientRect().top+scrollY-70}); start('check');};
 
 /* running */
 function body(){const b={draft:$('#draft').value.trim(), engine:(document.querySelector('input[name=engine]:checked')||{}).value||'agentcore'}; const p=$('#pmid').value.trim(); if(p) b.pmid=p; else b.conclusion=$('#concl').value.trim(); return b;}
@@ -551,9 +551,9 @@ const CUES=[
   [2,/\b(may|might|could|can|suggests?|suggesting|potential(?:ly)?|appears? to|likely|possible|possibly|promising)\b/gi],
   [1,/\b(associated with|association|linked (?:to|with)|link between|correlat\w*|related to|more likely|less likely|tends? to|higher rates?|lower rates?)\b/gi],
 ];
-function markCues(text){
+function markCues(text,only){
   let h=esc(text);
-  for(const [lvl,re] of CUES) h=h.replace(re,m=>`<mark class="cue c${lvl}">${m}</mark>`);
+  for(const [lvl,re] of CUES){ if(only!==undefined&&lvl!==only) continue; h=h.replace(re,m=>`<mark class="cue c${lvl}">${m}</mark>`); }
   return h;}
 function firstCue(text,lvl){for(const [l,re] of CUES){if(l!==lvl) continue; re.lastIndex=0; const m=re.exec(text); re.lastIndex=0; if(m) return m[0];} return null;}
 let PAPER={text:'',strength:null};
@@ -568,10 +568,10 @@ function whyLine(s){
     :`Decider is unsure whether this says more than the paper (<b>${RUNG[pp]}</b>${qp?`, “${esc(qp)}”`:''}), so it is listed for an editor rather than blocked.`;
   return `<div class="why"><div class="ladder" role="img" aria-label="Claim strength: paper ${RUNG[pp]}, sentence ${RUNG[sp]}">${cells}</div><div>${txt} ${iBtn('<b>Why this was flagged.</b> Claims climb a ladder: no link, linked, may cause, causes. HypeCheck flags a sentence that sits higher than the paper. Underlined words usually signal a rung; they help you read the verdict, but Decider judges the whole sentence, not a word list.')}</div></div>`;}
 function sentRow(s,pending){const z=pending?'wait':s.zone; return `<div class="sent ${pending?'pending':s.zone}">
-  <span class="chip ${z}">${pending?'… reading':ZONE[s.zone]}</span><span class="txt">${pending?esc(s.sentence):markCues(s.sentence)}</span>
+  <span class="chip ${z}">${pending?'… reading':ZONE[s.zone]}</span><span class="txt">${pending||!(s.zone==='block'||s.zone==='review')?esc(s.sentence):markCues(s.sentence,LEVEL[s.strength])}</span>
   <span class="meta">${pending?'':`<span class="score">${s.p_overclaim.toFixed(2)} ${iBtn(scoreTip(s))}</span><span class="tag">${READ[s.strength]} ${iBtn(STRENGTH_TIP[s.strength])}</span>`}</span>${pending?'':whyLine(s)}</div>`;}
 function splitSentences(t){return t.trim().split(/(?<=[.!?])["')\]]?\s+(?=[A-Z0-9"'(])/).map(x=>x.trim()).filter(x=>x.length>3);}
-function actionText(a,n,rv){return a==='guide'?`blocked: ${n} sentence${n>1?'s claim':' claims'} more than the paper`:a==='proceed'?`clean${rv?`, ${rv} for review`:''}: publish`:a==='confirm'?'still blocked after 3 rewrites: a person decides':`${n} to block${rv?`, ${rv} for review`:''}`;}
+function actionText(a,n,rv){return a==='guide'?`blocked: ${n} sentence${n>1?'s claim':' claims'} more than the paper`:a==='proceed'?`clean${rv?`, ${rv} for review`:''}: publish`:a==='confirm'?'still blocked after 3 rewrites: a person decides':n?`${n} sentence${n>1?'s claim':' claims'} more than the paper${rv?`, ${rv} for review`:''}`:`nothing claims more than the paper${rv?`, ${rv} for review`:''}`;}
 const ACT_TIP={guide:'<b>Guide</b>: the gate hands Claude its turn back with the blocked sentences and why, and asks for a rewrite of only those.',proceed:'<b>Proceed</b>: nothing is above the block threshold, so the publish tool runs. Review-zone sentences go into the publish record for an editor.',confirm:'<b>Confirm</b>: after 3 rewrites something still overclaims, so the agent stops and asks a person.',check:'Decider-only check: scores shown, nothing rewritten or published.'};
 function advis(a){const t=[];
   if(a.advice_inflated>=0.5) t.push(`advice stronger than the paper's (${a.advice_inflated.toFixed(2)}) ${iBtn('Document-level hint: the release tells readers what to do more strongly than the paper does. Measured AUROC 0.84 on 116 real releases. Passed to Claude, never blocks on its own.')}`);
@@ -590,7 +590,7 @@ async function start(kind){
       if(e.type==='host') R.insertAdjacentHTML('beforeend',`<div class="host">${e.host==='agentcore-runtime'?'☁ Agent hosted on Amazon Bedrock AgentCore Runtime':'▣ Agent running on the demo server'} ${iBtn(e.note?esc(e.note):(e.host==='agentcore-runtime'?'This run executes in AgentCore Runtime: Claude via Bedrock, Decider via the key-protected endpoint on the EC2 server.':'This run executes in-process on the EC2 demo server.'))}</div>`);
       if(e.type==='queued') busy(true, e.position>1?`Waiting in line: position ${e.position}`:'Starting…');
       if(e.type==='started') busy(true, kind==='run'?'Claude is reading the draft…':'Decider is reading…');
-      if(e.type==='paper'){PAPER={text:e.conclusion||'',strength:null}; R.insertAdjacentHTML('beforeend',`<p class="muted"><b>Paper${e.pmid?' (PMID '+esc(e.pmid)+')':''}</b>${e.title?': '+esc(e.title):''} ${iBtn('The yardstick. Its claim strength is rated once, and every sentence is compared with it.')}<br>“${markCues(e.conclusion||'')}”</p>`);}
+      if(e.type==='paper'){PAPER={text:e.conclusion||'',strength:null}; R.insertAdjacentHTML('beforeend',`<p class="muted"><b>Paper${e.pmid?' (PMID '+esc(e.pmid)+')':''}</b>${e.title?': '+esc(e.title):''} ${iBtn('The yardstick. Its claim strength is rated once, and every sentence is compared with it.')}<br>“<span data-paper>${esc(e.conclusion||'')}</span>”</p>`);}
       if(e.type==='round_start'){const sents=splitSentences(e.text); let diff='';
         if(prevText!==null&&prevText!==e.text) diff=`<details open><summary>What Claude changed ${iBtn('Words Claude removed are struck through in red; words it added are in green.')}</summary><pre class="diff">${wordDiff(prevText,e.text)}</pre></details>`;
         prevText=e.text;
@@ -600,7 +600,7 @@ async function start(kind){
       if(e.type==='progress'&&cur){const rows=cur.querySelector('[data-rows]').children; if(rows[e.index]) rows[e.index].outerHTML=sentRow(e,false);
         cur.querySelector('.prog div').style.width=(100*(e.index+1)/e.total)+'%'; cur.querySelector('[data-count]').textContent=`${e.index+1} of ${e.total} sentences read`;
         busy(true, e.index+1<e.total?`Decider is reading sentence ${e.index+2} of ${e.total}…`:'Checking the advice level…');}
-      if(e.type==='verdict'&&cur){PAPER.strength=e.paper_strength; const n=e.sentences.filter(s=>s.zone==='block').length, rv=e.sentences.filter(s=>s.zone==='review').length; lastBlocks=n;
+      if(e.type==='verdict'&&cur){PAPER.strength=e.paper_strength; R.querySelectorAll('[data-paper]').forEach(x=>x.innerHTML=markCues(PAPER.text,LEVEL[PAPER.strength])); const n=e.sentences.filter(s=>s.zone==='block').length, rv=e.sentences.filter(s=>s.zone==='review').length; lastBlocks=n;
         cur.querySelector('[data-rows]').innerHTML=e.sentences.map(s=>sentRow(s,false)).join('');
         const a=cur.querySelector('[data-act]'); a.className='act '+e.action; a.innerHTML='→ '+actionText(e.action,n,rv)+' '+iBtn(ACT_TIP[e.action]);
         cur.querySelector('[data-adv]').innerHTML=advis(e.advisory||{});
