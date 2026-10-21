@@ -56,6 +56,16 @@ input[type=search]{font:inherit;color:inherit;background:var(--card);border:1px 
 .sent.block{background:var(--badbg);border-left-color:var(--bad)} .sent.review{background:var(--revbg);border-left-color:var(--rev)} .sent.ok{background:var(--okbg);border-left-color:var(--ok)}
 .role{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-top:4px}
 .score{font-family:var(--mono);font-size:13px;font-weight:700;white-space:nowrap}
+mark.cue{background:transparent;color:inherit;border-bottom:2px solid currentColor;padding:0 1px;font-weight:650}
+mark.cue.c3{color:var(--bad)} mark.cue.c2{color:var(--rev)} mark.cue.c1{color:var(--accent)}
+.why{grid-column:2/4;font-size:13.5px;display:grid;gap:6px}
+.ladder{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;max-width:420px}
+.rung{font-size:11px;font-weight:700;text-align:center;padding:4px 2px;border-radius:6px;background:var(--card);color:var(--muted);border:1px solid var(--line)}
+.rung.gap{background:var(--badbg);color:var(--bad);border-color:transparent}
+.rung.paper{outline:2px solid var(--ok);outline-offset:-2px;color:var(--ok)}
+.rung.sent{background:var(--bad);color:#fff;border-color:transparent}
+.rung.same{background:var(--ok);color:#fff;border-color:transparent}
+.rung small{display:block;font-weight:600;font-size:10px;opacity:.9}
 .sugg{grid-column:2/4;font-size:14.5px;background:var(--card);border:1px dashed var(--line);border-radius:8px;padding:8px 10px}
 .sugg b{color:var(--ok)}
 details.more summary{cursor:pointer;color:var(--accent);font-size:14px;margin-top:4px}
@@ -150,20 +160,39 @@ function render(reset){if(reset){order(); shown=0; $('#list').innerHTML='';}
   const next=view.slice(shown, shown+PAGE); shown+=next.length;
   $('#list').insertAdjacentHTML('beforeend', next.map(card).join(''));
   $('#more').hidden=shown>=view.length;}
-function sentRow(s){
+/* Same explanation as the home page: a claim ladder and the cue words of the assigned rung. */
+const LEVEL={no_relationship:0,correlational:1,conditional_causal:2,direct_causal:3};
+const RUNG=['no link','linked','may cause','causes'];
+const CUES=[
+  [3,/\b(saves? lives|saving lives|causes?|caused|causing|prevents?|prevented|preventing|reduces?|reduced|reducing|increases?|increased|boosts?|boosted|cuts?|improves?|improved|leads? to|led to|protects? against|stops?|cures?|eliminates?|triggers?|reverses?|reversed|will (?:lower|reduce|raise|increase|improve|prevent|cause|grow|double|cut))\b/gi],
+  [2,/\b(may|might|could|can|suggests?|suggesting|potential(?:ly)?|appears? to|likely|possible|possibly|promising)\b/gi],
+  [1,/\b(associated with|association|linked (?:to|with)|link between|correlat\w*|related to|more likely|less likely|tends? to|higher rates?|lower rates?)\b/gi],
+];
+function markCues(text,only){let h=esc(text); for(const [lvl,re] of CUES){ if(lvl!==only) continue; h=h.replace(re,m=>`<mark class="cue c${lvl}">${m}</mark>`);} return h;}
+function firstCue(text,lvl){for(const [l,re] of CUES){if(l!==lvl) continue; re.lastIndex=0; const m=re.exec(text); re.lastIndex=0; if(m) return m[0];} return null;}
+function whyLine(s,r){
+  if(!(s.zone==='block'||s.zone==='review')) return '';
+  const sp=LEVEL[s.strength], pp=LEVEL[r.paper_strength];
+  const cells=RUNG.map((x,i)=>{let c='rung'; if(i===sp&&i===pp) c+=' same'; else if(i===sp) c+=' sent'; else if(i===pp) c+=' paper'; else if(i>pp&&i<sp) c+=' gap';
+    const tag=i===sp&&i===pp?'<small>both</small>':i===sp?'<small>release</small>':i===pp?'<small>paper</small>':''; return `<div class="${c}">${x}${tag}</div>`;}).join('');
+  const qs=firstCue(s.text,sp), qp=firstCue(r.paper_conclusion,pp);
+  const txt=sp>pp?`The release says <b>${RUNG[sp]}</b>${qs?` (“${esc(qs)}”)`:''}; the paper's conclusion says <b>${RUNG[pp]}</b>${qp?` (“${esc(qp)}”)`:''}.`
+    :`Not clearly stronger than the paper's conclusion (<b>${RUNG[pp]}</b>), so it is listed for review rather than blocked.`;
+  return `<div class="why"><div class="ladder" role="img" aria-label="Claim strength: paper ${RUNG[pp]}, release ${RUNG[sp]}">${cells}</div><div>${txt} ${iBtn('Claims climb a ladder: no link, linked, may cause, causes. A sentence is flagged when it sits higher than the paper. Underlined words usually signal a rung; Decider judges the whole sentence. Public flags also require the sentence to exceed the strongest claim anywhere in the abstract.')}</div></div>`;}
+function sentRow(s,r){
   const role={headline:'headline',subtitle:'subtitle',body:'opening',quote:'quote'}[s.role]||s.role;
   const sc=`<b>Overclaim score ${s.p.toFixed(2)}</b>: the lower of two probabilities that this sentence claims more than the paper. Against the conclusion: ${s.p_vs_conclusion.toFixed(2)}. Against the strongest claim anywhere in the abstract: ${s.p_vs_abstract.toFixed(2)}. Block above ${thr.toFixed(2)}. Decider read it as “${READ[s.strength]}”.`;
   let sug='';
   if(s.suggestion) sug=`<div class="sugg">${s.suggestion_ok?'<b>Suggested rewrite (Claude) · ✓ passes Decider’s check</b>':'<b style="color:var(--rev)">Suggested rewrite (Claude) · ! still above the threshold</b>'} (${s.suggestion_p.toFixed(2)}) ${iBtn('Claude on Amazon Bedrock was asked to rewrite the sentence so it claims no more than the paper. Decider then scored the rewrite; a score below the block threshold counts as verified.')}<br>“${esc(s.suggestion)}”</div>`;
-  return `<div class="sent ${s.zone}"><div><span class="chip ${s.zone}">${ZONE[s.zone]}</span><span class="role">${role}</span></div><div>${esc(s.text)}</div><div class="score">${s.p.toFixed(2)} ${iBtn(sc)}</div>${sug}</div>`;}
+  return `<div class="sent ${s.zone}"><div><span class="chip ${s.zone}">${ZONE[s.zone]}</span><span class="role">${role}</span></div><div>${s.zone==='ok'?esc(s.text):markCues(s.text,LEVEL[s.strength])}</div><div class="score">${s.p.toFixed(2)} ${iBtn(sc)}</div>${whyLine(s,r)}${sug}</div>`;}
 function card(r){
   const flagged=r.sentences.filter(s=>s.zone!=='ok'), rest=r.sentences.filter(s=>s.zone==='ok');
   const adv=(r.advisory?.advice_inflated>=0.5)?` · hint: advice stronger than the paper's ${iBtn('Document-level hint (AUROC 0.84 on 116 real releases): the release tells readers what to do more strongly than the paper does. Never blocks on its own.')}`:'';
   return `<article class="rel"><h2><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a></h2>
   <div class="meta"><span>${esc(r.date)}</span><span>${esc(r.institute)}</span><span>${r.flagged} blocked · ${r.review} for review · ${r.sentences.length} checked${adv}</span></div>
-  <div class="paper"><b>Paper</b> <a href="https://doi.org/${esc(r.doi)}" target="_blank" rel="noopener">${esc(r.paper_title||r.doi)}</a> · conclusion via ${esc(r.conclusion_source)} ${iBtn('The conclusion is taken from the paper’s abstract: its Conclusions section if it has one, otherwise its last two sentences. Decider rated its claim strength as “'+READ[r.paper_strength]+'”.')}<br>“${esc(r.paper_conclusion)}”</div>
-  ${flagged.map(sentRow).join('')}
-  ${rest.length?`<details class="more"><summary>${flagged.length?'Show':'All'} ${rest.length} sentence${rest.length>1?'s':''} within what the paper supports</summary>${rest.map(sentRow).join('')}</details>`:''}
+  <div class="paper"><b>Paper</b> <a href="https://doi.org/${esc(r.doi)}" target="_blank" rel="noopener">${esc(r.paper_title||r.doi)}</a> · conclusion via ${esc(r.conclusion_source)} ${iBtn('The conclusion is taken from the paper’s abstract: its Conclusions section if it has one, otherwise its last two sentences. Decider rated its claim strength as “'+READ[r.paper_strength]+'”.')}<br>“${flagged.length?markCues(r.paper_conclusion,LEVEL[r.paper_strength]):esc(r.paper_conclusion)}”</div>
+  ${flagged.map(s=>sentRow(s,r)).join('')}
+  ${rest.length?`<details class="more"><summary>${flagged.length?'Show':'All'} ${rest.length} sentence${rest.length>1?'s':''} within what the paper supports</summary>${rest.map(s=>sentRow(s,r)).join('')}</details>`:''}
   </article>`;}
 $$('.seg button').forEach(b=>b.onclick=()=>{$$('.seg button').forEach(x=>x.setAttribute('aria-pressed',x===b)); mode=b.dataset.f; render(true);});
 $('#q').oninput=()=>render(true); $('#more').onclick=()=>render(false);
