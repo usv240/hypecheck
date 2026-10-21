@@ -97,3 +97,52 @@ def test_review_zone_does_not_block():
     # same level as the source: overclaim ~0, so it is OK; nothing blocks, review list is empty
     assert isinstance(gate.before_tool_call(_Event("publish_release", "The pathway may help.")), Proceed)
     assert gate.history[-1]["flagged"] == 0
+
+
+def test_gate_fails_closed_with_deny():
+    from strands.interventions import Deny
+
+    from decision_pattern.decider import DeciderUnavailable
+
+    class DownDecider:
+        def ask(self, state, questions):
+            raise DeciderUnavailable("no decider at http://127.0.0.1:9")
+
+    denied = []
+    gate = ClaimFidelityGate(DownDecider(), lambda: "The pathway could be efficacious.", on_deny=denied.append)
+    assert isinstance(gate.before_tool_call(_Event("publish_release", "The pathway saves lives.")), Deny)
+    no_source = ClaimFidelityGate(FakeDecider({}), lambda: "  ")
+    assert isinstance(no_source.before_tool_call(_Event("publish_release", "The pathway saves lives.")), Deny)
+    assert denied and "unreachable" in denied[0] and "denied" in no_source.history[-1]
+
+
+def test_decider_fails_over_to_the_next_server():
+    import json
+    import threading
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+
+    from decision_pattern.decider import Decider, DeciderUnavailable
+
+    class Answer(BaseHTTPRequestHandler):
+        def do_POST(self):
+            self.rfile.read(int(self.headers["content-length"]))
+            body = json.dumps({"answers": {"q": {"type": "noul", "noul": 0.9}}}).encode()
+            self.send_response(200)
+            self.send_header("content-type", "application/json")
+            self.end_headers()
+            self.wfile.write(body)
+
+        def log_message(self, *a):
+            pass
+
+    srv = HTTPServer(("127.0.0.1", 0), Answer)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    try:
+        live = f"http://127.0.0.1:{srv.server_port}"
+        d = Decider(url=f"http://127.0.0.1:9,{live}", timeout=3)
+        assert d.ask("s", {"q": {"type": "noul"}})["q"]["noul"] == 0.9
+        assert d.url == live and d.calls == 1
+        with pytest.raises(DeciderUnavailable):
+            Decider(url="http://127.0.0.1:9", timeout=2).ask("s", {"q": {"type": "noul"}})
+    finally:
+        srv.shutdown()

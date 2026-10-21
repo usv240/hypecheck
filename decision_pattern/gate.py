@@ -12,6 +12,7 @@ action, with three zones for each sentence:
 
     still blocking after `max_rounds` rewrites -> Confirm (a person decides)
     nothing blocking                           -> Proceed
+    no source text, or Decider unreachable     -> Deny (fail closed: nothing is published unchecked)
 
 Both thresholds come from `decision_pattern.calibrate` (conformal, alpha = 0.10 and 0.20), not
 from a hand-picked band, so each carries a stated false-flag rate. The model classifies; the code
@@ -25,9 +26,9 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
-from strands.interventions import Confirm, Guide, InterventionHandler, Proceed
+from strands.interventions import Confirm, Deny, Guide, InterventionHandler, Proceed
 
-from .decider import Decider
+from .decider import Decider, DeciderUnavailable
 from .fidelity import STRENGTH, DocumentVerdict, SentenceVerdict, check_document
 
 READABLE = {
@@ -66,6 +67,7 @@ class ClaimFidelityGate(InterventionHandler):
         max_rounds: rewrites allowed before a person is asked.
         on_verdict: optional callback (verdict, action) for UIs and logs.
         on_sentence: optional callback (index, total, sentence_verdict) as each sentence is scored.
+        on_deny: optional callback (reason) when the gate fails closed.
     """
 
     name = "claim-fidelity-gate"
@@ -74,7 +76,8 @@ class ClaimFidelityGate(InterventionHandler):
                  text_arg: str = "text", threshold: float = 0.5, review_threshold: float | None = None,
                  max_rounds: int = 3,
                  on_verdict: Callable[[DocumentVerdict, str], None] | None = None,
-                 on_sentence: Callable[[int, int, SentenceVerdict], None] | None = None) -> None:
+                 on_sentence: Callable[[int, int, SentenceVerdict], None] | None = None,
+                 on_deny: Callable[[str], None] | None = None) -> None:
         self.decider = decider
         self.source = source
         self.tool_name = tool_name
@@ -84,6 +87,7 @@ class ClaimFidelityGate(InterventionHandler):
         self.max_rounds = max_rounds
         self.on_verdict = on_verdict
         self.on_sentence = on_sentence
+        self.on_deny = on_deny
         self.rounds = 0
         self.history: list[dict[str, Any]] = []
         self.review: list[str] = []
@@ -93,7 +97,13 @@ class ClaimFidelityGate(InterventionHandler):
             return Proceed()
         text = (event.tool_use.get("input") or {}).get(self.text_arg, "")
         self.rounds += 1
-        verdict = check_document(self.decider, self.source(), text, on_sentence=self.on_sentence)
+        source = (self.source() or "").strip()
+        if not source:
+            return self._deny("there is no source text to check against, so nothing can be verified")
+        try:
+            verdict = check_document(self.decider, source, text, on_sentence=self.on_sentence)
+        except DeciderUnavailable as exc:
+            return self._deny(f"the decision model is unreachable ({exc}); failing closed")
         zones = [zone(s.p_overclaim, self.threshold, self.review_threshold) for s in verdict.sentences]
         flagged = [s for s, z in zip(verdict.sentences, zones) if z == "block"]
         self.review = [s.sentence for s, z in zip(verdict.sentences, zones) if z == "review"]
@@ -114,6 +124,12 @@ class ClaimFidelityGate(InterventionHandler):
         if self.on_verdict:
             self.on_verdict(verdict, action)
         return result
+
+    def _deny(self, why: str) -> Deny:
+        self.history.append({"round": self.rounds, "denied": why})
+        if self.on_deny:
+            self.on_deny(why)
+        return Deny(reason=f"Not published: {why}. Do not retry; tell the user.")
 
     def _feedback(self, verdict: DocumentVerdict, flagged) -> str:
         lines = [f"The paper's conclusion claims {READABLE[verdict.source_strength]}. "

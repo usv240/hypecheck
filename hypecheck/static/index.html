@@ -678,6 +678,7 @@ async function start(kind,keep=false){
         cur.querySelector('[data-adv]').innerHTML=advis(e.advisory||{});
         busy(true, e.action==='guide'?'Claude is rewriting the blocked sentences…':e.action==='proceed'?'Publishing…':'');}
       if(e.type==='published'){R.insertAdjacentHTML('beforeend',`<div class="final"><h3>${IC.check}Published ${iBtn('Written to the newsroom outbox only after Decider found nothing above the block threshold.')}</h3><pre>${esc(e.text)}</pre>${e.review?.length?`<p class="muted"><b>For editor review (not blocked):</b> ${e.review.map(esc).join(' · ')}</p>`:''}</div>`); setTimeout(()=>toView(R.querySelector('.final')),60);}
+      if(e.type==='note') R.insertAdjacentHTML('beforeend',`<p class="muted">${esc(e.message)}</p>`);
       if(e.type==='error') R.insertAdjacentHTML('beforeend',`<p class="err">Something went wrong: ${esc(e.message)}. Try “Check with Decider only”, which needs no language model.</p>`);
       if(e.type==='done'){const d=e.decider_ms, l=Math.max(0,e.llm_ms), tot=Math.max(1,d+l);
         R.insertAdjacentHTML('beforeend',`<details class="time"><summary>Where the time went</summary>

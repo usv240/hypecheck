@@ -32,6 +32,12 @@ from decision_pattern.gate import ClaimFidelityGate, load_threshold, zone
 ROOT = Path(__file__).resolve().parents[1]
 OUTBOX = Path(os.environ.get("HYPECHECK_OUTBOX", ROOT / "outbox"))
 MODEL = os.environ.get("HYPECHECK_MODEL", "us.anthropic.claude-sonnet-4-6")
+# Backup model on Bedrock, used only if the main one is throttled or unavailable. Both are
+# cross-region inference profiles, so Bedrock can already route each across US regions.
+FALLBACK_MODEL = os.environ.get("HYPECHECK_FALLBACK_MODEL", "us.anthropic.claude-haiku-4-5-20251001-v1:0")
+UNAVAILABLE = {"ThrottlingException", "ServiceUnavailableException", "ModelNotReadyException",
+               "ModelTimeoutException", "InternalServerException", "AccessDeniedException",
+               "ResourceNotFoundException", "ModelThrottledException"}
 THRESHOLD_FILE = ROOT / "research" / "results" / "calibration" / "summary.json"
 
 SYSTEM = (
@@ -64,6 +70,18 @@ def europepmc_conclusion(pmid: str) -> tuple[str, str]:
     m = re.search(r"(?:CONCLUSIONS?|INTERPRETATION|Conclusions?)\s*[:.]?\s*(.+)$", abstract, re.S)
     conclusion = m.group(1) if m else " ".join(re.split(r"(?<=[.!?])\s+", abstract.strip())[-2:])
     return hits[0].get("title", ""), " ".join(conclusion.split())
+
+
+def bedrock_unavailable(exc: BaseException) -> str | None:
+    """The error code if `exc` (or anything it wraps) means the model can't serve right now."""
+    seen = 0
+    while exc is not None and seen < 6:
+        code = getattr(exc, "response", {}).get("Error", {}).get("Code") if hasattr(exc, "response") else None
+        for c in (code, type(exc).__name__):
+            if c in UNAVAILABLE:
+                return c
+        exc, seen = exc.__cause__ or exc.__context__, seen + 1
+    return None
 
 
 def sentence_dict(s: SentenceVerdict, threshold: float, review: float | None) -> dict[str, Any]:
@@ -139,9 +157,10 @@ def run_hypecheck(draft: str, *, conclusion: str | None = None, pmid: str | None
 
     gate = RecordingGate(decider, lambda: paper["conclusion"], threshold=threshold,
                          review_threshold=review_threshold, max_rounds=max_rounds,
-                         on_verdict=on_verdict, on_sentence=on_sentence)
-    agent = Agent(model=model, tools=[fetch_paper, publish_release], interventions=[gate],
-                  system_prompt=SYSTEM, callback_handler=None)
+                         on_verdict=on_verdict, on_sentence=on_sentence,
+                         on_deny=lambda why: emit({"type": "error", "message": f"not published: {why}"}))
+    make_agent = lambda m: Agent(model=m, tools=[fetch_paper, publish_release], interventions=[gate],  # noqa: E731
+                                 system_prompt=SYSTEM, callback_handler=None)
 
     if pmid:
         ask = f"Publish this press release about PMID {pmid}:\n\n{draft}"
@@ -152,12 +171,21 @@ def run_hypecheck(draft: str, *, conclusion: str | None = None, pmid: str | None
     # The decider client may be shared across runs (the web app keeps one), so count from here.
     calls0, ms0 = decider.calls, decider.total_ms
     t0 = time.perf_counter()
-    result = agent(ask)
+    used = model
+    try:
+        result = make_agent(model)(ask)
+    except Exception as exc:
+        code = bedrock_unavailable(exc)
+        if not code or published or not FALLBACK_MODEL or FALLBACK_MODEL == model:
+            raise
+        emit({"type": "note", "message": f"{model} is unavailable on Bedrock ({code}); retrying with the backup model {FALLBACK_MODEL}."})
+        used = FALLBACK_MODEL
+        result = make_agent(FALLBACK_MODEL)(ask)
     wall_ms = (time.perf_counter() - t0) * 1000
     decider_ms = decider.total_ms - ms0
     summary = {
         "type": "done", "published": bool(published), "final_text": published.get("text"),
-        "rounds": gate.rounds, "history": gate.history, "agent_reply": str(result),
+        "rounds": gate.rounds, "history": gate.history, "agent_reply": str(result), "model": used,
         "review": list(gate.review),
         "decider_calls": decider.calls - calls0, "decider_ms": round(decider_ms),
         "wall_ms": round(wall_ms), "llm_ms": round(wall_ms - decider_ms),

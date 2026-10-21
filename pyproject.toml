@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hypecheck-decision-pattern"
+version = "0.1.0"
+description = "ClaimFidelityGate: a Strands Decider 2B guardrail that stops text claiming more than its source."
+readme = "decision_pattern/README.md"
+license = {text = "Apache-2.0"}
+requires-python = ">=3.10"
+dependencies = ["strands-agents>=1.61"]
+
+[project.urls]
+Source = "https://github.com/usv240/hypecheck"
+
+[tool.setuptools]
+packages = ["decision_pattern"]
