@@ -8,86 +8,128 @@
 <script>/* apply the saved theme before first paint, so there is no flash */
 (function(){try{var t=localStorage.getItem('hc-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f6f7f9;--fg:#14171a;--muted:#5b6470;--card:#fff;--line:#dfe3e8;--soft:#eef1f4;--accent:#0b57d0;--accent-fg:#fff;
-  --ok:#17663f;--okbg:#e5f3eb;--rev:#8a5300;--revbg:#fff2dc;--bad:#a3221a;--badbg:#fde8e6;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;--r:12px}
-@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0f1114;--fg:#e8eaed;--muted:#a2a9b3;--card:#171a1f;--line:#2c3139;--soft:#1e2228;--accent:#8ab4f8;--accent-fg:#0b1a33;
-  --ok:#6fd49d;--okbg:#10291c;--rev:#f2b766;--revbg:#2d2110;--bad:#ff9a90;--badbg:#3a1714}}
-:root[data-theme=dark]{--bg:#0f1114;--fg:#e8eaed;--muted:#a2a9b3;--card:#171a1f;--line:#2c3139;--soft:#1e2228;--accent:#8ab4f8;--accent-fg:#0b1a33;
-  --ok:#6fd49d;--okbg:#10291c;--rev:#f2b766;--revbg:#2d2110;--bad:#ff9a90;--badbg:#3a1714}
+:root{
+  --bg:#f5f6f8; --fg:#101318; --muted:#56606c; --card:#fff; --line:#e1e5ea; --soft:#eef1f5;
+  --accent:#1f63d6; --accent-fg:#fff; --mark:#2a78d6; --mark-dim:#868d97;
+  --ok:#12683f; --okbg:#e3f3ea; --rev:#8a5300; --revbg:#fff1d9; --bad:#a3221a; --badbg:#fde7e4;
+  --ink:#0a1530; --ink2:#15264f; --onink:#f3f6fc; --onink-muted:#b9c6e2;
+  --font:"Schibsted Grotesk",system-ui,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; --r:14px;
+  --ease-out:cubic-bezier(.23,1,.32,1);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){
+  --bg:#0d1014; --fg:#e9ecf1; --muted:#a3acb8; --card:#161a20; --line:#2a3039; --soft:#1d222a;
+  --accent:#8ab4f8; --accent-fg:#0b1a33; --mark:#3987e5; --mark-dim:#6b7380;
+  --ok:#6fd49d; --okbg:#0f2a1c; --rev:#f2b766; --revbg:#2d2110; --bad:#ff9a90; --badbg:#3a1714;
+  --ink:#070d1c; --ink2:#111f42;
+}}
+:root[data-theme=dark]{
+  --bg:#0d1014; --fg:#e9ecf1; --muted:#a3acb8; --card:#161a20; --line:#2a3039; --soft:#1d222a;
+  --accent:#8ab4f8; --accent-fg:#0b1a33; --mark:#3987e5; --mark-dim:#6b7380;
+  --ok:#6fd49d; --okbg:#0f2a1c; --rev:#f2b766; --revbg:#2d2110; --bad:#ff9a90; --badbg:#3a1714;
+  --ink:#070d1c; --ink2:#111f42;
+}
 :root[data-theme=dark]{color-scheme:dark} :root[data-theme=light]{color-scheme:light}
 *{box-sizing:border-box}
+html{scrollbar-color:var(--mark-dim) var(--bg)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,"Segoe UI",Roboto,sans-serif}
-a{color:var(--accent)} :focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.6 var(--font);font-kerning:normal;-webkit-font-smoothing:antialiased}
+::selection{background:var(--accent);color:var(--accent-fg)}
+a{color:var(--accent);text-underline-offset:.18em;text-decoration-thickness:.07em}
+h1,h2,h3{text-wrap:balance;hyphens:none} p{text-wrap:pretty}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
 .wrap{max-width:1140px;margin:0 auto;padding:0 24px}
-nav{position:sticky;top:0;z-index:20;background:rgba(10,21,48,.94);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.08)}
-nav .wrap{display:flex;align-items:center;gap:20px;height:56px}
-.brand{font-weight:800;font-size:18px;display:flex;gap:8px;align-items:center;text-decoration:none;color:#fff} .brand img{width:22px;height:22px}
-nav .links{display:flex;gap:18px;margin-left:auto;font-size:14.5px} nav .links a{color:#b9c6e2;text-decoration:none} nav .links a:hover,nav .links a[aria-current]{color:#fff}
-.band{background:radial-gradient(1100px 460px at 85% -10%,rgba(80,140,255,.35),transparent 60%),linear-gradient(180deg,#0a1530,#132a5c);color:#f3f6fc;padding:56px 0 64px}
-.band .eyebrow{font-size:13px;font-weight:750;letter-spacing:.08em;text-transform:uppercase;color:#9cc0ff;margin:0 0 10px}
-h1{font-size:clamp(32px,4.6vw,52px);line-height:1.06;margin:0 0 16px;letter-spacing:-.03em;max-width:22ch;font-weight:800}
-h1 em{font-style:normal;background:linear-gradient(90deg,#ff9a8b,#ffd0a1);-webkit-background-clip:text;background-clip:text;color:transparent}
-.lead{font-size:18.5px;color:#b9c6e2;max-width:66ch;margin:0}
-.band .stats{margin-top:30px}
-.band .stat{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.14);color:#f3f6fc}
-.band .stat .lbl{color:#b9c6e2}
-.band .i{border-color:#b9c6e2;color:#b9c6e2}
-.band .i:hover,.band .i:focus-visible{border-color:#fff;color:#fff}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0 8px}
-@media (max-width:900px){.stats{grid-template-columns:1fr 1fr}} @media (max-width:520px){.stats{grid-template-columns:1fr}}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
-.stat .num{font-size:28px;font-weight:800;letter-spacing:-.02em} .stat .lbl{color:var(--muted);font-size:14px}
-.note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:12px 16px;margin:16px 0;color:var(--muted);font-size:14.5px;max-width:80ch}
+@media (max-width:520px){.wrap{padding:0 16px}}
+.ic{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+code{font-family:var(--mono);font-size:.88em}
+
+nav{position:sticky;top:0;z-index:20;background:var(--ink);border-bottom:1px solid rgba(255,255,255,.08)}
+nav .wrap{display:flex;align-items:center;gap:20px;min-height:58px;flex-wrap:wrap}
+.brand{font-weight:800;font-size:18px;display:flex;gap:9px;align-items:center;text-decoration:none;color:#fff;letter-spacing:-.01em} .brand img{width:24px;height:24px}
+nav .links{display:flex;gap:18px;margin-left:auto;font-size:15px}
+nav .links a{color:var(--onink-muted);text-decoration:none;white-space:nowrap;transition:color 150ms ease} nav .links a[aria-current]{color:#fff}
+#themeBtn{all:unset;cursor:pointer;display:inline-grid;place-items:center;width:36px;height:36px;border-radius:999px;border:1px solid rgba(255,255,255,.25);color:#fff;flex:none;transition:background-color 150ms ease,transform 160ms var(--ease-out)}
+#themeBtn:active{transform:scale(.94)} #themeBtn .ic{width:16px;height:16px;stroke-width:1.8}
+#themeBtn:focus-visible{outline:3px solid #9cc0ff;outline-offset:2px}
+@media (max-width:820px){
+  nav{position:static}
+  nav .wrap{gap:8px 12px;padding-top:10px;padding-bottom:10px}
+  nav .links{order:3;width:100%;margin:0;overflow-x:auto;gap:18px;scrollbar-width:none;padding-bottom:2px}
+  #themeBtn{margin-left:auto}
+}
+@media (hover:hover) and (pointer:fine){nav .links a:hover{color:#fff} #themeBtn:hover{background:rgba(255,255,255,.08)}}
+
+.band{background:var(--ink);color:var(--onink);padding:64px 0 72px}
+@media (max-width:620px){.band{padding:44px 0 52px}}
+.band h1{font-size:clamp(38px,1rem + 3.8vw,64px);line-height:1;margin:0 0 20px;letter-spacing:-.04em;max-width:16ch;font-weight:800}
+.band .lead{font-size:clamp(18px,1rem + .3vw,20px);line-height:1.45;color:var(--onink-muted);max-width:58ch;margin:0}
+.band .lead b{color:#fff;font-weight:600}
+.band .i{color:var(--onink-muted)} .band .i:hover,.band .i:focus-visible,.band .i[aria-expanded=true]{color:#fff}
+.facts{list-style:none;padding:0;margin:28px 0 0;display:grid;gap:8px;font-size:16.5px;color:var(--onink-muted)}
+.facts b{color:#fff;font-weight:700;font-variant-numeric:tabular-nums}
+
+.btn{font:inherit;font-weight:700;padding:12px 18px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;
+  transition:transform 160ms var(--ease-out),background-color 150ms ease,filter 150ms ease}
+.btn:active:not(:disabled){transform:scale(.97)}
+.btn.primary{background:var(--accent);color:var(--accent-fg);border-color:transparent}
+button:disabled{opacity:.55;cursor:default}
+@media (hover:hover) and (pointer:fine){.btn:not(.primary):not(:disabled):hover{background:var(--soft)} .btn.primary:not(:disabled):hover{filter:brightness(1.08)}}
+
+.i{all:unset;cursor:help;display:inline-grid;place-items:center;width:20px;height:20px;margin:2px;border-radius:50%;border:1.5px solid currentColor;opacity:.8;font:700 11px/1 Georgia,serif;font-style:italic;flex:none;vertical-align:middle;transition:opacity 150ms ease,color 150ms ease}
+.i:hover,.i:focus-visible,.i[aria-expanded=true]{opacity:1;color:var(--accent)} .i:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+#tip{position:absolute;top:0;left:0;z-index:60;max-width:330px;background:#0f1520;color:#f1f4f9;padding:11px 13px;border-radius:10px;font-size:14px;line-height:1.5;box-shadow:0 10px 28px rgba(0,0,0,.22);
+  opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-2px) scale(.98);transform-origin:50% 0;
+  transition:opacity 140ms var(--ease-out),transform 140ms var(--ease-out),visibility 0s linear 140ms}
+#tip.show{opacity:1;visibility:visible;pointer-events:auto;transform:none;transition-delay:0s}
+#tip b{color:#fff}
+footer{background:var(--ink);color:var(--onink-muted);padding:40px 0 56px;font-size:14.5px;margin-top:64px} footer a{color:#cfe0ff}
+
+.note{background:var(--card);border-radius:12px;padding:14px 18px;margin:28px 0 16px;color:var(--muted);font-size:15px;max-width:80ch}
+.note b{color:var(--fg)}
 .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:18px 0 10px}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
-.seg button{all:unset;cursor:pointer;padding:8px 14px;font-weight:600;font-size:14px;color:var(--muted)}
+.seg{display:inline-flex;background:var(--card);border-radius:10px;padding:3px;gap:2px}
+.seg button{all:unset;cursor:pointer;padding:7px 13px;font-weight:600;font-size:14.5px;color:var(--muted);border-radius:8px;transition:background-color 150ms ease,color 150ms ease,transform 160ms var(--ease-out)}
+.seg button:active{transform:scale(.97)}
 .seg button[aria-pressed=true]{background:var(--accent);color:var(--accent-fg)}
-.seg button:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
-input[type=search]{font:inherit;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:9px;padding:8px 12px;min-width:240px}
-.rel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin:12px 0}
-.rel h2{font-size:18px;margin:0 0 4px;line-height:1.3}
-.meta{color:var(--muted);font-size:13.5px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-.paper{background:var(--soft);border-radius:9px;padding:10px 12px;margin:10px 0;font-size:14.5px}
-.chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:750;letter-spacing:.03em;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.seg button:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
+input[type=search]{font:inherit;font-size:16px;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px;min-width:min(260px,100%);caret-color:var(--accent)}
+.rel{background:var(--card);border-radius:var(--r);padding:20px 22px;margin:12px 0}
+.rel h2{font-size:20px;margin:0 0 4px;line-height:1.25;letter-spacing:-.01em}
+.meta{color:var(--muted);font-size:14px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.paper{background:var(--soft);border-radius:10px;padding:10px 12px;margin:10px 0;font-size:15px}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:650;padding:2px 10px;border-radius:999px;white-space:nowrap}
+.chip .ic{width:12px;height:12px;stroke-width:2.6}
 .chip.block{background:var(--badbg);color:var(--bad)} .chip.review{background:var(--revbg);color:var(--rev)} .chip.ok{background:var(--okbg);color:var(--ok)}
-.sent{display:grid;grid-template-columns:96px 1fr auto;gap:10px;align-items:start;padding:8px 10px;border-radius:9px;margin:6px 0;border-left:4px solid var(--line);background:var(--soft)}
-.sent.block{background:var(--badbg);border-left-color:var(--bad)} .sent.review{background:var(--revbg);border-left-color:var(--rev)} .sent.ok{background:var(--okbg);border-left-color:var(--ok)}
-.role{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-top:4px}
-.score{font-family:var(--mono);font-size:13px;font-weight:700;white-space:nowrap}
+.sent{display:grid;grid-template-columns:100px minmax(0,1fr) auto;gap:10px;align-items:start;padding:10px 12px;border-radius:10px;margin:6px 0;background:var(--soft)}
+.sent.block{background:var(--badbg)} .sent.review{background:var(--revbg)} .sent.ok{background:var(--okbg)}
+.role{font-size:13px;color:var(--muted);display:block;margin-top:4px}
+.score{font-size:14px;font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
 mark.cue{background:transparent;color:inherit;border-bottom:2px solid currentColor;padding:0 1px;font-weight:650}
 mark.cue.c3{color:var(--bad)} mark.cue.c2{color:var(--rev)} mark.cue.c1{color:var(--accent)}
-.why{grid-column:2/4;font-size:13.5px;display:grid;gap:6px}
+.why{grid-column:2/4;font-size:14px;display:grid;gap:6px}
 .ladder{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;max-width:420px}
-.rung{font-size:11px;font-weight:700;text-align:center;padding:4px 2px;border-radius:6px;background:var(--card);color:var(--muted);border:1px solid var(--line)}
-.rung.gap{background:var(--badbg);color:var(--bad);border-color:transparent}
+.rung{font-size:12px;font-weight:650;text-align:center;padding:4px 2px;border-radius:6px;background:var(--card);color:var(--muted);min-height:40px;display:flex;flex-direction:column;justify-content:center;align-items:center}
+.rung.gap{background:var(--badbg);color:var(--bad)}
 .rung.paper{outline:2px solid var(--ok);outline-offset:-2px;color:var(--ok)}
-.rung.sent{background:var(--bad);color:var(--card);border-color:transparent}
-.rung.same{background:var(--ok);color:var(--card);border-color:transparent}
-.rung.sent small,.rung.same small{opacity:1}
-.rung small{display:block!important;font-weight:600;font-size:10px;opacity:.9;margin-top:1px}
-.rung{min-height:38px;display:flex;flex-direction:column;justify-content:center;align-items:center}
-.sugg{grid-column:2/4;font-size:14.5px;background:var(--card);border:1px dashed var(--line);border-radius:8px;padding:8px 10px}
+.rung.sent{background:var(--bad);color:var(--card)}
+.rung.same{background:var(--ok);color:var(--card)}
+.rung.sent.soft{background:var(--rev);color:var(--card)}
+.rung small{display:block;font-weight:600;font-size:10.5px;margin-top:1px}
+.sugg{grid-column:2/4;font-size:15px;background:var(--card);border-radius:8px;padding:10px 12px}
 .sugg b{color:var(--ok)}
-details.more summary{cursor:pointer;color:var(--accent);font-size:14px;margin-top:4px}
-.i{all:unset;cursor:help;display:inline-grid;place-items:center;width:20px;height:20px;margin:2px;border-radius:50%;border:1.5px solid var(--muted);color:var(--muted);font:700 11px/1 Georgia,serif;font-style:italic;flex:none;vertical-align:middle}
-.i:hover,.i:focus-visible,.i[aria-expanded=true]{border-color:var(--accent);color:var(--accent)} .i:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-#tip{position:absolute;z-index:50;max-width:320px;background:var(--fg);color:var(--bg);padding:10px 12px;border-radius:9px;font-size:13.5px;line-height:1.45;box-shadow:0 8px 24px rgba(0,0,0,.18);display:none}
-#tip.show{display:block}
+details.more summary{cursor:pointer;color:var(--accent);font-size:14.5px;margin-top:4px}
 .empty{color:var(--muted);text-align:center;padding:40px}
-footer{border-top:1px solid var(--line);padding:24px 0 50px;color:var(--muted);font-size:14px;margin-top:30px}
 .pager{display:flex;justify-content:center;margin:16px 0}
-button.btn{font:inherit;font-weight:650;padding:10px 16px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}
-
-#themeBtn{all:unset;cursor:pointer;display:inline-grid;place-items:center;width:36px;height:36px;border-radius:999px;border:1px solid rgba(255,255,255,.25);color:#fff;font-size:16px;flex:none}
-#themeBtn:hover{background:rgba(255,255,255,.08)} #themeBtn:focus-visible{outline:3px solid #9cc0ff;outline-offset:2px}
-
 @media (max-width:560px){
-  .sent{grid-template-columns:1fr auto;gap:6px 10px}
+  .sent{grid-template-columns:minmax(0,1fr) auto;gap:6px 10px}
   .sent > :first-child{grid-column:1/-1;display:flex;gap:8px;align-items:center}
   .sent .role{margin-top:0}
   .why,.sugg{grid-column:1/-1}
+  .controls input[type=search]{flex:1 1 100%}
 }
 </style>
 </head>
@@ -95,22 +137,20 @@ button.btn{font:inherit;font-weight:650;padding:10px 16px;border-radius:9px;bord
 <nav><div class="wrap">
   <a class="brand" href="/"><img src="/favicon.svg" alt="">HypeCheck</a>
   <div class="links"><a href="/">Try it</a><a href="/hypewatch" aria-current="page">HypeWatch</a><a href="/#proof">Evidence</a><a href="/developers">Developers</a><a href="https://github.com/usv240/hypecheck">GitHub</a></div>
-  <button id="themeBtn" type="button" aria-label="Switch colour theme"><span aria-hidden="true">☾</span></button>
+  <button id="themeBtn" type="button" aria-label="Switch colour theme"><span class="themeIc"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.2 9.6A5.6 5.6 0 0 1 6.4 2.8a5.6 5.6 0 1 0 6.8 6.8z"/></svg></span></button>
 </div></nav>
 
 <header class="band"><div class="wrap">
-  <p class="eyebrow">HypeWatch · the real world</p>
-  <h1>Does a press release say more than its study? <em>We checked the NIH's.</em></h1>
-  <p class="lead">Every US National Institutes of Health news release since February 2023 that cites its paper by DOI, with its headline and opening sentences compared with the paper's conclusion. Where a sentence says more than the paper, Claude suggests a faithful rewrite and Decider checks it.</p>
-  <div class="stats">
-    <div class="stat"><div class="num" id="s_rel">–</div><div class="lbl">releases checked <button class="i" data-tip="Research news releases from nih.gov that cite a paper whose abstract we could retrieve. Announcements without a study are skipped and counted separately.">i</button></div></div>
-    <div class="stat"><div class="num" id="s_block">–</div><div class="lbl">with a sentence the gate would block <button class="i" data-tip="Share of releases where at least one sentence claims a stronger relationship than both the paper's conclusion and the strongest claim anywhere in its abstract. This is stricter than the benchmark rule, so it under-counts rather than over-counts.">i</button></div></div>
-    <div class="stat"><div class="num" id="s_head">–</div><div class="lbl">headlines vs body: average overclaim score <button class="i" data-tip="Mean overclaim score for headlines compared with the other checked sentences. Research on health news finds headlines are where exaggeration concentrates; this shows whether that holds here.">i</button></div></div>
-    <div class="stat"><div class="num" id="s_rw">–</div><div class="lbl">of Claude's suggested rewrites pass Decider's check <button class="i" data-tip="For each blocked sentence Claude on Amazon Bedrock suggested a faithful rewrite (two tries at most); Decider then scored it against the paper's conclusion. We pre-registered that if fewer than 70% passed, rewrites would be shown as suggestions, not fixes. They are: check each one's own result.">i</button></div></div>
-  </div>
+  <h1>Does the press release say more than the study?</h1>
+  <p class="lead"><b>We checked the NIH's.</b> Every US National Institutes of Health news release since February 2023 that cites its paper by DOI, with its headline and opening sentences compared with the paper's conclusion. Where a sentence says more than the paper, Claude suggests a faithful rewrite and Decider checks it.</p>
+  <ul class="facts">
+    <li><b id="s_rel">85</b> releases checked against their papers <button class="i" data-tip="Research news releases from nih.gov that cite a paper whose abstract we could retrieve. Announcements without a study are skipped and counted separately.">i</button></li>
+    <li><b id="s_block">15%</b> had a sentence the gate would block <button class="i" data-tip="Share of releases where at least one sentence claims a stronger relationship than both the paper's conclusion and the strongest claim anywhere in its abstract. This is stricter than the benchmark rule, so it under-counts rather than over-counts.">i</button></li>
+    <li><b id="s_rw">67%</b> of Claude's suggested rewrites pass Decider's check <button class="i" data-tip="For each blocked sentence Claude on Amazon Bedrock suggested a faithful rewrite (two tries at most); Decider then scored it against the paper's conclusion. We pre-registered that if fewer than 70% passed, rewrites would be shown as suggestions, not fixes. They are: check each one's own result.">i</button></li>
+  </ul>
 </div></header>
 <main class="wrap">
-  <div class="note" style="margin-top:28px"><b>How to read this.</b> A flag is a 2-billion-parameter model's reading of claim strength, not a finding of wrongdoing. The paper's own words sit beside every flag so you can judge. NIH releases are US-government works in the public domain; papers are linked by DOI. <span id="s_meta"></span></div>
+  <div class="note"><b>How to read this.</b> A flag is a 2-billion-parameter model's reading of claim strength, not a finding of wrongdoing. The paper's own words sit beside every flag so you can judge. NIH releases are US-government works in the public domain; papers are linked by DOI. Headlines scored <span id="s_head">–</span> on average against the other sentences, so NIH headlines were no hotter than their body text <button class="i" data-tip="Mean overclaim score for headlines compared with the other checked sentences. Research on health news finds headlines are where exaggeration concentrates; this shows whether that holds here.">i</button>. <span id="s_meta"></span></div>
 </div>
 
 <div class="controls">
@@ -131,7 +171,8 @@ button.btn{font:inherit;font-weight:650;padding:10px 16px;border-radius:9px;bord
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const esc=t=>String(t??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const READ={no_relationship:'no relationship',correlational:'association',conditional_causal:'hedged cause',direct_causal:'definite cause'};
-const ZONE={block:'✕ BLOCK',review:'! REVIEW',ok:'✓ OK'};
+const IC={x:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg>',check:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg>',alert:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5v5.5M8 12.2v.3"/></svg>',moon:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.2 9.6A5.6 5.6 0 0 1 6.4 2.8a5.6 5.6 0 1 0 6.8 6.8z"/></svg>',sun:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="2.8"/><path d="M8 1.5v1.6M8 12.9v1.6M1.5 8h1.6M12.9 8h1.6M3.4 3.4l1.1 1.1M11.5 11.5l1.1 1.1M3.4 12.6l1.1-1.1M11.5 4.5l1.1-1.1"/></svg>'};
+const ZONE={block:IC.x+'Block',review:IC.alert+'Review',ok:IC.check+'OK'};
 const iBtn=t=>`<button class="i" type="button" aria-label="What does this mean?" data-tip="${esc(t)}">i</button>`;
 /* tooltips: hover, focus, tap; Esc closes; hoverable (WCAG 1.4.13) */
 const tip=$('#tip'); let tipFor=null, hideT=null;
@@ -182,7 +223,7 @@ function firstCue(text,lvl){for(const [l,re] of CUES){if(l!==lvl) continue; re.l
 function whyLine(s,r){
   if(!(s.zone==='block'||s.zone==='review')) return '';
   const sp=LEVEL[s.strength], pp=LEVEL[r.paper_strength];
-  const cells=RUNG.map((x,i)=>{let c='rung'; if(i===sp&&i===pp) c+=' same'; else if(i===sp) c+=' sent'; else if(i===pp) c+=' paper'; else if(i>pp&&i<sp) c+=' gap';
+  const cells=RUNG.map((x,i)=>{let c='rung'; if(i===sp&&i===pp) c+=' same'; else if(i===sp) c+=' sent'+(sp<pp?' soft':''); else if(i===pp) c+=' paper'; else if(i>pp&&i<sp) c+=' gap';
     const tag=i===sp&&i===pp?'<small>both</small>':i===sp?'<small>release</small>':i===pp?'<small>paper</small>':''; return `<div class="${c}">${x}${tag}</div>`;}).join('');
   const qs=firstCue(s.text,sp), qp=firstCue(r.paper_conclusion,pp);
   const txt=sp>pp?`The release says <b>${RUNG[sp]}</b>${qs?` (“${esc(qs)}”)`:''}; the paper's conclusion says <b>${RUNG[pp]}</b>${qp?` (“${esc(qp)}”)`:''}.`
@@ -192,7 +233,7 @@ function sentRow(s,r){
   const role={headline:'headline',subtitle:'subtitle',body:'opening',quote:'quote'}[s.role]||s.role;
   const sc=`<b>Overclaim score ${s.p.toFixed(2)}</b>: the lower of two probabilities that this sentence claims more than the paper. Against the conclusion: ${s.p_vs_conclusion.toFixed(2)}. Against the strongest claim anywhere in the abstract: ${s.p_vs_abstract.toFixed(2)}. Block above ${thr.toFixed(2)}. Decider read it as “${READ[s.strength]}”.`;
   let sug='';
-  if(s.suggestion) sug=`<div class="sugg">${s.suggestion_ok?'<b>Suggested rewrite (Claude) · ✓ passes Decider’s check</b>':'<b style="color:var(--rev)">Suggested rewrite (Claude) · ! still above the threshold</b>'} (${s.suggestion_p.toFixed(2)}) ${iBtn('Claude on Amazon Bedrock was asked to rewrite the sentence so it claims no more than the paper. Decider then scored the rewrite; a score below the block threshold counts as verified.')}<br>“${esc(s.suggestion)}”</div>`;
+  if(s.suggestion) sug=`<div class="sugg">${s.suggestion_ok?(s.suggestion_p>thr-0.03?'<b>Suggested rewrite (Claude) · passes Decider’s check, narrowly</b>':'<b>Suggested rewrite (Claude) · passes Decider’s check</b>'):'<b style="color:var(--rev)">Suggested rewrite (Claude) · still above the threshold</b>'} (${s.suggestion_p.toFixed(2)}) ${iBtn('Claude on Amazon Bedrock was asked to rewrite the sentence so it claims no more than the paper. Decider then scored the rewrite; a score below the block threshold counts as verified.')}<br>“${esc(s.suggestion)}”</div>`;
   return `<div class="sent ${s.zone}"><div><span class="chip ${s.zone}">${ZONE[s.zone]}</span><span class="role">${role}</span></div><div>${s.zone==='ok'?esc(s.text):markCues(s.text,LEVEL[s.strength])}</div><div class="score">${s.p.toFixed(2)} ${iBtn(sc)}</div>${whyLine(s,r)}${sug}</div>`;}
 function card(r){
   const flagged=r.sentences.filter(s=>s.zone!=='ok'), rest=r.sentences.filter(s=>s.zone==='ok');
@@ -210,7 +251,7 @@ $('#q').oninput=()=>render(true); $('#more').onclick=()=>render(false);
 (function(){
   const btn=document.getElementById('themeBtn'), root=document.documentElement, mq=matchMedia('(prefers-color-scheme: dark)');
   const current=()=>root.getAttribute('data-theme')||(mq.matches?'dark':'light');
-  const paint=()=>{const dark=current()==='dark'; btn.firstElementChild.textContent=dark?'☀':'☾';
+  const paint=()=>{const dark=current()==='dark'; btn.firstElementChild.innerHTML=dark?IC.sun:IC.moon;
     btn.setAttribute('aria-label',dark?'Switch to light mode':'Switch to dark mode'); btn.title=dark?'Light mode':'Dark mode';};
   btn.addEventListener('click',()=>{const next=current()==='dark'?'light':'dark'; root.setAttribute('data-theme',next);
     try{localStorage.setItem('hc-theme',next);}catch(e){} paint();});

@@ -49,9 +49,35 @@ spend three to five minutes in total.
 | On phones the verdict chip sits on its own row | The label column squeezed each sentence to about five words per line | Mobile review at 390 px |
 | Ladder text uses the surface colour | axe flagged 2.0:1 contrast in dark mode | WCAG 2.2 SC 1.4.3 |
 
-## Verified
+## Third pass (2026-10-21): the claim ladder is the brand
 
-- **axe-core, WCAG 2.2 AA plus best practice:** 0 violations on the home page (with a real result and ladder rendered), HypeWatch and Developers,
-  in both light and dark themes.
-- **Mobile:** no horizontal overflow at 390 px.
+The method was an Impeccable critique (one design-review agent, one detector agent), plus the
+design-taste-frontend house rules and Emil Kowalski's motion rules. The site scored 26/40. The
+review found that HypeCheck's own moments (the replay and the ladder) sat inside a generic
+AI-startup frame. It also found two phone bugs that the second pass had claimed were fixed. They
+were not.
+
+| Change | Why |
+|---|---|
+| One typeface, Schibsted Grotesk, which was drawn for a news publisher | The system font read as unbranded. A news grotesk fits a product about health news |
+| Flat ink hero. No gradient text, glass, side stripes or resting shadows. Cards are tone steps, not outlined boxes | These are the most recognisable generated-site tells; the detector flagged 14 |
+| The hero card shows the claim ladder moving: the paper sits at *may cause*, the release climbs to *causes*, and the rewrite comes back down | The ladder explains every verdict, so it now leads instead of appearing only after a run |
+| Uppercase section labels removed (9 on home, 6 on Developers). On Developers they are folded into the headings ("REST API: check text…") | Section labels repeated what the headings said |
+| The paper → release → news → public chain and the four steps are real `<ol>` lists with no "1 ·" numbers | The order is carried by position |
+| HypeWatch and AI summaries merged into one section ("Then we ran it on text nobody chose for us"). Stat tiles became plain facts in sentences | Removed five clusters of competing big-number tiles |
+| Hero stats: 0.498 accuracy replaced by "run on 85 real NIH releases and 170 AI summaries"; "a year of NIH releases" corrected; HypeWatch's 0.20 vs 0.19 non-result moved into the reading note | "0.498 accuracy" read like a coin flip; the date wording contradicted the data |
+| "Let Claude fix it" adds the fix below the check instead of wiping it. The view follows each run. The run ends on a green "Published" block. Timing is folded into a closed "Where the time went". There is a Stop button | The flow used to hide its own payoff, especially on phones |
+| Phone result rows: the verdict, the sentence and the score each get their own row | At 390 px each sentence was squeezed to 1–2 words per line |
+| HypeWatch and Developers no longer scroll sideways. The nav becomes a second scrollable row instead of disappearing. Grid columns use `minmax(0,1fr)` | Both pages overflowed at 390 px |
+| SVG icons replace the ✕ ✓ ! ☾ ☀ ☁ ▣ glyphs | Glyphs render differently per platform |
+| Motion: buttons scale to 0.97 when pressed. Tooltips and the tour fade and scale in (140–160 ms, strong ease-out). Hover is gated behind `(hover:hover)`. Chart labels arrive with their bars. The hero replay plays twice, then again on hover or focus | Emil Kowalski's rules: responsive press, no pop-in, no endless loops |
+| `::selection`, caret, accent colour, scrollbar colour, link underline offset and tabular figures are set from the palette | The browser's own surfaces belong to the design too |
+| A "Review" row whose sentence sits below the paper colours that rung amber, not red | Red implied an overclaim that wasn't there |
+| One token block, footer and nav across all three pages | Each page had had its own accent, radius and nav |
+
+## Verified (2026-10-21, after the third pass)
+
+- **Impeccable detector:** 0 findings on all three pages, down from 18.
+- **axe-core 4.10.2, WCAG 2.2 AA plus best practice:** 0 violations on the home page (with a rendered result, ladder and published block), HypeWatch and Developers, in both themes. One false positive remains: a `region` warning on an element injected by the testing browser extension.
+- **Phone, 390 px:** `scrollWidth` equals `clientWidth` on all three pages, and result rows wrap at full width.
 - **Check script:** `tests/ui/a11y_check.py`.
