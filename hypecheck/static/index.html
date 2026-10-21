@@ -279,8 +279,8 @@ footer a{color:#cfe0ff}
       <a class="btn ghost" href="/hypewatch">See it on a year of NIH releases</a>
     </div>
     <div class="proof">
-      <div><b>6.7%</b>false alarms, vs 30–45% for Claude <button class="i" type="button" data-tip="<b>False alarms</b> on 345 press releases experts judged faithful to their paper. Asked the same question, Claude Haiku 4.5 flagged 44.9%, Sonnet 4.6 29.6% and Opus 4.6 40.0%.">i</button></div>
-      <div><b>0.498</b>accuracy, above the best published <button class="i" type="button" data-tip="<b>Macro-F1</b> on 563 expert-labelled pairs (Wright &amp; Augenstein 2021). The best published system scores 0.4735 and was trained on the task; Decider was not. One run, so a narrow edge.">i</button></div>
+      <div><b>6.7%</b>false alarms, vs 30–45% for Claude <button class="i" type="button" data-tip="<b>False alarms</b> on 345 press releases experts judged faithful to their paper. Asked the same question, Claude Haiku 4.5 flagged 44.9%, Sonnet 4.6 29.6% and Opus 4.6 40.0%. Paired bootstrap: every gap is far outside chance (smallest, Sonnet: 22.9 points, 95% CI 17.8–27.9).">i</button></div>
+      <div><b>0.498</b>accuracy with no training, level with the best published <button class="i" type="button" data-tip="<b>Macro-F1</b> on 563 expert-labelled pairs (Wright &amp; Augenstein 2021), 95% CI 0.452–0.541. The best published system scores 0.4735 and was trained on the task; Decider was not. 0.4735 is inside our interval, so we call it a tie, not a win.">i</button></div>
       <div><b>5× cheaper</b>than Claude Sonnet as the judge <button class="i" type="button" data-tip="Per 1,000 sentences checked: $0.18 for Strands Decider on our CPU server (0.9 s × $0.714/h, fully used; $0 on a GPU you already own) vs $0.97 for Claude Sonnet 4.6 on Bedrock (tokens we measured × list price). Decider spends no LLM tokens: it answers in one forward pass without writing text.">i</button></div>
     </div>
   </div>
@@ -381,7 +381,7 @@ footer a{color:#cfe0ff}
     </div>
     <div class="kpis">
       <div class="card kpi"><div class="n" id="k_prom">7.7% <small>vs ≤10% promised</small></div><p>Calibrated threshold, checked on 441 pairs it had never seen. <button class="i" type="button" data-tip="<b>Conformal calibration:</b> the cut-off is set on 78 training pairs so that at most 10% of non-exaggerating sentences should be flagged. Measured 7.7% (95% CI 5.6–10.6%) on unseen pairs.">i</button></p></div>
-      <div class="card kpi"><div class="n" id="k_f1">0.498 <small>vs 0.474 best published</small></div><p>Overall accuracy (macro-F1), with no training on the task. <button class="i" type="button" data-tip="A 0–1 score across the three labels (same / exaggerates / downplays) on 563 pairs. Claude: Haiku 0.358, Sonnet 0.401, Opus 0.460.">i</button></p></div>
+      <div class="card kpi"><div class="n" id="k_f1">0.498 <small>best published 0.474 (a tie)</small></div><p>Overall accuracy (macro-F1), with no training on the task. <button class="i" type="button" data-tip="A 0–1 score across the three labels (same / exaggerates / downplays) on 563 pairs, 95% CI 0.452–0.541. Claude: Haiku 0.358, Sonnet 0.401, Opus 0.460. The gains over Haiku and Sonnet are outside chance; over Opus they are not.">i</button></p></div>
       <div class="card kpi"><div class="n">0.84</div><p>Spotting advice stronger than the paper, on 116 real 2011 releases (AUROC). <button class="i" type="button" data-tip="AUROC: the chance a randomly picked inflated release scores higher than a non-inflated one. 0.5 is a coin flip, 1.0 is perfect. Data: InSciOut, coded by Sumner's team (CC BY 4.0).">i</button></p></div>
     </div>
   </div>
@@ -403,7 +403,7 @@ footer a{color:#cfe0ff}
   <div class="card limits"><h3>Limits we measured <button class="i" type="button" data-tip="Stated as numbers from the same pre-registered runs, not hidden.">i</button></h3><ul>
     <li>At the strict threshold it catches 39% of exaggerations (95% CI 30–47%): a safety net, not an editor.</li>
     <li>The animal-to-human hint is weak (AUROC 0.61 on 45 releases), so it never blocks.</li>
-    <li>563 test pairs give wide intervals; the edge over 0.4735 is one run.</li>
+    <li>563 test pairs give wide intervals: accuracy is a tie with the published best (0.4735) and with Opus. The false-alarm gap to every Claude model is far outside chance.</li>
     <li>This demo server runs Decider on a CPU, about six times slower than a GPU.</li></ul></div>
 </div></section>
 
@@ -537,7 +537,7 @@ fetch('/api/evidence').then(r=>r.json()).then(ev=>{
   if(ev.haiku){$('#e_hff').textContent=pct(ev.haiku.false_flag_on_same); $('#e_hf1').textContent=ev.haiku.macro_f1.toFixed(3); $('#e_hauc').textContent=ev.haiku.auroc_exag.toFixed(3);}
   if(ev.sonnet){$('#e_sff').textContent=pct(ev.sonnet.false_flag_on_same); $('#e_sf1').textContent=ev.sonnet.macro_f1.toFixed(3); $('#e_sauc').textContent=ev.sonnet.auroc_exag.toFixed(3);}
   if(ev.opus){$('#e_off').textContent=pct(ev.opus.false_flag_on_same); $('#e_of1').textContent=ev.opus.macro_f1.toFixed(3); $('#e_oauc').textContent=ev.opus.auroc_exag.toFixed(3);}
-  if(ev.spike){$('#e_f1').textContent=ev.spike.wa.v2_macro_f1.toFixed(3); $('#e_auc').textContent=ev.spike.wa.v2_auroc_exag.toFixed(3); $('#k_f1').innerHTML=`${ev.spike.wa.v2_macro_f1.toFixed(3)} <small>vs 0.474 best published</small>`;}
+  if(ev.spike){$('#e_f1').textContent=ev.spike.wa.v2_macro_f1.toFixed(3); $('#e_auc').textContent=ev.spike.wa.v2_auroc_exag.toFixed(3); $('#k_f1').innerHTML=`${ev.spike.wa.v2_macro_f1.toFixed(3)} <small>best published 0.474 (a tie)</small>`;}
   if(ev.insciout){$('#e_adv').textContent='AUROC '+ev.insciout.advice.auroc_inflated.toFixed(2);}
 }).catch(()=>{});
 

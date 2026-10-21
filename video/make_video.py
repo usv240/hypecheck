@@ -42,7 +42,7 @@ SCENES = [
     ("info", "Every label, score and number has an info button that explains it in plain words."),
     ("evidence", "Does it work? On five hundred and sixty-three expert-labelled release and paper pairs, Claude "
                  "asked to judge flagged thirty to forty-five percent of faithful releases as exaggerated, Opus "
-                 "included. Decider, with a calibrated threshold, flags six point seven percent, and edges the best "
+                 "included. Decider, with a calibrated threshold, flags six point seven percent, and matches the best "
                  "published system on overall accuracy without training on the task."),
     ("hypewatch", "Then we pointed it at the real world. HypeWatch checks every research release from the US "
                   "National Institutes of Health in the past year against the paper it cites, with Claude's "

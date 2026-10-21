@@ -68,7 +68,7 @@ Status key:
 |---|---|---|
 | 1 | Two numbers | ✅ Benchmark (W&A F1 / false flags), plus a second, independent set: InSciOut real releases, AUROC 0.84 |
 | 2 | Cases from outside | ✅ All data is published expert coding |
-| 3 | Named baseline beaten | ✅ Beats the published SOTA 0.4735 and every Claude model asked the same question (Haiku 4.5 0.358, Sonnet 4.6 0.401, Opus 4.6 0.460) |
+| 3 | Named baseline beaten | ✅ Ties the published best (0.4735, trained) zero-shot; beats Haiku 4.5 and Sonnet 4.6 on macro-F1 and all three Claude models on false flags, each with a paired-bootstrap 95% CI (`research/significance.py`) |
 | 4 | Negative control is the headline | ✅ 6.7% false flags on faithful releases vs 29.6–44.9% for Claude |
 | 5 | Loop closes into the user's system | ✅ The release is published to the outbox only when clean. The publish record lists review-band sentences |
 | 6 | Depth on one surface | ✅ One decision, five measurements |

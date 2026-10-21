@@ -65,6 +65,8 @@ V2 reaches 0.498, above the published MT-PET best of 0.4735. That comparison has
 - MT-PET was trained on 100 in-task pairs plus auxiliary data, while Decider here is untrained.
 - This is one run on 563 items. We have not computed a CI yet, so do not call it a resolved win.
 
+**CI added 2026-10-21** (`research/significance.py`, paired bootstrap, 5,000 resamples): macro-F1 0.498, 95% CI 0.452–0.541. 0.4735 lies inside it, so this is a **tie with the published best**, not a win. Gains over Haiku 4.5 (+0.141, CI 0.085–0.198) and Sonnet 4.6 (+0.098, CI 0.038–0.158) are outside chance; over Opus 4.6 (+0.039, CI −0.023–0.101) they are not. Fewer false flags than all three Claude models is outside chance (smallest gap, Sonnet: 22.9 points, CI 17.8–27.9).
+
 ### Yu19 (3,061 sentences)
 
 **Scoring error, disclosed.**

@@ -11,8 +11,8 @@ Two numbers first:
   wrongly flagged 6.7%. Claude, asked the same question, flagged 29.6% (Sonnet 4.6), 40.0% (Opus 4.6)
   and 44.9% (Haiku 4.5).
 - **Overall accuracy.** On the full benchmark of 563 expert-labelled pairs, Strands Decider scores
-  macro-F1 0.498 with no training on the task. The best published system, which was trained on
-  it, scores 0.4735.
+  macro-F1 0.498 (95% CI 0.452–0.541) with no training on the task. The best published system,
+  which was trained on it, scores 0.4735: a statistical tie, reached without training.
 
 - Live demo: https://d174bz5yly61n4.cloudfront.net (the "New here?" tour takes 30 seconds)
 - Code, Apache-2.0: https://github.com/usv240/hypecheck
@@ -167,7 +167,7 @@ the false-flag rate.
 - At the strict threshold the gate catches 39% of exaggerations. It is a safety net; a press
   officer still reads the draft.
 - The animal-to-human check is weak (AUROC 0.61, 45 releases), so it is shown as a hint only.
-- The test set has 563 pairs, which gives wide intervals. The edge over 0.4735 is one run.
+- The test set has 563 pairs, which gives wide intervals. Against the published best (0.4735) the result is a tie, not a win; against Claude's false flags the gap is far outside chance (`research/significance.py`).
 - The demo server runs Decider on CPU, about six times slower than a GPU, because a GPU quota
   request was still pending.
 

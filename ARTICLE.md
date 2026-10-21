@@ -59,7 +59,7 @@ We asked Claude on Bedrock the same question on 563 expert-labelled press-releas
 | | Decider 2B (no training) | Claude Haiku 4.5 | Claude Sonnet 4.6 | Claude Opus 4.6 |
 |---|---|---|---|---|
 | Honest releases wrongly flagged | **6.7%** | 44.9% | 29.6% | 40.0% |
-| Overall accuracy (macro-F1; best published system: 0.474) | **0.498** | 0.358 | 0.401 | 0.460 |
+| Overall accuracy (macro-F1; best published system 0.474, a statistical tie) | **0.498** | 0.358 | 0.401 | 0.460 |
 | Time per decision | 0.16 s on a laptop GPU | 2.0 s | 0.9 s | 5.3 s |
 | Cost per sentence | $0.0002 on our CPU server, $0 on your own GPU | $0.0005 | $0.0010 | $0.0056 |
 

@@ -20,7 +20,8 @@ HypeCheck reads a draft health press release next to the paper it reports, flags
 
 **Headline numbers (all on public expert-labelled data, pre-registered):**
 - Per 1,000 honest sentences: Claude Sonnet as the judge wrongly blocks 296 for $0.97; HypeCheck blocks 67 for $0.18 ($0 on your own GPU).
-- Exaggeration detection macro-F1 0.498 zero-shot on 563 pairs (published best 0.4735, trained; Claude Opus 4.6 0.460).
+- Exaggeration detection macro-F1 0.498 zero-shot on 563 pairs (95% CI 0.452–0.541): level with the published best (0.4735, trained). Claude Opus 4.6 0.460.
+- Every gap to Claude on false flags is outside chance (paired bootstrap; smallest, Sonnet: 22.9 points, CI 17.8–27.9).
 - Faithful releases wrongly flagged: 6.7%, against Claude 29.6–44.9% (Sonnet 4.6, Opus 4.6, Haiku 4.5). The calibrated promise is ≤10%, and the measured rate on 441 unseen pairs is 7.7%.
 - The agent is hosted on Amazon Bedrock AgentCore Runtime; Decider runs on EC2 behind CloudFront.
 - HypeWatch: 85 NIH releases (2023–2026) checked against their papers. 15.3% have a sentence the strict public rule blocks (43.5% under the benchmark rule). Claude rewrites pass Decider's check 67% of the time.

@@ -36,7 +36,7 @@ Point at the screen as the events arrive:
 > "Why not ask Claude to check itself? We did. On 563 expert-labelled press-release pairs,
 > Claude flagged 30 to 45% of the *faithful* releases as exaggerated, depending on the model,
 > Opus included. Decider, with a threshold fitted by conformal calibration, flags 6.7%, and
-> still catches twice as many real exaggerations as Haiku at that false-flag rate. Zero-shot, it also edges the best
+> still catches twice as many real exaggerations as Haiku at that false-flag rate. Zero-shot, it also matches the best
 > published system on this benchmark. And because Decider cannot generate text, Claude cannot
 > talk it out of a verdict."
 

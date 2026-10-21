@@ -30,6 +30,8 @@ Yu's labels are 1 = direct causal, 2 = conditional, 3 = correlational (not the o
 | Advisory checks on real releases | `python -m research.insciout_eval --insciout "path/open data"` | `insciout/` |
 | Signal combination (train-only rule, not adopted) | see `PREREGISTRATION-combo.md` | `calibration/combo_decision.json` |
 | Prompt wording (train-only rule, not adopted) | `python research/prompt_select.py` | `prompt-select/` |
+| Cascade: Claude only on REVIEW (offline, not adopted) | `python research/cascade_eval.py` | `cascade/` |
+| Paired-bootstrap 95% CIs for every headline gap (offline) | `python research/significance.py` | `significance/` |
 
 `python -m pytest -q tests` runs the offline tests of the pattern itself.
 

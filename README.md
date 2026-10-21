@@ -7,9 +7,10 @@ anything is published.**
 **Every 1,000 honest press-release sentences: Claude Sonnet as the judge wrongly blocks 296 and costs $0.97. HypeCheck wrongly blocks 67 and costs $0.18 ($0 on your own GPU).**
 
 On 345 press releases that experts judged faithful to their paper, HypeCheck wrongly flagged
-**6.7%**. Claude asked the same question flagged 29.6% (Sonnet 4.6) to 44.9% (Haiku 4.5). On the
-full 563-pair benchmark it scores macro-F1 **0.498 zero-shot**, against 0.4735 for the best
-published system, which was trained on the task.
+**6.7%**. Claude asked the same question flagged 29.6% (Sonnet 4.6) to 44.9% (Haiku 4.5). The gap
+holds against all three Claude models in a paired bootstrap (Sonnet: 22.9 points fewer false flags,
+95% CI 17.8–27.9). On the full 563-pair benchmark it scores macro-F1 **0.498 zero-shot**
+(95% CI 0.452–0.541), level with the best published system (0.4735), which was trained on the task.
 
 | | |
 |---|---|
@@ -64,8 +65,8 @@ predictions failed.
 
 | Measurement | Decider 2B (zero-shot) | Claude on Bedrock, same question |
 |---|---|---|
-| Faithful releases wrongly flagged (the negative control) | **6.7%** | Haiku 4.5 44.9% · Sonnet 4.6 29.6% · Opus 4.6 40.0% |
-| Exaggeration macro-F1, 563 pairs (Wright & Augenstein 2021) | **0.498** (published best 0.4735, trained) | Haiku 0.358 · Sonnet 0.401 · Opus 0.460 |
+| Faithful releases wrongly flagged (the negative control) | **6.7%** (CI 4.1–9.4%) | Haiku 4.5 44.9% · Sonnet 4.6 29.6% · Opus 4.6 40.0% |
+| Exaggeration macro-F1, 563 pairs (Wright & Augenstein 2021) | **0.498** (CI 0.452–0.541; published best 0.4735, trained: a statistical tie) | Haiku 0.358 · Sonnet 0.401 · Opus 0.460 |
 | Exaggerates-vs-not AUROC | **0.716** | Haiku 0.570 · Sonnet 0.580 · Opus 0.663 |
 | Conformal promise (≤10% false flags) vs measured, 441 unseen non-overclaim pairs | 7.7% (95% CI 5.6–10.6%) | — |
 | Recall at that strict threshold | 39% (CI 30–47%) | Haiku at ~10% false flags: 18% |
