@@ -156,6 +156,17 @@ label.radio{font-weight:400;margin:4px 0;font-size:14.5px;gap:8px} label.radio i
 .sent{display:grid;grid-template-columns:90px 1fr auto;gap:10px;align-items:start;padding:10px 11px;border-radius:10px;margin:6px 0;border-left:4px solid var(--line);background:var(--soft)}
 .sent.block{background:var(--badbg);border-left-color:var(--bad)} .sent.review{background:var(--revbg);border-left-color:var(--rev)} .sent.ok{background:var(--okbg);border-left-color:var(--ok)}
 .sent .txt{font-size:15px} .sent .meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+mark.cue{background:transparent;color:inherit;border-bottom:2px solid currentColor;padding:0 1px;font-weight:650}
+mark.cue.c3{color:var(--bad)} mark.cue.c2{color:var(--rev)} mark.cue.c1{color:var(--accent)}
+.why{grid-column:2/4;font-size:13.5px;color:var(--fg);display:grid;gap:6px;margin-top:2px}
+.ladder{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;max-width:420px}
+.rung{font-size:11px;font-weight:700;text-align:center;padding:4px 2px;border-radius:6px;background:var(--card);color:var(--muted);border:1px solid var(--line)}
+.rung.gap{background:var(--badbg);color:var(--bad);border-color:transparent}
+.rung.paper{outline:2px solid var(--ok);outline-offset:-2px;color:var(--ok)}
+.rung.sent{background:var(--bad);color:#fff;border-color:transparent}
+.rung.same{background:var(--ok);color:#fff;border-color:transparent}
+.rung small{display:block;font-weight:600;font-size:10px;opacity:.9}
+.fixcta{margin-top:14px;padding:14px 16px;border-radius:12px;background:var(--soft);display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .score{font-family:var(--mono);font-size:13px;font-weight:700}
 .tag{font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 7px;white-space:nowrap;background:var(--card)}
 .pending{opacity:.55}
@@ -523,7 +534,7 @@ fetch('/api/evidence').then(r=>r.json()).then(ev=>{
 
 function loadExample(i){const x=examples[i]; if(!x) return; $('#ex').value=i; $('#draft').value=x.draft; $('#concl').value=x.conclusion; $('#pmid').value='';}
 $('#ex').onchange=e=>loadExample(e.target.value);
-$('#heroTry').onclick=()=>{loadExample(0); $('#try').scrollIntoView(); setTimeout(()=>$('#run').focus(),400);};
+$('#heroTry').onclick=()=>{loadExample(0); $('#out').scrollIntoView({block:'start'}); scrollBy(0,-80); start('check');};
 
 /* running */
 function body(){const b={draft:$('#draft').value.trim(), engine:(document.querySelector('input[name=engine]:checked')||{}).value||'agentcore'}; const p=$('#pmid').value.trim(); if(p) b.pmid=p; else b.conclusion=$('#concl').value.trim(); return b;}
@@ -531,9 +542,34 @@ function validate(b){if(!b.draft) return 'Paste a draft press release, or choose
 function busy(on,t){$('#run').disabled=on; $('#check').disabled=on; $('#status').classList.toggle('busy',on); $('#statusText').textContent=t||'';}
 function scoreTip(s){const w=s.zone==='block'?`above the block threshold (${thr.b.toFixed(2)})`:s.zone==='review'?`between the review (${thr.r.toFixed(2)}) and block (${thr.b.toFixed(2)}) thresholds`:`below the review threshold (${thr.r.toFixed(2)})`;
   return `<b>Overclaim score ${s.p_overclaim.toFixed(2)}</b>: the probability this sentence claims a stronger relationship than the paper. It is ${w}. Decider read it as "${READ[s.strength]}".`;}
+/* "Why?" explanation: cue words that usually signal claim strength, and a claim ladder.
+   The cues are a reading aid for people; Decider reads the whole sentence, not a word list. */
+const LEVEL={no_relationship:0,correlational:1,conditional_causal:2,direct_causal:3};
+const RUNG=['no link','linked','may cause','causes'];
+const CUES=[
+  [3,/\b(saves? lives|saving lives|causes?|caused|causing|prevents?|prevented|preventing|reduces?|reduced|reducing|increases?|increased|boosts?|boosted|cuts?|improves?|improved|leads? to|led to|protects? against|stops?|cures?|eliminates?|triggers?|reverses?|reversed|will (?:lower|reduce|raise|increase|improve|prevent|cause|grow|double|cut))\b/gi],
+  [2,/\b(may|might|could|can|suggests?|suggesting|potential(?:ly)?|appears? to|likely|possible|possibly|promising)\b/gi],
+  [1,/\b(associated with|association|linked (?:to|with)|link between|correlat\w*|related to|more likely|less likely|tends? to|higher rates?|lower rates?)\b/gi],
+];
+function markCues(text){
+  let h=esc(text);
+  for(const [lvl,re] of CUES) h=h.replace(re,m=>`<mark class="cue c${lvl}">${m}</mark>`);
+  return h;}
+function firstCue(text,lvl){for(const [l,re] of CUES){if(l!==lvl) continue; re.lastIndex=0; const m=re.exec(text); re.lastIndex=0; if(m) return m[0];} return null;}
+let PAPER={text:'',strength:null};
+function whyLine(s){
+  if(!PAPER.strength||!(s.zone==='block'||s.zone==='review')) return '';
+  const sp=LEVEL[s.strength], pp=LEVEL[PAPER.strength];
+  const cells=RUNG.map((r,i)=>{let c='rung'; if(i===sp&&i===pp) c+=' same'; else if(i===sp) c+=' sent'; else if(i===pp) c+=' paper'; else if(i>pp&&i<sp) c+=' gap';
+    const tag=i===sp&&i===pp?'<small>both</small>':i===sp?'<small>sentence</small>':i===pp?'<small>paper</small>':'';
+    return `<div class="${c}">${r}${tag}</div>`;}).join('');
+  const qs=firstCue(s.sentence,sp), qp=firstCue(PAPER.text,pp);
+  const txt=sp>pp?`This sentence says <b>${RUNG[sp]}</b>${qs?` (“${esc(qs)}”)`:''}; the paper only says <b>${RUNG[pp]}</b>${qp?` (“${esc(qp)}”)`:''}.`
+    :`Decider is unsure whether this says more than the paper (<b>${RUNG[pp]}</b>${qp?`, “${esc(qp)}”`:''}), so it is listed for an editor rather than blocked.`;
+  return `<div class="why"><div class="ladder" role="img" aria-label="Claim strength: paper ${RUNG[pp]}, sentence ${RUNG[sp]}">${cells}</div><div>${txt} ${iBtn('<b>Why this was flagged.</b> Claims climb a ladder: no link, linked, may cause, causes. HypeCheck flags a sentence that sits higher than the paper. Underlined words usually signal a rung; they help you read the verdict, but Decider judges the whole sentence, not a word list.')}</div></div>`;}
 function sentRow(s,pending){const z=pending?'wait':s.zone; return `<div class="sent ${pending?'pending':s.zone}">
-  <span class="chip ${z}">${pending?'… reading':ZONE[s.zone]}</span><span class="txt">${esc(s.sentence)}</span>
-  <span class="meta">${pending?'':`<span class="score">${s.p_overclaim.toFixed(2)} ${iBtn(scoreTip(s))}</span><span class="tag">${READ[s.strength]} ${iBtn(STRENGTH_TIP[s.strength])}</span>`}</span></div>`;}
+  <span class="chip ${z}">${pending?'… reading':ZONE[s.zone]}</span><span class="txt">${pending?esc(s.sentence):markCues(s.sentence)}</span>
+  <span class="meta">${pending?'':`<span class="score">${s.p_overclaim.toFixed(2)} ${iBtn(scoreTip(s))}</span><span class="tag">${READ[s.strength]} ${iBtn(STRENGTH_TIP[s.strength])}</span>`}</span>${pending?'':whyLine(s)}</div>`;}
 function splitSentences(t){return t.trim().split(/(?<=[.!?])["')\]]?\s+(?=[A-Z0-9"'(])/).map(x=>x.trim()).filter(x=>x.length>3);}
 function actionText(a,n,rv){return a==='guide'?`blocked: ${n} sentence${n>1?'s claim':' claims'} more than the paper`:a==='proceed'?`clean${rv?`, ${rv} for review`:''}: publish`:a==='confirm'?'still blocked after 3 rewrites: a person decides':`${n} to block${rv?`, ${rv} for review`:''}`;}
 const ACT_TIP={guide:'<b>Guide</b>: the gate hands Claude its turn back with the blocked sentences and why, and asks for a rewrite of only those.',proceed:'<b>Proceed</b>: nothing is above the block threshold, so the publish tool runs. Review-zone sentences go into the publish record for an editor.',confirm:'<b>Confirm</b>: after 3 rewrites something still overclaims, so the agent stops and asks a person.',check:'Decider-only check: scores shown, nothing rewritten or published.'};
@@ -542,9 +578,10 @@ function advis(a){const t=[];
   if(a.animal_to_human>=0.5) t.push(`animal → human? (${a.animal_to_human.toFixed(2)}) ${iBtn('Weak hint (AUROC 0.61): the release may present an animal or lab result as if it applied to people.')}`);
   return t.length?`<p class="muted">Hints: ${t.join(' · ')}</p>`:'';}
 
+let lastBlocks=0;
 async function start(kind){
   const b=body(), v=validate(b); if(v){$('#results').innerHTML=`<p class="err">${esc(v)}</p>`; return;}
-  busy(true,'Sending…'); const R=$('#results'); R.innerHTML=''; let cur=null, prevText=null;
+  busy(true,'Sending…'); const R=$('#results'); R.innerHTML=''; let cur=null, prevText=null; lastBlocks=0;
   try{
     const r=await fetch('/api/'+kind,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(b)});
     const j=await r.json(); if(!r.ok) throw new Error(j.detail?.[0]?.msg||j.detail||r.statusText);
@@ -553,7 +590,7 @@ async function start(kind){
       if(e.type==='host') R.insertAdjacentHTML('beforeend',`<div class="host">${e.host==='agentcore-runtime'?'☁ Agent hosted on Amazon Bedrock AgentCore Runtime':'▣ Agent running on the demo server'} ${iBtn(e.note?esc(e.note):(e.host==='agentcore-runtime'?'This run executes in AgentCore Runtime: Claude via Bedrock, Decider via the key-protected endpoint on the EC2 server.':'This run executes in-process on the EC2 demo server.'))}</div>`);
       if(e.type==='queued') busy(true, e.position>1?`Waiting in line: position ${e.position}`:'Starting…');
       if(e.type==='started') busy(true, kind==='run'?'Claude is reading the draft…':'Decider is reading…');
-      if(e.type==='paper') R.insertAdjacentHTML('beforeend',`<p class="muted"><b>Paper${e.pmid?' (PMID '+esc(e.pmid)+')':''}</b>${e.title?': '+esc(e.title):''} ${iBtn('The yardstick. Its claim strength is rated once, and every sentence is compared with it.')}<br>“${esc(e.conclusion)}”</p>`);
+      if(e.type==='paper'){PAPER={text:e.conclusion||'',strength:null}; R.insertAdjacentHTML('beforeend',`<p class="muted"><b>Paper${e.pmid?' (PMID '+esc(e.pmid)+')':''}</b>${e.title?': '+esc(e.title):''} ${iBtn('The yardstick. Its claim strength is rated once, and every sentence is compared with it.')}<br>“${markCues(e.conclusion||'')}”</p>`);}
       if(e.type==='round_start'){const sents=splitSentences(e.text); let diff='';
         if(prevText!==null&&prevText!==e.text) diff=`<details open><summary>What Claude changed ${iBtn('Words Claude removed are struck through in red; words it added are in green.')}</summary><pre class="diff">${wordDiff(prevText,e.text)}</pre></details>`;
         prevText=e.text;
@@ -563,7 +600,7 @@ async function start(kind){
       if(e.type==='progress'&&cur){const rows=cur.querySelector('[data-rows]').children; if(rows[e.index]) rows[e.index].outerHTML=sentRow(e,false);
         cur.querySelector('.prog div').style.width=(100*(e.index+1)/e.total)+'%'; cur.querySelector('[data-count]').textContent=`${e.index+1} of ${e.total} sentences read`;
         busy(true, e.index+1<e.total?`Decider is reading sentence ${e.index+2} of ${e.total}…`:'Checking the advice level…');}
-      if(e.type==='verdict'&&cur){const n=e.sentences.filter(s=>s.zone==='block').length, rv=e.sentences.filter(s=>s.zone==='review').length;
+      if(e.type==='verdict'&&cur){PAPER.strength=e.paper_strength; const n=e.sentences.filter(s=>s.zone==='block').length, rv=e.sentences.filter(s=>s.zone==='review').length; lastBlocks=n;
         cur.querySelector('[data-rows]').innerHTML=e.sentences.map(s=>sentRow(s,false)).join('');
         const a=cur.querySelector('[data-act]'); a.className='act '+e.action; a.innerHTML='→ '+actionText(e.action,n,rv)+' '+iBtn(ACT_TIP[e.action]);
         cur.querySelector('[data-adv]').innerHTML=advis(e.advisory||{});
@@ -574,6 +611,9 @@ async function start(kind){
         R.insertAdjacentHTML('beforeend',`<div class="round"><h3>Where the time went ${iBtn('Green: time in Strands Decider making decisions. Blue: time in Claude on Amazon Bedrock reading and writing.')}</h3>
           <div class="tbar"><div class="d" style="width:${100*d/tot}%"></div><div class="l" style="width:${100*l/tot}%"></div></div>
           <p class="muted">Decider: ${e.decider_calls} decisions in ${(d/1000).toFixed(1)} s (${(d/Math.max(1,e.decider_calls)).toFixed(0)} ms each)${kind==='run'?` · Claude on Bedrock: ${(l/1000).toFixed(1)} s${e.usage?.inputTokens?`, ${e.usage.inputTokens} input + ${e.usage.outputTokens} output tokens`:''} · ${e.rounds} round(s)`:' · no language model used'}</p></div>`);
+        if(kind==='check') R.insertAdjacentHTML('beforeend', lastBlocks?`<div class="fixcta"><span><b>${lastBlocks} sentence${lastBlocks>1?'s claim':' claims'} more than the paper.</b> Let Claude rewrite ${lastBlocks>1?'them':'it'}; Decider checks every rewrite before anything is published.</span><button class="btn primary" type="button" id="fixBtn">Let Claude fix it →</button></div>`
+          :`<div class="fixcta"><span><b>Nothing here claims more than the paper.</b> It would publish as written.</span></div>`);
+        document.getElementById('fixBtn')?.addEventListener('click',()=>start('run'));
         busy(false, kind==='run'?(e.published?'Done: published.':'Done: not published.'):'Done.');}
     };
     es.addEventListener('end',()=>{es.close(); busy(false,$('#statusText').textContent);});
