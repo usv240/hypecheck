@@ -37,7 +37,12 @@ def build() -> Path:
     out.mkdir(parents=True)
     pip_args = ["install", "-q", "--platform", "manylinux2014_aarch64", "--implementation", "cp",
                 "--python-version", "3.12", "--only-binary=:all:", "--upgrade", *DEPS]
-    if os.name == "nt":
+    if os.environ.get("AGENTCORE_PINS"):
+        # A pinned list resolved on Linux (pip install --dry-run --report with the same --platform
+        # flags). Installing it with --no-deps skips marker evaluation, so this works on any host.
+        subprocess.run([sys.executable, "-m", "pip", *pip_args[:-len(DEPS)], "--no-deps",
+                        "-r", os.environ["AGENTCORE_PINS"], "--target", str(out)], check=True)
+    elif os.name == "nt":
         # pip on Windows evaluates environment markers (e.g. pywin32; sys_platform == "win32") against
         # the host even with --platform, so resolve the Linux wheels from WSL instead.
         drive, rest = str(out).split(":", 1)

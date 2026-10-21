@@ -114,7 +114,11 @@ predictions down first.
 - **Amazon Bedrock** serves Claude.
 - **Amazon EC2** runs Decider and the web page, behind **Amazon CloudFront**.
 - **AWS Systems Manager Parameter Store** holds the key that protects the Decider endpoint.
-- If AgentCore is ever unavailable, the page runs the same agent on EC2.
+- **Backups at every step:**
+  - If AgentCore is unavailable, the page runs the same agent on EC2.
+  - If Claude Sonnet is throttled, the agent switches to Claude Haiku.
+  - If Decider can't be reached, the gate refuses to publish (`Deny`) rather than letting text
+    through unchecked.
 
 ## What we learned
 

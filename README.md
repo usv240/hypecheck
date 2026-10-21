@@ -164,10 +164,20 @@ Bedrock).
 | **REST API** | `POST /v1/check` (free, 300 a day per key): every sentence's claim strength, overclaim probability and zone. `POST /v1/rewrite` (20 a day): Claude fixes the blocked sentences, and Decider verifies each fix. Keys are issued instantly at `/developers`, with no signup; only a SHA-256 hash is stored. OpenAPI reference at `/docs` |
 | **MCP connector** | `https://d174bz5yly61n4.cloudfront.net/mcp` exposes `check_claims` and `suggest_rewrites` to any MCP client: Strands, Claude Desktop (via `mcp-remote`), Kiro, Cursor. A Strands agent on Bedrock has been verified using it to block "Statins prevent dementia" (0.73) |
 | **Bring your own data** | A form on `/developers` (paste or upload a CSV, or load a sample from a non-health domain) or `POST /v1/calibrate` with 10–60 of your labelled pairs returns a split-conformal threshold with a stated false-flag rate for your domain |
+| **Python package** | `pip install "git+https://github.com/usv240/hypecheck"` installs the reusable `decision_pattern` gate on its own |
 | **Bring your own AWS** | `deploy/hypecheck-stack.yaml` deploys the whole stack into your account: one EC2 instance, a least-privilege Bedrock role, access through SSM, no SSH. Test-launched end to end |
 
 Claude rewrites spend real Bedrock money, so they also have a shared ceiling of $2 per day. Checks
 never call a language model.
+
+**Backups, and failing closed:**
+- **The agent's host:** the agent runs on AgentCore Runtime, and the page falls back to the same
+  agent on EC2 if AgentCore fails.
+- **Claude:** Sonnet 4.6 falls back to Haiku 4.5 if it is throttled or unavailable. This was
+  tested by forcing a model the account cannot use.
+- **Decider:** the client takes several servers and fails over between them.
+- **Failing closed:** if no Decider answers, or there is no source to check against, the gate
+  returns `Deny` and nothing is published unchecked.
 
 ## Run it yourself
 

@@ -70,6 +70,7 @@ agent = Agent(model="us.anthropic.claude-sonnet-4-6", tools=[publish_release], i
 | A sentence scores between `review_threshold` and `threshold` | (counted, not blocking) | Low-confidence zone. Listed in `gate.review` so the publish record can carry it for an editor |
 | Still blocked after `max_rounds` rewrites | `Confirm(prompt=…)` | A person decides (Strands interrupt) |
 | Nothing above `threshold` | `Proceed()` | The tool runs |
+| No source text, or Decider unreachable | `Deny(reason=…)` | Fails closed: nothing is published unchecked. `on_deny` reports why |
 
 ## 4. Calibrate the thresholds on your own data
 
@@ -90,7 +91,13 @@ n ≥ 1/α − 1 faithful pairs.
 
 The same gate is a hosted API and an MCP tool, and you can calibrate it on your own pairs. Instructions and a free key are at https://d174bz5yly61n4.cloudfront.net/developers.
 
-## 6. Notes for reuse
+## 6. Install
+
+```bash
+pip install "git+https://github.com/usv240/hypecheck"   # installs decision_pattern only
+```
+
+## 7. Notes for reuse
 
 - It works for any "derived text must not exceed its source" job: summaries, RAG answers,
   patient leaflets, changelogs. `examples/leaflet_gate.py` runs it unchanged on a leaflet writer.
@@ -100,4 +107,23 @@ The same gate is a hosted API and an MCP tool, and you can calibrate it on your 
   - No LLM tokens are spent on judging.
 - The client is standard library only (`decider.py`). Set `STRANDS_DECIDER_KEY` to send an
   `x-hypecheck-key` header when Decider sits behind a guarded proxy.
+- Backups: give `STRANDS_DECIDER_URL` several servers, comma-separated, and the client fails
+  over to the next one. If none answers, the gate returns `Deny`. In HypeCheck's own agent, a
+  throttled or unavailable Claude Sonnet 4.6 falls back to Claude Haiku 4.5
+  (`HYPECHECK_FALLBACK_MODEL`). Both models are cross-region inference profiles.
 - Offline tests: `pytest -q tests` (uses a fake decider; no server or Bedrock needed).
+
+## 8. What this uses from Strands Decider and the hackathon brief
+
+| Capability | How it is used here |
+|---|---|
+| `choice` questions | Claim strength (4 options) and advice level (4 options), asked of the source and of each sentence |
+| `noul` (yes/no) | The animal-to-human hint. It is weak (AUROC 0.61), so it informs the rewrite but never blocks |
+| `score` questions | Not used. The Decider repo reports that `score` does not hold up on unseen tasks behind a confidence gate. An ordered `choice` plus probabilities gives the same ladder with calibrated probabilities |
+| Calibrated probabilities | Overclaim probability = Σ P(sentence level i)·P(source level j) for i > j. Thresholds come from conformal calibration, not the illustrative 0.9/0.5 bands |
+| Low-confidence handling | A REVIEW zone between the two calibrated thresholds: never blocks, always surfaced to an editor |
+| All four intervention actions | `Proceed`, `Guide`, `Confirm` and `Deny` (see section 3) |
+| Amazon Bedrock | Claude Sonnet 4.6 writes and rewrites, with Haiku 4.5 as its backup. Haiku, Sonnet and Opus were also measured as judges for comparison |
+| Measured latency and cost | 160 ms per decision on a laptop GPU, about 0.9 s on the CPU demo server, $0 in LLM tokens, against Claude as the judge (README) |
+| Decision patterns | **Guardrails** is the declared pattern. **Context scoring**: HypeWatch asks Decider for the strength of each abstract sentence and compares against the strongest one. **Model routing**: we measured a Bylaw-style cascade (Claude only on REVIEW) and did not adopt it (`research/PREREGISTRATION-cascade.md`) |
+| Vision (`--vision`) | Not used. The text claims are the thing being checked, and the Decider docs report that its confidence doesn't drop when an image is missing |
