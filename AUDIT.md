@@ -54,7 +54,7 @@ Status key:
 | Wall of text, no "60-second tour" | 🔧 The README opens with a judge-first summary: tagline, two numbers, links, screenshot. Detail sits below the fold |
 | Jargon (AUROC, conformal, macro-F1) | 🔧 Each term has a ⓘ on the site and a one-line plain-English gloss in the article |
 | No video | ✅ A 2:34 narrated video exists, made by `video/make_video.py` (live site, Amazon Polly voice, no music). ⏳ The author uploads it to YouTube |
-| Learnings missing | ✅ The article has a "What we learned" section, including the two failed pre-registered experiments |
+| Learnings missing | ✅ The article has a "What we learned" section, including the failed pre-registered predictions |
 
 ### Originality (15%)
 

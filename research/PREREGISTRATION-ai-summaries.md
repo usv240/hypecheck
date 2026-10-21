@@ -73,3 +73,42 @@ The scoring is the same public rule HypeWatch uses on NIH releases, with the sam
 ---
 
 ## Results (appended after the run)
+
+Run 2026-10-21 on the EC2 demo box (CPU Decider), with
+`python -m research.ai_summary_eval`. All 85 abstracts were fetched; none was skipped. Per-item
+output is in `results/ai-summaries/items.jsonl` (SHA-256 listed in `results/MANIFEST.json`). The
+summary is in `results/ai-summaries/summary.json`.
+
+| Measure | Sonnet 4.6 | Haiku 4.5 | NIH press office, same papers |
+|---|---|---|---|
+| Summaries with ≥ 1 BLOCK sentence | **11.8%** (10 of 85) | **10.6%** (9 of 85) | 15.3% of releases (longer texts: up to 8 sentences) |
+| Per-sentence BLOCK rate | 4.3% (11 of 256) | 3.9% (10 of 255) | 2.9% (18 of 615) |
+| Summaries with ≥ 1 REVIEW sentence | 17.6% | 21.2% | — |
+| Flagged summaries left with no BLOCK after the gate | **90%** (9 of 10) | **89%** (8 of 9) | — |
+| Exploratory: advice inflated (> 0.5) | 8.2% | 2.4% | — |
+
+| Prediction | Result | Hit? |
+|---|---|---|
+| P1: 5–25% of Sonnet summaries have a BLOCK | 11.8% | **yes** |
+| P2: Haiku's per-sentence BLOCK rate is higher than Sonnet's | 3.9% vs 4.3% | **no** |
+| P3: both models' per-sentence rates are ≥ the NIH rate of 2.93% | 4.3% and 3.9% | **nominally yes, but within chance** (Fisher exact vs NIH: p = 0.31 and 0.53) |
+| P4: ≥ 85% of flagged summaries are fixed by the gate | 90% and 89% | **yes** |
+
+**Decision.** Both models exceed the 5% bar, so AI summaries are added to the site and article as
+a second use case.
+
+**How to read it:**
+- **What the flags look like.** The paper on medication for opioid use disorder in jail reports
+  that it "was associated with … decreased risks of overdose, death from any cause". Both Claude
+  summaries said expanding it "can save lives". Claude's rewrites under the gate ("may be associated
+  with reduced risks of overdose, death, and reincarceration") passed Decider's re-check.
+- **Rewrites now pass about 90% of the time, against 67% in HypeWatch.** That supports the
+  explanation given in the HypeWatch pre-registration: there, rewrites were held to a stricter
+  rule than the flags. Here both use the same rule. This is a post-hoc reading, not a test.
+- **Claude is no worse than the press office per sentence.** The gap is within chance, which fits
+  Peters & Chin-Yee's finding that Claude is the most faithful family they tested. The claim we
+  make is narrower: about 1 in 9 Claude summaries contains a sentence our gate would stop, and the
+  gate fixes about 9 in 10 of those.
+- **No ground truth.** These are Decider's flags. There are no human labels, so precision on this
+  set is unknown. On the labelled benchmark, about 58% of BLOCKs at this threshold are real
+  overclaims.

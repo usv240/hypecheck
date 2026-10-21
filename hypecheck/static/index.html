@@ -424,6 +424,25 @@ footer a{color:#cfe0ff}
   </div>
 </div></section>
 
+<section id="aisum" style="padding-top:0"><div class="wrap">
+  <div class="card hw">
+    <div>
+      <p class="eyebrow">AI summaries · second use case</p>
+      <h2 style="font-size:clamp(24px,2.8vw,32px)">AI summaries of science overclaim too. The same gate catches them.</h2>
+      <p class="sub" style="margin-bottom:14px">A 2025 study found that AI summaries were nearly five times as likely as expert-written ones to state findings more broadly than the paper did <button class="i" type="button" data-tip="Peters &amp; Chin-Yee, <i>Royal Society Open Science</i> 2025: 4,900 summaries from 10 models; odds ratio 4.85 (95% CI 3.06–7.70) against NEJM Journal Watch summaries. Claude models were the most faithful family they tested.">i</button>. We asked Claude to summarise the same 85 NIH papers.</p>
+      <div class="sent block" style="margin-bottom:8px"><span class="chip block">✕ BLOCK</span><span class="txt">“…expanding access to opioid use disorder medications in jails <u>can save lives</u>…” <small style="color:var(--muted)">Claude Sonnet 4.6</small></span></div>
+      <div class="sent ok" style="margin-bottom:8px"><span class="chip ok">✓ OK</span><span class="txt">“…<u>may be associated with</u> reduced risks of overdose, death, and reincarceration…” <small style="color:var(--muted)">after the gate</small></span></div>
+      <p class="sub" style="font-size:14px;margin:0">The paper: treatment in jail “was associated with” lower risks. <a href="https://github.com/usv240/hypecheck/blob/main/research/PREREGISTRATION-ai-summaries.md">Pre-registered method and all 170 summaries</a></p>
+    </div>
+    <div class="nums">
+      <div><b>1 in 9</b><span>Claude summaries had a sentence the gate blocks <button class="i" type="button" data-tip="Sonnet 4.6: 10 of 85 summaries (11.8%); Haiku 4.5: 9 of 85 (10.6%). Same strict public rule as HypeWatch. These are Decider's flags, not human labels: on the labelled benchmark about 58% of blocks at this threshold are real overclaims.">i</button></span></div>
+      <div><b>9 in 10</b><span>of those fixed by Claude's rewrite and Decider's re-check <button class="i" type="button" data-tip="Flagged summaries with no blocked sentence left after at most two rewrites: Sonnet 9 of 10, Haiku 8 of 9. Predicted ≥85% before the run.">i</button></span></div>
+      <div><b>170</b><span>summaries from Claude Sonnet 4.6 and Haiku 4.5</span></div>
+      <div><b>1 of 4</b><span>predictions missed, and reported <button class="i" type="button" data-tip="We predicted Haiku would overclaim more often than Sonnet per sentence. It didn't (3.9% vs 4.3%). Both models' rates are close to the NIH press office's 2.9%; the difference is within chance.">i</button></span></div>
+    </div>
+  </div>
+</div></section>
+
 <section id="builders" style="padding-top:0"><div class="wrap">
   <p class="eyebrow">For builders</p>
   <h2>Drop the same gate into any agent.</h2>

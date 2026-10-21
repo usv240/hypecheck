@@ -22,6 +22,10 @@ In 2014, researchers read 462 university press releases next to their papers. A 
 linked to" into "causes". When the release exaggerated, most of the news did too. When it didn't,
 most of the news didn't (Sumner et al., *BMJ*).
 
+It matters because health news changes what people do. After one burst of coverage questioning
+statins, researchers estimated that about 219,000 people in the UK stopped taking them. They
+caution that the study can't prove the coverage caused it (Matthews et al., *BMJ*, 2016).
+
 A later randomised trial in nine press offices showed the fix works. Releases that matched the
 evidence produced more accurate headlines, and they got just as much coverage (Adams et al.,
 *BMC Medicine*, 2019).
@@ -58,7 +62,7 @@ We asked Claude on Bedrock the same question on 563 expert-labelled press-releas
 
 | | Decider 2B (no training) | Claude Haiku 4.5 | Claude Sonnet 4.6 | Claude Opus 4.6 |
 |---|---|---|---|---|
-| Honest releases wrongly flagged | **6.7%** | 44.9% | 29.6% | 40.0% |
+| Honest releases wrongly flagged | **6.7%** (95% CI 4.1–9.4%) | 44.9% | 29.6% | 40.0% |
 | Overall accuracy (macro-F1; best published system 0.474, a statistical tie) | **0.498** | 0.358 | 0.401 | 0.460 |
 | Time per decision | 0.16 s on a laptop GPU | 2.0 s | 0.9 s | 5.3 s |
 | Cost per sentence | $0.0002 on our CPU server, $0 on your own GPU | $0.0005 | $0.0010 | $0.0056 |
@@ -70,7 +74,7 @@ We asked Claude on Bedrock the same question on 563 expert-labelled press-releas
 - **It can't be argued with.** Decider returns a number, and plain code decides what to do.
 
 All test data is published expert coding we didn't write. Every experiment was written down,
-predictions included, before it ran, and the two that failed are in the repo.
+predictions included, before it ran: seven experiments, with every missed prediction reported.
 
 ## HypeWatch: the same check on real releases
 
@@ -88,6 +92,22 @@ one cites its paper.
 Every flag sits next to the paper's own words, so a reader can judge. The page updates every
 morning.
 
+## A second use case: AI summaries
+
+AI now writes much of the science people read. A 2025 study compared 4,900 AI summaries with
+expert-written ones. The AI summaries were nearly five times as likely to state findings more
+broadly than the paper did, and Claude was the most faithful family tested (Peters & Chin-Yee,
+*Royal Society Open Science*).
+
+We asked Claude Sonnet 4.6 and Haiku 4.5 to summarise the same 85 NIH papers, and wrote our
+predictions down first.
+- **About 1 in 9 summaries** had a sentence the gate blocks: 11.8% for Sonnet, 10.6% for Haiku.
+- **Example.** A paper says medication for opioid use disorder in jail "was associated with" lower
+  overdose and death risks. Both summaries said expanding it "can save lives".
+- **The gate fixed 9 in 10** of the flagged summaries, re-checked by Decider.
+- **One of four predictions missed:** Haiku did not overclaim more than Sonnet.
+- **Limit:** these are Decider's flags, not human labels.
+
 ## How it runs on AWS
 
 - **Amazon Bedrock AgentCore Runtime** hosts the agent, deployed as plain code with no container.
@@ -102,8 +122,13 @@ morning.
    compared, scored 0.50. "Is A stronger than B?" scored 0.41.
 2. **Measure the cut-off.** The default answer under-called "causes" sentences, yet the model
    *ranked* them very well. A cut-off fitted on labelled data fixed that.
-3. **Write predictions down first.** It made two failed experiments, and one scoring bug, easy to
+3. **Write predictions down first.** It made the failed predictions, and one scoring bug, easy to
    report instead of explain away.
+4. **Put error bars on your own claims.** Our site said Decider scored "above the best published
+   system". A paired bootstrap put the published score inside our 95% interval (0.452–0.541), so
+   it now says "level with". Fewer false alarms than every Claude model survives the same test by
+   a wide margin (smallest gap 22.9 points, 95% CI 17.8–27.9). A tool against overclaiming should
+   not overclaim.
 
 ## Limits we measured
 
@@ -129,6 +154,7 @@ more than its source: summaries, RAG answers, patient materials.
 *Sources:*
 - Sumner et al., *BMJ* 2014
 - Adams et al., *BMC Medicine* 2019
+- Matthews et al., *BMJ* 2016
 - Wright & Augenstein, EMNLP 2021
 - Yu et al., EMNLP 2019
 - InSciOut (CC BY 4.0)

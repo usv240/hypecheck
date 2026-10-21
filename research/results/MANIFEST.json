@@ -1,0 +1,130 @@
+{
+ "models": {
+  "decider": "StrandsAgents/strands-decider-2B-qwen3.5-v1-2610",
+  "claude_sonnet": "us.anthropic.claude-sonnet-4-6",
+  "claude_haiku": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+  "claude_opus": "us.anthropic.claude-opus-4-6-v1"
+ },
+ "files": {
+  "ai-summaries/items.jsonl": {
+   "sha256": "06ddfaec9a3529d77d5634f0f369d75ed2b5d2cc6a871b90efa5fa6ea56fbf6d",
+   "bytes": 323568,
+   "preregistration": "PREREGISTRATION-ai-summaries.md"
+  },
+  "ai-summaries/summary.json": {
+   "sha256": "e3b9ed572a067f012527f6c97854a1115941f98683d4bdb2e3bacad1e20000f1",
+   "bytes": 722,
+   "preregistration": "PREREGISTRATION-ai-summaries.md"
+  },
+  "baseline-haiku45/items.csv": {
+   "sha256": "b2d0c772c64cc6668026b7add93103f7a712d46cff1ba7923fdf946b28b4fd80",
+   "bytes": 26338,
+   "preregistration": "PREREGISTRATION-spike.md"
+  },
+  "baseline-haiku45/summary.json": {
+   "sha256": "dc60604f2ad83638149909a8e200d354ce80e888511e6fc3691665de7bc36e0b",
+   "bytes": 280,
+   "preregistration": "PREREGISTRATION-spike.md"
+  },
+  "baseline-opus-4-6/items.csv": {
+   "sha256": "ecea70949f419ca556a76f7c9a9e8cef0980ed30fe2e2e52f7f3c003a87b14c0",
+   "bytes": 30922,
+   "preregistration": "PREREGISTRATION-spike.md"
+  },
+  "baseline-opus-4-6/summary.json": {
+   "sha256": "6c269b6b105f5155657ce0bca4151ef6dcb8a08109db0c26c77c976278246974",
+   "bytes": 265,
+   "preregistration": "PREREGISTRATION-spike.md"
+  },
+  "baseline-opus-4-6-60tok/items.csv": {
+   "sha256": "60f55460c77a7d622ee630b0804ecff2f2ef6320c9631bf0c85826d1dc79eb97",
+   "bytes": 30781,
+   "preregistration": "PREREGISTRATION-spike.md"
+  },
+  "baseline-opus-4-6-60tok/summary.json": {
+   "sha256": "8e4e99e1f196c306b5088fd655c4d0b29c021e118bc9486e3f1c76e9e55eae5f",
+   "bytes": 269,
+   "preregistration": "PREREGISTRATION-spike.md"
+  },
+  "baseline-sonnet-4-6/items.csv": {
+   "sha256": "6d42a1edab192723c388658ddb709f5e5ec6803c26daf11e09e1df4b482dc76a",
+   "bytes": 29839,
+   "preregistration": "PREREGISTRATION-spike.md"
+  },
+  "baseline-sonnet-4-6/summary.json": {
+   "sha256": "72281c8d87d7d4107209ce8c5c05be0619f8d14b8e4c6e221d5aa201d2372cfd",
+   "bytes": 265,
+   "preregistration": "PREREGISTRATION-spike.md"
+  },
+  "calibration/combo_decision.json": {
+   "sha256": "01eecf26c53eaf6e1c5c4483399d7720975c374be704394ecaa0776ce0cf972d",
+   "bytes": 75,
+   "preregistration": "PREREGISTRATION-combo.md"
+  },
+  "calibration/summary.json": {
+   "sha256": "d0faa152cf0fbaa6d618ac6b5cac87b77dca16498f918e6787646b6e524cfc41",
+   "bytes": 1278,
+   "preregistration": "PREREGISTRATION-combo.md"
+  },
+  "calibration/train_scores.json": {
+   "sha256": "cbc7cd4bbffb33757cc834f884835f06a463e5d379ee1511cb69e7b5b76da724",
+   "bytes": 1467,
+   "preregistration": "PREREGISTRATION-combo.md"
+  },
+  "cascade/summary.json": {
+   "sha256": "2fc2886b03fb8a7e6fc1de0389defc78a813432d34d8ab86235d2937cc9cfaac",
+   "bytes": 1104,
+   "preregistration": "PREREGISTRATION-cascade.md"
+  },
+  "hypewatch-summary.json": {
+   "sha256": "1a0bfc04690470ed73cba87334cf9e39285ce26fd2b49940e7b0690f29b41064",
+   "bytes": 647,
+   "preregistration": "PREREGISTRATION-hypewatch.md"
+  },
+  "insciout/advice_items.csv": {
+   "sha256": "4617eb0d51bc9d0fd873243d2afeb7893d563992364d27385d81518213b40318",
+   "bytes": 4881,
+   "preregistration": "PREREGISTRATION-insciout.md"
+  },
+  "insciout/animal_items.csv": {
+   "sha256": "1d639bbfa855698f8ab41d1746d09d8a11c3eb9fb61a6c507619d76de6d0e06a",
+   "bytes": 1436,
+   "preregistration": "PREREGISTRATION-insciout.md"
+  },
+  "insciout/summary.json": {
+   "sha256": "16b5ef9fadf9269a07f699c824e211eeeb8c89e129443363a0b18fb0ab2c1ffe",
+   "bytes": 441,
+   "preregistration": "PREREGISTRATION-insciout.md"
+  },
+  "prompt-select/summary.json": {
+   "sha256": "e1ba185a5d5dea5a016be81db519750703ae195a467265973d8692c1c5a20394",
+   "bytes": 333,
+   "preregistration": "PREREGISTRATION-prompts.md"
+  },
+  "significance/summary.json": {
+   "sha256": "2bf4fa67a5978a09a3f286fd888432239f4b42f545996d355b4a2ef66a587fb8",
+   "bytes": 1215,
+   "preregistration": "PREREGISTRATION-spike.md"
+  },
+  "spike-train/wa_items.csv": {
+   "sha256": "86f64f04e9f706fb2fdbfd9bbf2b4918b414fd614efb8a54a86f6267e0e27c73",
+   "bytes": 7584,
+   "preregistration": "PREREGISTRATION-spike.md"
+  },
+  "spike-v1/summary.json": {
+   "sha256": "27bb845bde10b4441c5ae56aba98b692ee4cc9446a073ab1abd94b1792553871",
+   "bytes": 1488,
+   "preregistration": "PREREGISTRATION-spike.md"
+  },
+  "spike-v1/wa_items.csv": {
+   "sha256": "d248238cf003aea69fbbef88fe0ccfc97138deb72b67b3063ead6675069cb6da",
+   "bytes": 41761,
+   "preregistration": "PREREGISTRATION-spike.md"
+  },
+  "spike-v1/yu19_items.csv": {
+   "sha256": "5fd32d0a152dc19878408a24f8b576237a302d4db36fe0565f9740ecc40d0c00",
+   "bytes": 120858,
+   "preregistration": "PREREGISTRATION-spike.md"
+  }
+ }
+}

@@ -32,6 +32,8 @@ Yu's labels are 1 = direct causal, 2 = conditional, 3 = correlational (not the o
 | Prompt wording (train-only rule, not adopted) | `python research/prompt_select.py` | `prompt-select/` |
 | Cascade: Claude only on REVIEW (offline, not adopted) | `python research/cascade_eval.py` | `cascade/` |
 | Paired-bootstrap 95% CIs for every headline gap (offline) | `python research/significance.py` | `significance/` |
+| AI summaries: Claude summarises the HypeWatch papers, the gate checks them (on the EC2 box) | `python -m research.ai_summary_eval` | `ai-summaries/` |
+| Fingerprint every result file | `python research/manifest.py` (`--check` to verify) | `MANIFEST.json` |
 
 `python -m pytest -q tests` runs the offline tests of the pattern itself.
 

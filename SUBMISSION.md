@@ -25,6 +25,8 @@ HypeCheck reads a draft health press release next to the paper it reports, flags
 - Faithful releases wrongly flagged: 6.7%, against Claude 29.6–44.9% (Sonnet 4.6, Opus 4.6, Haiku 4.5). The calibrated promise is ≤10%, and the measured rate on 441 unseen pairs is 7.7%.
 - The agent is hosted on Amazon Bedrock AgentCore Runtime; Decider runs on EC2 behind CloudFront.
 - HypeWatch: 85 NIH releases (2023–2026) checked against their papers. 15.3% have a sentence the strict public rule blocks (43.5% under the benchmark rule). Claude rewrites pass Decider's check 67% of the time.
+- AI summaries, second use case: about 1 in 9 Claude summaries of the same 85 papers had a sentence the gate blocks (Sonnet 4.6 11.8%, Haiku 4.5 10.6%), and the gate fixed 9 in 10 of them. Pre-registered; 1 of 4 predictions missed.
+- Reproducible: `research/results/MANIFEST.json` lists every result file's SHA-256; `python research/manifest.py --check` verifies them.
 - 160 ms per decision on a laptop GPU, 0 tokens; the LLM baseline costs ~2 s and ~270 tokens per check.
 
-**What was learned:** decompose the judgement (classify each side's strength, then compare) rather than ask for a direct comparison; calibrate thresholds on your own labelled data instead of using the illustrative 0.9/0.5 bands; pre-register and report the misses (two of five predictions failed, and are in the repo).
+**What was learned:** decompose the judgement (classify each side's strength, then compare) rather than ask for a direct comparison; calibrate thresholds on your own labelled data instead of using the illustrative 0.9/0.5 bands; pre-register and report the misses (seven pre-registered experiments; every missed prediction is in the repo).

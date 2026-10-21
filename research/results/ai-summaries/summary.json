@@ -1,0 +1,29 @@
+{
+ "papers": 85,
+ "checked": 85,
+ "skipped": 0,
+ "nih_sentence_block_rate": 0.0293,
+ "threshold": 0.5001,
+ "models": {
+  "sonnet-4-6": {
+   "summaries": 85,
+   "sentences": 256,
+   "summaries_with_block": 0.1176,
+   "summaries_with_review": 0.1765,
+   "sentence_block_rate": 0.043,
+   "flagged_summaries_fixed_by_gate": 0.9,
+   "block_sentences_fixed": 0.9091,
+   "advice_inflated_over_half": 0.0824
+  },
+  "haiku-4-5": {
+   "summaries": 85,
+   "sentences": 255,
+   "summaries_with_block": 0.1059,
+   "summaries_with_review": 0.2118,
+   "sentence_block_rate": 0.0392,
+   "flagged_summaries_fixed_by_gate": 0.8889,
+   "block_sentences_fixed": 0.9,
+   "advice_inflated_over_half": 0.0235
+  }
+ }
+}

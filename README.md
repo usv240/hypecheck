@@ -60,8 +60,8 @@ third round was clean.
 ## Results
 
 All test data is published expert coding that we did not write. Every experiment was
-pre-registered before it ran ([research/](research/README.md)), including the two whose
-predictions failed.
+pre-registered before it ran ([research/](research/README.md)), seven in all, and every
+missed prediction is reported.
 
 | Measurement | Decider 2B (zero-shot) | Claude on Bedrock, same question |
 |---|---|---|
@@ -104,6 +104,24 @@ The public rule only flags a sentence that claims more than the conclusion *and*
 strongest claim anywhere in the abstract. That avoids flagging an animal result reported earlier
 in the abstract, and since it can only remove flags, the calibrated false-flag bound still holds.
 A systemd timer on EC2 checks new releases every morning (`hypecheck/hypewatch.py`).
+
+## AI summaries: a second use case
+
+Peters & Chin-Yee (2025, *R. Soc. Open Sci.* 12:241776) found that AI summaries of research were
+4.85× as likely as expert-written ones to generalise beyond the paper (95% CI 3.06–7.70). We asked
+Claude Sonnet 4.6 and Haiku 4.5 to summarise the same 85 papers, then scored the summaries under
+the same public rule ([pre-registration](research/PREREGISTRATION-ai-summaries.md),
+`research/ai_summary_eval.py`).
+
+| Pre-registered measure | Sonnet 4.6 | Haiku 4.5 |
+|---|---|---|
+| Summaries with a sentence the gate blocks (predicted 5–25% for Sonnet) | **11.8%** (10 of 85) | **10.6%** (9 of 85) |
+| Flagged summaries fixed by the gate (predicted ≥ 85%) | **90%** | **89%** |
+| Per-sentence block rate (NIH releases on the same papers: 2.9%) | 4.3% | 3.9% (predicted higher than Sonnet: **missed**) |
+
+Example: the paper says medication for opioid use disorder in jail "was associated with" lower
+overdose and death risks. Both summaries said expanding it "can save lives". These are Decider's
+flags, without human labels.
 
 ## Architecture on AWS
 
