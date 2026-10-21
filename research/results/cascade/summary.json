@@ -1,0 +1,49 @@
+{
+ "n": 563,
+ "thresholds": {
+  "block": 0.5001,
+  "review": 0.3986
+ },
+ "systems": [
+  {
+   "system": "decider alone",
+   "recall": 0.3852,
+   "false_flag_same": 0.0667,
+   "false_flag_not_overclaim": 0.0771,
+   "sent_to_claude": 0.0,
+   "claude_cost_per_1000": 0.0
+  },
+  {
+   "system": "cascade sonnet-4-6",
+   "recall": 0.418,
+   "false_flag_same": 0.0928,
+   "false_flag_not_overclaim": 0.1066,
+   "sent_to_claude": 0.0639,
+   "claude_cost_per_1000": 0.062
+  },
+  {
+   "system": "claude alone sonnet-4-6",
+   "recall": 0.4016,
+   "false_flag_same": 0.2957,
+   "false_flag_not_overclaim": 0.2902,
+   "sent_to_claude": 1.0,
+   "claude_cost_per_1000": 0.972
+  },
+  {
+   "system": "cascade haiku45",
+   "recall": 0.4262,
+   "false_flag_same": 0.1043,
+   "false_flag_not_overclaim": 0.1202,
+   "sent_to_claude": 0.0639,
+   "claude_cost_per_1000": 0.033
+  },
+  {
+   "system": "claude alone haiku45",
+   "recall": 0.5902,
+   "false_flag_same": 0.4493,
+   "false_flag_not_overclaim": 0.4603,
+   "sent_to_claude": 1.0,
+   "claude_cost_per_1000": 0.514
+  }
+ ]
+}
