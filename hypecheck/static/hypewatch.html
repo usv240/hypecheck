@@ -82,6 +82,13 @@ button.btn{font:inherit;font-weight:650;padding:10px 16px;border-radius:9px;bord
 
 #themeBtn{all:unset;cursor:pointer;display:inline-grid;place-items:center;width:36px;height:36px;border-radius:999px;border:1px solid rgba(255,255,255,.25);color:#fff;font-size:16px;flex:none}
 #themeBtn:hover{background:rgba(255,255,255,.08)} #themeBtn:focus-visible{outline:3px solid #9cc0ff;outline-offset:2px}
+
+@media (max-width:560px){
+  .sent{grid-template-columns:1fr auto;gap:6px 10px}
+  .sent > :first-child{grid-column:1/-1;display:flex;gap:8px;align-items:center}
+  .sent .role{margin-top:0}
+  .why,.sugg{grid-column:1/-1}
+}
 </style>
 </head>
 <body>

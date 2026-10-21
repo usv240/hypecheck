@@ -247,6 +247,13 @@ footer a{color:#cfe0ff}
 
 #themeBtn{all:unset;cursor:pointer;display:inline-grid;place-items:center;width:36px;height:36px;border-radius:999px;border:1px solid rgba(255,255,255,.25);color:#fff;font-size:16px;flex:none}
 #themeBtn:hover{background:rgba(255,255,255,.08)} #themeBtn:focus-visible{outline:3px solid #9cc0ff;outline-offset:2px}
+
+@media (max-width:560px){
+  .sent{grid-template-columns:1fr auto;gap:6px 10px}
+  .sent > .chip{grid-column:1/-1;justify-self:start}
+  .sent .meta{flex-direction:row;align-items:center}
+  .why{grid-column:1/-1}
+}
 </style>
 </head>
 <body>
