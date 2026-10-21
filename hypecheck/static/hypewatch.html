@@ -65,7 +65,8 @@ mark.cue.c3{color:var(--bad)} mark.cue.c2{color:var(--rev)} mark.cue.c1{color:va
 .rung.paper{outline:2px solid var(--ok);outline-offset:-2px;color:var(--ok)}
 .rung.sent{background:var(--bad);color:#fff;border-color:transparent}
 .rung.same{background:var(--ok);color:#fff;border-color:transparent}
-.rung small{display:block;font-weight:600;font-size:10px;opacity:.9}
+.rung small{display:block!important;font-weight:600;font-size:10px;opacity:.9;margin-top:1px}
+.rung{min-height:38px;display:flex;flex-direction:column;justify-content:center;align-items:center}
 .sugg{grid-column:2/4;font-size:14.5px;background:var(--card);border:1px dashed var(--line);border-radius:8px;padding:8px 10px}
 .sugg b{color:var(--ok)}
 details.more summary{cursor:pointer;color:var(--accent);font-size:14px;margin-top:4px}
