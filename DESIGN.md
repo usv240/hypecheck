@@ -38,9 +38,20 @@ spend three to five minutes in total.
 | User-selectable theme, respecting system preference | WCAG 2.2 SC 1.4.3 (contrast in each theme); `prefers-color-scheme` | ☾/☀ toggle on both pages. It starts from the system setting, remembers the choice, and is applied before first paint (no flash). Dark mode is its own palette, not an inversion |
 | Respect reduced motion | WCAG 2.2 SC 2.3.3 | The hero replay and bar growth are skipped under `prefers-reduced-motion`, which shows the final state instead |
 
+## Second pass (2026-10-21): explain every verdict, shorten time to value
+
+| Change | Why | Source |
+|---|---|---|
+| Every BLOCK or REVIEW sentence shows a four-rung claim ladder (no link / linked / may cause / causes) with the paper's rung and the sentence's rung, plus the phrases that usually signal each ("saving lives" vs "could") | A visible reason helps people decide when to trust an AI verdict; a confident score with no reason earns unwarranted trust | NN/g's explainable-AI guidance, as summarised in secondary sources (the original article was not retrieved); adapted from TraceMate's quote-the-evidence review |
+| Cue words are underlined only in flagged rows, and only those matching the rung Decider assigned | An early version underlined "increase" in a sentence marked OK. That is noise that contradicts the verdict | Heuristic review |
+| The hero button runs the fast Decider-only check first, then offers "Let Claude fix it →" | Cuts the time to first result from the full Claude loop (20–30 s on the CPU server) to the check alone; progressive disclosure | NN/g, *Progressive Disclosure*; Nielsen heuristic 1 |
+| HypeWatch uses the same ladder | Consistency and standards | Nielsen heuristic 4 |
+| On phones the verdict chip sits on its own row | The label column squeezed each sentence to about five words per line | Mobile review at 390 px |
+| Ladder text uses the surface colour | axe flagged 2.0:1 contrast in dark mode | WCAG 2.2 SC 1.4.3 |
+
 ## Verified
 
-- **axe-core, WCAG 2.2 AA plus best practice:** 0 violations on the home page and on HypeWatch,
+- **axe-core, WCAG 2.2 AA plus best practice:** 0 violations on the home page (with a real result and ladder rendered), HypeWatch and Developers,
   in both light and dark themes.
 - **Mobile:** no horizontal overflow at 390 px.
 - **Check script:** `tests/ui/a11y_check.py`.
