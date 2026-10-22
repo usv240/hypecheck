@@ -60,7 +60,7 @@ third round was clean.
 ## Results
 
 All test data is published expert coding that we did not write. Every experiment was
-pre-registered before it ran ([research/](research/README.md)), eight in all, and every
+pre-registered before it ran ([research/](research/README.md)), nine in all, and every
 missed prediction is reported.
 
 | Measurement | Decider 2B (zero-shot) | Claude on Bedrock, same question |
@@ -81,7 +81,7 @@ Cost basis:
 - **Decider:** c7i.4xlarge on-demand at $0.714/h × 0.9 s per decision.
 
 **Measured limits:**
-- 39% recall at the strict threshold: it is a safety net, not a full reviewer.
+- 39% recall at the strict threshold: it is a safety net, not a full reviewer. The other published 2B checkpoints don't fix it: on the train split, hobson-v21 ranked 0.720 and an ensemble 0.724, against 0.712 for ours, below our pre-registered +0.03 bar ([pre-registration](research/PREREGISTRATION-checkpoints.md)).
 - The animal-to-human hint is weak: AUROC 0.61 on 45 releases, so it never blocks.
 - 563 pairs give wide intervals.
 - The demo server runs Decider on CPU, because a GPU quota request was still pending.

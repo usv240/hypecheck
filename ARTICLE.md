@@ -80,7 +80,7 @@ We asked Claude on Bedrock the same question on 563 expert-labelled press-releas
   The two belong side by side.
 
 All test data is published expert coding we didn't write. Every experiment was written down,
-predictions included, before it ran: eight experiments, with every missed prediction reported.
+predictions included, before it ran: nine experiments, with every missed prediction reported.
 
 ## HypeWatch: the same check on real releases
 

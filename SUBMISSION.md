@@ -32,4 +32,4 @@ HypeCheck reads a draft health press release next to the paper it reports, flags
 - Backups: AgentCore → EC2 for the agent; Claude Sonnet 4.6 → Haiku 4.5 on throttling; several Decider servers with failover; the gate fails closed.
 - 160 ms per decision on a laptop GPU, 0 tokens; the LLM baseline costs ~2 s and ~270 tokens per check.
 
-**What was learned:** decompose the judgement (classify each side's strength, then compare) rather than ask for a direct comparison; calibrate thresholds on your own labelled data instead of using the illustrative 0.9/0.5 bands; pre-register and report the misses (eight pre-registered experiments; every missed prediction is in the repo).
+**What was learned:** decompose the judgement (classify each side's strength, then compare) rather than ask for a direct comparison; calibrate thresholds on your own labelled data instead of using the illustrative 0.9/0.5 bands; pre-register and report the misses (nine pre-registered experiments; every missed prediction is in the repo).

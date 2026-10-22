@@ -1,0 +1,10 @@
+{
+ "train_auroc": {
+  "C0 v1-2610": 0.7121,
+  "hobson-v21": 0.7197,
+  "hobson-v19": 0.6457,
+  "E mean(C0,hobson-v21)": 0.7238
+ },
+ "picked": "C0 v1-2610",
+ "test_run_required": false
+}

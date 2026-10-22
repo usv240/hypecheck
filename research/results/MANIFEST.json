@@ -76,6 +76,21 @@
    "bytes": 1104,
    "preregistration": "PREREGISTRATION-cascade.md"
   },
+  "checkpoints/hobson-v19_train.jsonl": {
+   "sha256": "28dbaae187b399c48ccd457cec7a698605c856300f196cdc5a46bdc71d1b6f66",
+   "bytes": 15137,
+   "preregistration": "PREREGISTRATION-checkpoints.md"
+  },
+  "checkpoints/hobson-v21_train.jsonl": {
+   "sha256": "d31f895fefe08bf6dddbc93976c3393ddf46c5bbbf099dbfaf633f9fe35f19e9",
+   "bytes": 15132,
+   "preregistration": "PREREGISTRATION-checkpoints.md"
+  },
+  "checkpoints/summary.json": {
+   "sha256": "65680d47ea5682e88c87b28b88b39be844d1c5db31eb53c7defd20a657cd256c",
+   "bytes": 184,
+   "preregistration": "PREREGISTRATION-checkpoints.md"
+  },
   "guardrails/summary.json": {
    "sha256": "18b2f624caa65c76999e6a7de7e6a3bc80c21ebc5c8eb93ffa50d362f50939b7",
    "bytes": 464,

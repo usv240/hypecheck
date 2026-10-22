@@ -33,6 +33,7 @@ Yu's labels are 1 = direct causal, 2 = conditional, 3 = correlational (not the o
 | Cascade: Claude only on REVIEW (offline, not adopted) | `python research/cascade_eval.py` | `cascade/` |
 | Paired-bootstrap 95% CIs for every headline gap (offline) | `python research/significance.py` | `significance/` |
 | AWS-native baseline: Bedrock Guardrails contextual grounding (creates and deletes one guardrail) | `python research/guardrails_baseline.py --wa-dir data` | `guardrails/` |
+| Other Decider 2B checkpoints (hobson-v21, v19) and an ensemble, train split only (not adopted) | `python research/checkpoint_eval.py score --url … --name hobson-v21 --split train --wa-dir data`, then `summary` | `checkpoints/` |
 | AI summaries: Claude summarises the HypeWatch papers, the gate checks them (on the EC2 box) | `python -m research.ai_summary_eval` | `ai-summaries/` |
 | Fingerprint every result file | `python research/manifest.py` (`--check` to verify) | `MANIFEST.json` |
 

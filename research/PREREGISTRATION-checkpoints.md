@@ -53,3 +53,31 @@ Otherwise C0 stays and the result is reported as "not adopted".
 The reasoning: C0 is the newest reference checkpoint and was trained with rule-application rows.
 Averaging two checkpoints usually ranks slightly better but rarely moves recall at a fixed
 false-flag rate by much.
+
+---
+
+## Results (appended after the run)
+
+Run 2026-10-23 on the EC2 demo box (CPU), beside the live server. Each alternative checkpoint was
+served on its own port, scored, then stopped. Per-item scores (both sides' probabilities) are in
+`results/checkpoints/{hobson-v21,hobson-v19}_train.jsonl`; the summary is in
+`results/checkpoints/summary.json`.
+
+| Candidate | Train AUROC (100 pairs) | Gain over C0 |
+|---|---|---|
+| C0 v1-2610 (current) | 0.712 | — |
+| C1 hobson-v21 | 0.720 | +0.008 |
+| C2 hobson-v19 | 0.646 | −0.066 |
+| E mean(C0, hobson-v21) | **0.724** | +0.012 |
+
+- **Pick, by the rule:** E has the highest train AUROC, but its gain (+0.012) is below the 0.03
+  bar. **C0 stays, and no test run was made**, as pre-registered.
+- **Predictions:**
+  - K1 (no single checkpoint beats C0 by ≥ 0.03): **yes**.
+  - K2 (the ensemble is highest): **yes**.
+  - K3: not reached.
+- **What it means:** the reference checkpoint we built on is at least as good as the other 2B
+  checkpoints for this question. The older hobson-v19 is clearly worse. Averaging two checkpoints
+  helps a little, but not enough on 100 pairs to justify doubling the cost of every decision. The
+  recall limit (38.5%) stays as stated; the next lever is a larger calibration set, not a
+  different 2B checkpoint.

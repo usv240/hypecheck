@@ -25,7 +25,7 @@ PREREG = {
     "baseline-opus-4-6": "PREREGISTRATION-spike.md", "baseline-opus-4-6-60tok": "PREREGISTRATION-spike.md",
     "significance": "PREREGISTRATION-spike.md", "calibration": "PREREGISTRATION-combo.md",
     "insciout": "PREREGISTRATION-insciout.md", "prompt-select": "PREREGISTRATION-prompts.md",
-    "cascade": "PREREGISTRATION-cascade.md", "guardrails": "PREREGISTRATION-guardrails.md", "ai-summaries": "PREREGISTRATION-ai-summaries.md",
+    "cascade": "PREREGISTRATION-cascade.md", "guardrails": "PREREGISTRATION-guardrails.md", "checkpoints": "PREREGISTRATION-checkpoints.md", "ai-summaries": "PREREGISTRATION-ai-summaries.md",
     "hypewatch-summary.json": "PREREGISTRATION-hypewatch.md",
 }
 
