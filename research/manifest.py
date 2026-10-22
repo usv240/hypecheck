@@ -30,8 +30,12 @@ PREREG = {
 }
 
 
+CRLF, LF = bytes([13, 10]), bytes([10])
+
+
 def sha(p: Path) -> str:
-    return hashlib.sha256(p.read_bytes()).hexdigest()
+    # Line endings are normalised so a Windows checkout and a Linux clone give the same hash.
+    return hashlib.sha256(p.read_bytes().replace(CRLF, LF)).hexdigest()
 
 
 def build() -> dict:

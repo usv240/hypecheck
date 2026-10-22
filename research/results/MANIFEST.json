@@ -12,47 +12,47 @@
    "preregistration": "PREREGISTRATION-ai-summaries.md"
   },
   "ai-summaries/summary.json": {
-   "sha256": "e3b9ed572a067f012527f6c97854a1115941f98683d4bdb2e3bacad1e20000f1",
+   "sha256": "31306880ea40baaeea07e98dc35a28fb6b7b55f22b8b0e8f3f98bd6467be1359",
    "bytes": 722,
    "preregistration": "PREREGISTRATION-ai-summaries.md"
   },
   "baseline-haiku45/items.csv": {
-   "sha256": "b2d0c772c64cc6668026b7add93103f7a712d46cff1ba7923fdf946b28b4fd80",
+   "sha256": "17cfc6e5468114c41ed02408904aad5095466432a608c1c311320cdaf597a273",
    "bytes": 26338,
    "preregistration": "PREREGISTRATION-spike.md"
   },
   "baseline-haiku45/summary.json": {
-   "sha256": "dc60604f2ad83638149909a8e200d354ce80e888511e6fc3691665de7bc36e0b",
+   "sha256": "41f9fc38bd6672369d533596ab57fdcefce5287a8ac66b2384c58aac6d4b83f3",
    "bytes": 280,
    "preregistration": "PREREGISTRATION-spike.md"
   },
   "baseline-opus-4-6/items.csv": {
-   "sha256": "ecea70949f419ca556a76f7c9a9e8cef0980ed30fe2e2e52f7f3c003a87b14c0",
+   "sha256": "6d4fbe34cae09f4a1a4ca9e156c844067d2bb6984675bbd9f0aca8c23798a309",
    "bytes": 30922,
    "preregistration": "PREREGISTRATION-spike.md"
   },
   "baseline-opus-4-6/summary.json": {
-   "sha256": "6c269b6b105f5155657ce0bca4151ef6dcb8a08109db0c26c77c976278246974",
+   "sha256": "21436970ca53f569dd6363cc9441c7128a93e971b37aa225d938abdd3f9f91c9",
    "bytes": 265,
    "preregistration": "PREREGISTRATION-spike.md"
   },
   "baseline-opus-4-6-60tok/items.csv": {
-   "sha256": "60f55460c77a7d622ee630b0804ecff2f2ef6320c9631bf0c85826d1dc79eb97",
+   "sha256": "6e3f55f301445f6d236b0f8b3884ac5d2afe3b09bc6892a4b46705f8b221b7a5",
    "bytes": 30781,
    "preregistration": "PREREGISTRATION-spike.md"
   },
   "baseline-opus-4-6-60tok/summary.json": {
-   "sha256": "8e4e99e1f196c306b5088fd655c4d0b29c021e118bc9486e3f1c76e9e55eae5f",
+   "sha256": "c5afa9b9037cc6bd0bd37268c91823b62daf38303ca7630e9cff02f93998ed0c",
    "bytes": 269,
    "preregistration": "PREREGISTRATION-spike.md"
   },
   "baseline-sonnet-4-6/items.csv": {
-   "sha256": "6d42a1edab192723c388658ddb709f5e5ec6803c26daf11e09e1df4b482dc76a",
+   "sha256": "8d45530723f9ada0e0e11bd8d12860764a9912b5532741c934be07407b8157ff",
    "bytes": 29839,
    "preregistration": "PREREGISTRATION-spike.md"
   },
   "baseline-sonnet-4-6/summary.json": {
-   "sha256": "72281c8d87d7d4107209ce8c5c05be0619f8d14b8e4c6e221d5aa201d2372cfd",
+   "sha256": "746fc948ea90a9773b6dd7ca8dd272794b85b6e85e67eeb2e5405d51f1bde30c",
    "bytes": 265,
    "preregistration": "PREREGISTRATION-spike.md"
   },
@@ -62,7 +62,7 @@
    "preregistration": "PREREGISTRATION-combo.md"
   },
   "calibration/summary.json": {
-   "sha256": "d0faa152cf0fbaa6d618ac6b5cac87b77dca16498f918e6787646b6e524cfc41",
+   "sha256": "beaea8bffca80c8f017a2bee485f44a495881e9a45d1fffc964e9e188875d321",
    "bytes": 1278,
    "preregistration": "PREREGISTRATION-combo.md"
   },
@@ -72,72 +72,72 @@
    "preregistration": "PREREGISTRATION-combo.md"
   },
   "cascade/summary.json": {
-   "sha256": "2fc2886b03fb8a7e6fc1de0389defc78a813432d34d8ab86235d2937cc9cfaac",
+   "sha256": "6621e91174b5912a09051976505c12ed218ecbe4b501b860c73cacf0c0595e5f",
    "bytes": 1104,
    "preregistration": "PREREGISTRATION-cascade.md"
   },
   "guardrails/summary.json": {
-   "sha256": "d7ee03ea85016ab85fa630508e6d31d6bcdb4e838497339c1f36e32202669f86",
+   "sha256": "18b2f624caa65c76999e6a7de7e6a3bc80c21ebc5c8eb93ffa50d362f50939b7",
    "bytes": 464,
    "preregistration": "PREREGISTRATION-guardrails.md"
   },
   "guardrails/test_items.jsonl": {
-   "sha256": "b2eb855e8a7a0788c80743fd2d5da47e58a7c8c3a1bdebd0d390deb6bf088fb8",
+   "sha256": "7fd12bfcf849daf7525787fe5443117de1bfb38ace7e3be587897d3c529bb737",
    "bytes": 62612,
    "preregistration": "PREREGISTRATION-guardrails.md"
   },
   "guardrails/train_items.jsonl": {
-   "sha256": "e9cc46c716b6d45c8d87f112957eb38ef5e74b3da859f5ab7823253ccba4690b",
+   "sha256": "8874a704da6f7ff8153e84afa6be88ebae2cd3cec35adf01aa8be4f9e8df350a",
    "bytes": 11090,
    "preregistration": "PREREGISTRATION-guardrails.md"
   },
   "hypewatch-summary.json": {
-   "sha256": "1a0bfc04690470ed73cba87334cf9e39285ce26fd2b49940e7b0690f29b41064",
+   "sha256": "6f59a0c5ab7070a7a12938a3cd6b3ecb8b783c98a244f0f1762088a0a09a2ca3",
    "bytes": 647,
    "preregistration": "PREREGISTRATION-hypewatch.md"
   },
   "insciout/advice_items.csv": {
-   "sha256": "4617eb0d51bc9d0fd873243d2afeb7893d563992364d27385d81518213b40318",
+   "sha256": "c719db035cc837ccd94e8f516ca04f8a9db25f8fb4569588ffcd6a0864f41587",
    "bytes": 4881,
    "preregistration": "PREREGISTRATION-insciout.md"
   },
   "insciout/animal_items.csv": {
-   "sha256": "1d639bbfa855698f8ab41d1746d09d8a11c3eb9fb61a6c507619d76de6d0e06a",
+   "sha256": "fe03ab5fbc4be30ba1baa092d9f20fb56555d8184086aa2cc4729fc35650fee1",
    "bytes": 1436,
    "preregistration": "PREREGISTRATION-insciout.md"
   },
   "insciout/summary.json": {
-   "sha256": "16b5ef9fadf9269a07f699c824e211eeeb8c89e129443363a0b18fb0ab2c1ffe",
+   "sha256": "e71e9a94597344e6e4be033a463390c33d26c5cafcad24dee6f72c3039be12c8",
    "bytes": 441,
    "preregistration": "PREREGISTRATION-insciout.md"
   },
   "prompt-select/summary.json": {
-   "sha256": "e1ba185a5d5dea5a016be81db519750703ae195a467265973d8692c1c5a20394",
+   "sha256": "1257973554938bf96c58207c54c81a5317058c13208ae292287b45c080313ab5",
    "bytes": 333,
    "preregistration": "PREREGISTRATION-prompts.md"
   },
   "significance/summary.json": {
-   "sha256": "2bf4fa67a5978a09a3f286fd888432239f4b42f545996d355b4a2ef66a587fb8",
+   "sha256": "4fc74691c93635ae06f71db44f93617ec1aa776698ceed29b75f7a8569c5e5b3",
    "bytes": 1215,
    "preregistration": "PREREGISTRATION-spike.md"
   },
   "spike-train/wa_items.csv": {
-   "sha256": "86f64f04e9f706fb2fdbfd9bbf2b4918b414fd614efb8a54a86f6267e0e27c73",
+   "sha256": "d26b32377f34cd2dce1ef0428b8f2252f548fa328798c041f3f1cc91cc905e2e",
    "bytes": 7584,
    "preregistration": "PREREGISTRATION-spike.md"
   },
   "spike-v1/summary.json": {
-   "sha256": "27bb845bde10b4441c5ae56aba98b692ee4cc9446a073ab1abd94b1792553871",
+   "sha256": "8f2fafe5dc8bcd838eff0a070f2db5e27b97be4967bb8a93aec9d397630aeba8",
    "bytes": 1488,
    "preregistration": "PREREGISTRATION-spike.md"
   },
   "spike-v1/wa_items.csv": {
-   "sha256": "d248238cf003aea69fbbef88fe0ccfc97138deb72b67b3063ead6675069cb6da",
+   "sha256": "10c5fd301843c5cd22d6808a6bc2feb5d56b8d0ede078fbd3c6b70ca8d143784",
    "bytes": 41761,
    "preregistration": "PREREGISTRATION-spike.md"
   },
   "spike-v1/yu19_items.csv": {
-   "sha256": "5fd32d0a152dc19878408a24f8b576237a302d4db36fe0565f9740ecc40d0c00",
+   "sha256": "9b179e504db4f685befd1eed9094b408a3b40ddee9756bee9e29411a56c942ea",
    "bytes": 120858,
    "preregistration": "PREREGISTRATION-spike.md"
   }
