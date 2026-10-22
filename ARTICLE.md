@@ -95,7 +95,10 @@ one cites its paper.
 - **Headlines.** Headlines averaged 0.20, against 0.19 for the sentences below them. That gap is too small to matter: NIH headlines turned out no hotter than their body text.
 - **Rewrites.** Claude's suggested rewrites passed Decider's check 67% of the time. That is below the 85% we predicted, so the page labels them suggestions, not fixes.
 
-Every flag sits next to the paper's own words, so a reader can judge. The page updates every
+When the Sumner study came out, Ben Goldacre's *BMJ* editorial proposed linking every release to
+its paper, naming its authors and opening it to review, to create "an information trail, and
+accountability among peers and the public". HypeWatch automates part of that for one major
+publisher of health news. Every flag sits next to the paper's own words, so a reader can judge. The page updates every
 morning.
 
 ## A second use case: AI summaries
@@ -195,6 +198,7 @@ more than its source: summaries, RAG answers, patient materials.
 - Sumner et al., *BMJ* 2014
 - Adams et al., *BMC Medicine* 2019
 - Matthews et al., *BMJ* 2016
+- Goldacre, *BMJ* 2014;349:g7465 (editorial)
 - Wright & Augenstein, EMNLP 2021
 - Yu et al., EMNLP 2019
 - InSciOut (CC BY 4.0)
