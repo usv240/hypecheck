@@ -84,22 +84,20 @@ predictions included, before it ran: eight experiments, with every missed predic
 
 ## HypeWatch: the same check on real releases
 
-To test it on text nobody chose for us, HypeWatch runs HypeCheck over every research release from
-the US National Institutes of Health since February 2023 that cites its paper by DOI. These releases are public domain, and each
-one cites its paper.
+To test it on text nobody chose for us, HypeWatch runs HypeCheck over every US National Institutes
+of Health research release since February 2023 that cites its paper by DOI.
 
-- **Coverage.** 85 releases (February 2023 to October 2026) were checked against their papers' abstracts.
+- **Coverage.** 85 releases were checked against their papers' abstracts.
 - **Flags.** 15% had a headline or opening sentence the gate would block, under a stricter rule
   for public flags (a sentence must exceed the paper's conclusion *and* the strongest claim
   anywhere in the abstract).
-- **Headlines.** Headlines averaged 0.20, against 0.19 for the sentences below them. That gap is too small to matter: NIH headlines turned out no hotter than their body text.
 - **Rewrites.** Claude's suggested rewrites passed Decider's check 67% of the time. That is below the 85% we predicted, so the page labels them suggestions, not fixes.
 
 When the Sumner study came out, Ben Goldacre's *BMJ* editorial proposed linking every release to
 its paper, naming its authors and opening it to review, to create "an information trail, and
 accountability among peers and the public". HypeWatch automates part of that for one major
-publisher of health news. Every flag sits next to the paper's own words, so a reader can judge. The page updates every
-morning.
+publisher of health news. Every flag sits next to the paper's own words, so a reader can judge. The
+page updates every morning.
 
 ## A second use case: AI summaries
 
@@ -138,57 +136,35 @@ predictions down first.
 3. **Write predictions down first.** It made the failed predictions, and one scoring bug, easy to
    report instead of explain away.
 4. **Put error bars on your own claims.** Our site said Decider scored "above the best published
-   system". A paired bootstrap put the published score inside our 95% interval (0.452–0.541), so
-   it now says "level with". Fewer false alarms than every Claude model survives the same test by
-   a wide margin (smallest gap 22.9 points, 95% CI 17.8–27.9). A tool against overclaiming should
-   not overclaim.
+   system", but the published score sat inside our 95% interval, so it now says "level with". The
+   false-alarm gap to Claude survived the same test easily. A tool against overclaiming should not
+   overclaim.
 
 **Platform findings, for other builders:**
-- **AgentCore direct code deploy from Windows.** `pip install --platform manylinux2014_aarch64`
-  still evaluates environment markers against the Windows host and pulls in `pywin32`. We resolve
-  the ARM64 wheels on Linux once and install that pinned list with `--no-deps`
-  (`deploy/agentcore-arm64-pins.txt`).
-- **`Guide` ended the turn.** After the first `Guide`, Claude stopped and asked the user instead of
-  rewriting. One line in the system prompt fixed it ("rewrite and call the tool again in the same
-  turn; never stop to ask").
-- **Listed is not enabled.** The Claude 5.5 inference profiles appeared in our account's list but
-  returned `AccessDeniedException`. The agent now falls back to another model on that error.
-- **Abstract coverage.** Europe PMC, then OpenAlex, then Semantic Scholar between them found an
-  abstract for 85 of the 94 NIH papers with a DOI. Nine were missing from all three.
-- **No GPU quota.** The account's GPU quota was 0, so the demo runs Decider on a CPU instance, about
-  six times slower. Results were measured on a laptop GPU. The quota request is still open.
-- **Reported upstream.** The Decider docs don't yet say how to judge whether one text claims more
-  than another. We opened [strands-decider#103](https://github.com/strands-labs/strands-decider/issues/103)
-  with our numbers: asking each side separately and comparing in code scored 0.498 macro-F1,
-  against 0.408 for one comparison question. The issue also reports where the separate approach
-  did worse, and proposes a short conformal-threshold recipe.
+- **AgentCore code deploy from Windows:** `pip --platform` still pulls Windows-only wheels. We
+  resolve the ARM64 list on Linux once and install it with `--no-deps`.
+- **`Guide` ended the turn:** Claude stopped to ask the user until the system prompt said "rewrite
+  and call the tool again in the same turn".
+- **Listed is not enabled:** Claude 5.5 profiles were listed but denied, so the agent now falls back
+  to another model.
+- **Reported upstream:** [strands-decider#103](https://github.com/strands-labs/strands-decider/issues/103)
+  proposes docs for comparing two texts, with our numbers, including the one that cuts against us.
 
-**What it cost.** All Claude usage on the account during the build came to $9.04 on Bedrock, per AWS
-Cost Explorer: Opus 4.6 $5.60, Sonnet 4.6 $2.98 and Haiku 4.5 $0.45. That figure is an upper
-bound. Most of it is the three Claude baselines on 563 pairs, plus HypeWatch's rewrites and the 170
-AI summaries. The Guardrails baseline cost $0.07 and AgentCore Runtime $0.07.
-
-**How AI was used:** an AI coding assistant wrote most of the code, tests and documents under my
-direction. I chose the problem, the decision and what the gate must never do. Every number in this
-article comes from a script in the repo, and the scripts' outputs are fingerprinted in
-`research/results/MANIFEST.json`.
+**Cost and AI use.** All Claude usage during the build cost at most $9.04 on Bedrock, mostly the
+three Claude baselines. The Guardrails run cost $0.07. An AI coding assistant wrote most of the
+code under my direction. Every number here comes from a script in the repo, and
+`python research/reproduce.py` recomputes all 21 headline numbers offline in about 10 seconds.
 
 ## Limits we measured
 
-- At the strict cut-off it catches 39% of exaggerations. It is a safety net, not an editor.
-- The animal-to-human hint is weak (0.61 on a 0–1 ranking score), so it never blocks.
-- The live demo runs Decider on a CPU, about six times slower than a GPU.
-
-**What this does not show:**
-- **No press officer has used it yet.**
-- **HypeWatch and the AI summaries have no human labels**, so their rates are Decider's flags. That
-  is why every flag sits next to the paper's own words.
-- **It judges claim strength only.** It doesn't check numbers, doses or invented facts.
-- **English biomedicine only.**
-- **Each experiment ran once.**
-
-Every headline number in this article can be recomputed offline in about 10 seconds:
-`python research/reproduce.py`.
+- **Recall:** at the strict cut-off it catches 39% of exaggerations. It is a safety net, not an
+  editor.
+- **Claim strength only:** it doesn't check numbers, doses or invented facts. The animal-to-human
+  hint is weak (AUROC 0.61), so it never blocks.
+- **No human labels:** HypeWatch and the AI-summary rates are Decider's flags, which is why every
+  flag sits next to the paper's own words. No press officer has used it yet.
+- **Scope:** English biomedicine only, and each experiment ran once.
+- **Speed:** the live demo runs Decider on a CPU, about six times slower than a GPU.
 
 ## Reuse it
 
@@ -198,9 +174,8 @@ There are four ways in, all on the Developers page (https://d174bz5yly61n4.cloud
 - **Calibration on your own labelled pairs**, in a form on the page: paste or upload them, get your threshold and a chart, then test new text against it.
 - **A CloudFormation stack** that runs everything in your own AWS account.
 
-For code:
-
-`decision_pattern/` contains the question, the gate, the calibration script and tests. The same
+For code, `pip install "git+https://github.com/usv240/hypecheck"` gives you `decision_pattern/`:
+the question, the gate, the calibration script and tests. The same
 gate runs unchanged on a patient-leaflet writer, where it caught "statin users were less likely to
 develop dementia" stated as fact from an observational study. Use it anywhere text must not say
 more than its source: summaries, RAG answers, patient materials.

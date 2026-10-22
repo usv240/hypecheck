@@ -68,7 +68,7 @@ Status key:
 |---|---|---|
 | 1 | Two numbers | ✅ Benchmark (W&A F1 / false flags), plus a second, independent set: InSciOut real releases, AUROC 0.84 |
 | 2 | Cases from outside | ✅ All data is published expert coding |
-| 3 | Named baseline beaten | ✅ Ties the published best (0.4735, trained) zero-shot; beats Haiku 4.5 and Sonnet 4.6 on macro-F1 and all three Claude models on false flags, each with a paired-bootstrap 95% CI (`research/significance.py`) |
+| 3 | Named baseline beaten | ✅ AWS-native Bedrock Guardrails grounding check beaten (AUROC 0.72 vs 0.50, gap CI 0.14–0.29). Ties the published best (0.4735, trained) zero-shot; beats Haiku 4.5 and Sonnet 4.6 on macro-F1 and all three Claude models on false flags, each with a paired-bootstrap 95% CI (`research/significance.py`) |
 | 4 | Negative control is the headline | ✅ 6.7% false flags on faithful releases vs 29.6–44.9% for Claude |
 | 5 | Loop closes into the user's system | ✅ The release is published to the outbox only when clean. The publish record lists review-band sentences |
 | 6 | Depth on one surface | ✅ One decision, five measurements |
@@ -77,7 +77,7 @@ Status key:
 | 9 | Practitioner voice | ✅ via research, per the author's constraint: Sumner/Adams worked *with* press offices (the RCT ran in 9 real press offices), and HealthNewsReview's 2018 closure notice is cited |
 | 10 | Shipped surface | ✅ HTTPS URL |
 | 11 | Limits as measured properties | ✅ Recall 39%; animal check AUROC 0.61; CPU latency; CI widths |
-| 12 | Inspect and rerun | ✅ Pre-registrations, per-item CSVs, `research/README.md` commands, tests |
+| 12 | Inspect and rerun | ✅ Eight pre-registrations, per-item outputs, a SHA-256 manifest, and `research/reproduce.py`, which recomputes 21 of 21 headline numbers offline (also a test). Upstream docs issue strands-decider#103 |
 
 
 ## D. Second pass (after HypeWatch), scored 4 or 5 per rubric line
