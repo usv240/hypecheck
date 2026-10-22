@@ -42,11 +42,11 @@ SCENES = [
     ("info", "Every label, score and number has an info button that explains it in plain words."),
     ("evidence", "Does it work? On five hundred and sixty-three expert-labelled release and paper pairs, Claude "
                  "asked to judge flagged thirty to forty-five percent of faithful releases as exaggerated, Opus "
-                 "included. Decider, with a calibrated threshold, flags six point seven percent, and matches the best "
-                 "published system on overall accuracy without training on the task."),
-    ("hypewatch", "Then we pointed it at the real world. HypeWatch checks every research release from the US "
-                  "National Institutes of Health in the past year against the paper it cites, with Claude's "
-                  "suggested fix, verified by Decider, beside every flag. It updates every morning."),
+                 "included. Decider, with a calibrated threshold, flags six point seven percent. Amazon's own grounding "
+                 "check ranks these exaggerations at chance, because the facts are the same and only the strength grew."),
+    ("hypewatch", "Then we pointed it at text nobody chose for us. HypeWatch checks eighty-five real releases from "
+                  "the US National Institutes of Health against the papers they cite, every morning. And when we asked "
+                  "Claude to summarise the same papers, about one summary in nine overclaimed. The gate fixed nine in ten."),
     ("limits", "Every experiment was pre-registered, and the limits are on the page: at its strictest setting it "
                "catches thirty-nine percent of exaggerations. It's a safety net, not an editor."),
     ("builders", "The gate is a reusable Strands intervention handler: one typed question, a calibrated "

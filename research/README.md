@@ -36,6 +36,8 @@ Yu's labels are 1 = direct causal, 2 = conditional, 3 = correlational (not the o
 | AI summaries: Claude summarises the HypeWatch papers, the gate checks them (on the EC2 box) | `python -m research.ai_summary_eval` | `ai-summaries/` |
 | Fingerprint every result file | `python research/manifest.py` (`--check` to verify) | `MANIFEST.json` |
 
+`python research/reproduce.py` recomputes every headline number from these per-item outputs, offline, and checks it against the README (21 of 21 reproduce).
+
 `python -m pytest -q tests` runs the offline tests of the pattern itself.
 
 ## Hardware used

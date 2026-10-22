@@ -86,6 +86,16 @@ Cost basis:
 - 563 pairs give wide intervals.
 - The demo server runs Decider on CPU, because a GPU quota request was still pending.
 
+**What this does not show:**
+- **No press officer has used it.** The rules come from published research (Sumner 2014, Adams 2019), not from user testing.
+- **HypeWatch and the AI-summary run have no human labels.** Their rates are Decider's flags. On the labelled benchmark, about 58% of blocks at the strict threshold are real overclaims, so some HypeWatch flags will be wrong. That is why each sits next to the paper's own words.
+- **It judges one thing: how strong a causal claim is.** It does not check numbers, doses, sample sizes or invented facts. That is a job for a grounding check, and Bedrock Guardrails' grounding check does not catch inflated strength.
+- **English health research only.** Every dataset is English-language biomedicine.
+- **Claude's rewrites can change meaning.** Decider re-checks how strong each rewrite's claim is, not whether it is faithful in every other respect. A person should read what is published.
+- **One run each.** Every experiment ran once; the intervals are bootstrap intervals over items, not over repeated runs.
+
+**Reproduce every number, offline:** `python research/reproduce.py` recomputes the 21 headline numbers in this README from the saved per-item outputs. It checks each file against its fingerprint first. It needs no Decider, AWS or network, costs nothing, and takes about 10 seconds.
+
 ## HypeWatch: the same check on real releases
 
 Benchmarks are curated, so we also pointed HypeCheck at text nobody chose for us: every NIH news

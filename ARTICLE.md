@@ -179,6 +179,17 @@ article comes from a script in the repo, and the scripts' outputs are fingerprin
 - The animal-to-human hint is weak (0.61 on a 0–1 ranking score), so it never blocks.
 - The live demo runs Decider on a CPU, about six times slower than a GPU.
 
+**What this does not show:**
+- **No press officer has used it yet.**
+- **HypeWatch and the AI summaries have no human labels**, so their rates are Decider's flags. That
+  is why every flag sits next to the paper's own words.
+- **It judges claim strength only.** It doesn't check numbers, doses or invented facts.
+- **English biomedicine only.**
+- **Each experiment ran once.**
+
+Every headline number in this article can be recomputed offline in about 10 seconds:
+`python research/reproduce.py`.
+
 ## Reuse it
 
 There are four ways in, all on the Developers page (https://d174bz5yly61n4.cloudfront.net/developers):

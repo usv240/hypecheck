@@ -38,3 +38,14 @@ def test_iso_date():
     assert iso_date("Wednesday, October 14, 2026") == "2026-10-14"
     assert iso_date("Media Advisory Thursday, May 22, 2025") == "2025-05-22"
     assert iso_date("not a date") == ""
+
+
+def test_every_headline_number_reproduces_offline():
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    script = Path(__file__).resolve().parents[1] / "research" / "reproduce.py"
+    out = subprocess.run([sys.executable, str(script)], capture_output=True, text=True, timeout=300)
+    assert out.returncode == 0, out.stdout[-2000:] + out.stderr[-2000:]
+    assert "21 of 21 headline numbers reproduce" in out.stdout
