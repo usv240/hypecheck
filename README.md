@@ -60,7 +60,7 @@ third round was clean.
 ## Results
 
 All test data is published expert coding that we did not write. Every experiment was
-pre-registered before it ran ([research/](research/README.md)), seven in all, and every
+pre-registered before it ran ([research/](research/README.md)), eight in all, and every
 missed prediction is reported.
 
 | Measurement | Decider 2B (zero-shot) | Claude on Bedrock, same question |
@@ -68,6 +68,7 @@ missed prediction is reported.
 | Faithful releases wrongly flagged (the negative control) | **6.7%** (CI 4.1–9.4%) | Haiku 4.5 44.9% · Sonnet 4.6 29.6% · Opus 4.6 40.0% |
 | Exaggeration macro-F1, 563 pairs (Wright & Augenstein 2021) | **0.498** (CI 0.452–0.541; published best 0.4735, trained: a statistical tie) | Haiku 0.358 · Sonnet 0.401 · Opus 0.460 |
 | Exaggerates-vs-not AUROC | **0.716** | Haiku 0.570 · Sonnet 0.580 · Opus 0.663 |
+| AWS-native baseline: Bedrock Guardrails contextual grounding, same pairs, same conformal fit | AUROC **0.716** vs **0.503**; gap 0.21 (95% CI 0.14–0.29). Recall 38.5% vs 13.9% | Guardrails flags 13.3% of faithful releases ([pre-registration](research/PREREGISTRATION-guardrails.md)) |
 | Conformal promise (≤10% false flags) vs measured, 441 unseen non-overclaim pairs | 7.7% (95% CI 5.6–10.6%) | — |
 | Recall at that strict threshold | 39% (CI 30–47%) | Haiku at ~10% false flags: 18% |
 | Advice inflation, 116 real UK releases (InSciOut), AUROC | 0.84 | — |

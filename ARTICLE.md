@@ -72,9 +72,15 @@ We asked Claude on Bedrock the same question on 563 expert-labelled press-releas
   We did, with conformal calibration: pick the cut-off so that at most 10% of known-honest
   sentences would be flagged. On 441 pairs it had never seen, it flagged 7.7%.
 - **It can't be argued with.** Decider returns a number, and plain code decides what to do.
+- **AWS's own grounding check doesn't catch this.** Amazon Bedrock Guardrails has a contextual
+  grounding check for "does this text stay within its source". On the same pairs it ranked
+  exaggerations at chance level: AUROC 0.50, against 0.72 for Decider, a gap of 0.21 (95% CI
+  0.14–0.29). Grounding checks catch invented facts. A release that turns "could" into "saves
+  lives" keeps the same facts and only inflates their strength, which is the job HypeCheck does.
+  The two belong side by side.
 
 All test data is published expert coding we didn't write. Every experiment was written down,
-predictions included, before it ran: seven experiments, with every missed prediction reported.
+predictions included, before it ran: eight experiments, with every missed prediction reported.
 
 ## HypeWatch: the same check on real releases
 
@@ -133,6 +139,26 @@ predictions down first.
    it now says "level with". Fewer false alarms than every Claude model survives the same test by
    a wide margin (smallest gap 22.9 points, 95% CI 17.8–27.9). A tool against overclaiming should
    not overclaim.
+
+**Platform findings, for other builders:**
+- **AgentCore direct code deploy from Windows.** `pip install --platform manylinux2014_aarch64`
+  still evaluates environment markers against the Windows host and pulls in `pywin32`. We resolve
+  the ARM64 wheels on Linux once and install that pinned list with `--no-deps`
+  (`deploy/agentcore-arm64-pins.txt`).
+- **`Guide` ended the turn.** After the first `Guide`, Claude stopped and asked the user instead of
+  rewriting. One line in the system prompt fixed it ("rewrite and call the tool again in the same
+  turn; never stop to ask").
+- **Listed is not enabled.** The Claude 5.5 inference profiles appeared in our account's list but
+  returned `AccessDeniedException`. The agent now falls back to another model on that error.
+- **Abstract coverage.** Europe PMC, then OpenAlex, then Semantic Scholar between them found an
+  abstract for 85 of the 94 NIH papers with a DOI. Nine were missing from all three.
+- **No GPU quota.** The account's GPU quota was 0, so the demo runs Decider on a CPU instance, about
+  six times slower. Results were measured on a laptop GPU.
+
+**How AI was used:** an AI coding assistant wrote most of the code, tests and documents under my
+direction. I chose the problem, the decision and what the gate must never do. Every number in this
+article comes from a script in the repo, and the scripts' outputs are fingerprinted in
+`research/results/MANIFEST.json`.
 
 ## Limits we measured
 

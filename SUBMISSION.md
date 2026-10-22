@@ -21,6 +21,7 @@ HypeCheck reads a draft health press release next to the paper it reports, flags
 **Headline numbers (all on public expert-labelled data, pre-registered):**
 - Per 1,000 honest sentences: Claude Sonnet as the judge wrongly blocks 296 for $0.97; HypeCheck blocks 67 for $0.18 ($0 on your own GPU).
 - Exaggeration detection macro-F1 0.498 zero-shot on 563 pairs (95% CI 0.452–0.541): level with the published best (0.4735, trained). Claude Opus 4.6 0.460.
+- AWS-native baseline: Amazon Bedrock Guardrails' contextual grounding check ranks exaggerations at chance on the same pairs (AUROC 0.50 vs Decider 0.72; gap 95% CI 0.14–0.29). Grounding catches invented facts, not inflated strength.
 - Every gap to Claude on false flags is outside chance (paired bootstrap; smallest, Sonnet: 22.9 points, CI 17.8–27.9).
 - Faithful releases wrongly flagged: 6.7%, against Claude 29.6–44.9% (Sonnet 4.6, Opus 4.6, Haiku 4.5). The calibrated promise is ≤10%, and the measured rate on 441 unseen pairs is 7.7%.
 - The agent is hosted on Amazon Bedrock AgentCore Runtime; Decider runs on EC2 behind CloudFront.
@@ -29,4 +30,4 @@ HypeCheck reads a draft health press release next to the paper it reports, flags
 - Reproducible: `research/results/MANIFEST.json` lists every result file's SHA-256; `python research/manifest.py --check` verifies them.
 - 160 ms per decision on a laptop GPU, 0 tokens; the LLM baseline costs ~2 s and ~270 tokens per check.
 
-**What was learned:** decompose the judgement (classify each side's strength, then compare) rather than ask for a direct comparison; calibrate thresholds on your own labelled data instead of using the illustrative 0.9/0.5 bands; pre-register and report the misses (seven pre-registered experiments; every missed prediction is in the repo).
+**What was learned:** decompose the judgement (classify each side's strength, then compare) rather than ask for a direct comparison; calibrate thresholds on your own labelled data instead of using the illustrative 0.9/0.5 bands; pre-register and report the misses (eight pre-registered experiments; every missed prediction is in the repo).

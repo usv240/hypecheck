@@ -76,6 +76,21 @@
    "bytes": 1104,
    "preregistration": "PREREGISTRATION-cascade.md"
   },
+  "guardrails/summary.json": {
+   "sha256": "d7ee03ea85016ab85fa630508e6d31d6bcdb4e838497339c1f36e32202669f86",
+   "bytes": 464,
+   "preregistration": "PREREGISTRATION-guardrails.md"
+  },
+  "guardrails/test_items.jsonl": {
+   "sha256": "b2eb855e8a7a0788c80743fd2d5da47e58a7c8c3a1bdebd0d390deb6bf088fb8",
+   "bytes": 62612,
+   "preregistration": "PREREGISTRATION-guardrails.md"
+  },
+  "guardrails/train_items.jsonl": {
+   "sha256": "e9cc46c716b6d45c8d87f112957eb38ef5e74b3da859f5ab7823253ccba4690b",
+   "bytes": 11090,
+   "preregistration": "PREREGISTRATION-guardrails.md"
+  },
   "hypewatch-summary.json": {
    "sha256": "1a0bfc04690470ed73cba87334cf9e39285ce26fd2b49940e7b0690f29b41064",
    "bytes": 647,

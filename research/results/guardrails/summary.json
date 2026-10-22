@@ -1,0 +1,24 @@
+{
+ "n_train": 100,
+ "n_test": 563,
+ "threshold_overclaim": 0.99,
+ "alpha": 0.1,
+ "guardrails": {
+  "auroc": 0.5025,
+  "false_flag_same": 0.1333,
+  "recall_exaggerates": 0.1393,
+  "latency_ms_p50": 242.7,
+  "latency_ms_p95": 358.7
+ },
+ "decider": {
+  "auroc": 0.716
+ },
+ "auroc_gap_decider_minus_guardrails": 0.2135,
+ "auroc_gap_95ci": [
+  0.1416,
+  0.2892
+ ],
+ "text_units": 664,
+ "cost_usd": 0.0664,
+ "cost_per_1000_sentences_usd": 0.1002
+}
