@@ -12,6 +12,12 @@ holds against all three Claude models in a paired bootstrap (Sonnet: 22.9 points
 95% CI 17.8–27.9). On the full 563-pair benchmark it scores macro-F1 **0.498 zero-shot**
 (95% CI 0.452–0.541), level with the best published system (0.4735), which was trained on the task.
 
+AWS's own **Bedrock Guardrails grounding check ranks these exaggerations at chance** (AUROC 0.50 vs
+0.72), because the facts stay the same and only the claim grows. On real text, the gate flags 15% of
+85 NIH releases and **1 in 9 Claude summaries** of the same papers, and fixes 9 in 10 of those
+summaries. All nine experiments were pre-registered, and `python research/reproduce.py` recomputes
+every number offline.
+
 | | |
 |---|---|
 | **Live demo** | https://d174bz5yly61n4.cloudfront.net (click *New here? 30-second tour*) |
@@ -22,7 +28,10 @@ holds against all three Claude models in a paired bootstrap (Sonnet: 22.9 points
 | **Video** | *(YouTube link)* — generated reproducibly by [`video/make_video.py`](video/make_video.py) |
 | **Tags** | `#strands-decider-2b` `#guardrails` |
 
-![Round 1 blocks "is saving lives" at 0.80; round 2 publishes the rewrite](docs/demo.jpg)
+<p>
+<img src="docs/hero.jpg" width="62%" alt="The home page: the paper says 'could be efficacious', the release says 'is saving lives', and the claim ladder shows the release one rung above the paper">
+<img src="docs/demo.jpg" width="34%" alt="A live check: the 'saving lives' sentence is blocked at 0.80 with the claim ladder and the words that gave it away; three other sentences pass">
+</p>
 
 ## The decision handed to Strands Decider
 
