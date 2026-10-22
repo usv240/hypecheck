@@ -14,6 +14,8 @@ anything is published.**
 - **Code (Apache-2.0):** https://github.com/usv240/hypecheck
 - **Video:** *(YouTube link)*
 
+![HypeCheck: the paper says "could be efficacious", the release says "is saving lives", and the claim ladder shows the gap](https://raw.githubusercontent.com/usv240/hypecheck/main/docs/hero.jpg)
+
 **In one line:** for every 1,000 honest press-release sentences, Claude Sonnet as the judge wrongly blocks 296 and costs $0.97; HypeCheck wrongly blocks 67 and costs $0.18, or nothing on your own GPU.
 
 ## Why it matters
@@ -51,6 +53,8 @@ lands in one of three zones:
 - **REVIEW.** The model is unsure. It doesn't block, but an editor sees it in the publish record.
   This is how HypeCheck handles low confidence.
 - **OK.** It is within what the paper supports.
+
+![A live check: "saving lives" is blocked at 0.80; the ladder shows the sentence at "causes" and the paper at "may cause"](https://raw.githubusercontent.com/usv240/hypecheck/main/docs/demo.jpg)
 
 Claude's rewrite goes through the same check. In one recorded run, Claude's first rewrite still
 overclaimed; Decider caught it, and the second rewrite passed. After three failed rewrites, a
