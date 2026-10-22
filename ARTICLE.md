@@ -153,7 +153,17 @@ predictions down first.
 - **Abstract coverage.** Europe PMC, then OpenAlex, then Semantic Scholar between them found an
   abstract for 85 of the 94 NIH papers with a DOI. Nine were missing from all three.
 - **No GPU quota.** The account's GPU quota was 0, so the demo runs Decider on a CPU instance, about
-  six times slower. Results were measured on a laptop GPU.
+  six times slower. Results were measured on a laptop GPU. The quota request is still open.
+- **Reported upstream.** The Decider docs don't yet say how to judge whether one text claims more
+  than another. We opened [strands-decider#103](https://github.com/strands-labs/strands-decider/issues/103)
+  with our numbers: asking each side separately and comparing in code scored 0.498 macro-F1,
+  against 0.408 for one comparison question. The issue also reports where the separate approach
+  did worse, and proposes a short conformal-threshold recipe.
+
+**What it cost.** All Claude usage on the account during the build came to $9.04 on Bedrock, per AWS
+Cost Explorer: Opus 4.6 $5.60, Sonnet 4.6 $2.98 and Haiku 4.5 $0.45. That figure is an upper
+bound. Most of it is the three Claude baselines on 563 pairs, plus HypeWatch's rewrites and the 170
+AI summaries. The Guardrails baseline cost $0.07 and AgentCore Runtime $0.07.
 
 **How AI was used:** an AI coding assistant wrote most of the code, tests and documents under my
 direction. I chose the problem, the decision and what the gate must never do. Every number in this

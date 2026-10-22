@@ -171,6 +171,8 @@ Bedrock).
 Claude rewrites spend real Bedrock money, so they also have a shared ceiling of $2 per day. Checks
 never call a language model.
 
+**Upstream:** [strands-decider#103](https://github.com/strands-labs/strands-decider/issues/103) proposes docs for comparing two texts, with our numbers.
+
 **Backups, and failing closed:**
 - **The agent's host:** the agent runs on AgentCore Runtime, and the page falls back to the same
   agent on EC2 if AgentCore fails.
