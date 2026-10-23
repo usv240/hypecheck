@@ -24,6 +24,7 @@ every number offline.
 | **HypeWatch** | https://d174bz5yly61n4.cloudfront.net/hypewatch: 85 real NIH releases checked against their papers, updated daily |
 | **Developers** | https://d174bz5yly61n4.cloudfront.net/developers: free API key in one click, REST API, MCP connector, bring your own data or AWS |
 | **Decision pattern** | [`decision_pattern/`](decision_pattern/README.md): a claim-fidelity gate, `#guardrails` |
+| **Notebook** | [`notebooks/reproduce.ipynb`](notebooks/reproduce.ipynb): every headline number recomputed offline, with charts ([open in Colab](https://colab.research.google.com/github/usv240/hypecheck/blob/main/notebooks/reproduce.ipynb)) |
 | **Article** | [ARTICLE.md](ARTICLE.md) |
 | **Video** | *(YouTube link)* — generated reproducibly by [`video/make_video.py`](video/make_video.py) |
 | **Tags** | `#strands-decider-2b` `#guardrails` |
@@ -32,6 +33,8 @@ every number offline.
 <img src="docs/hero.jpg" width="62%" alt="The home page: the paper says 'could be efficacious', the release says 'is saving lives', and the claim ladder shows the release one rung above the paper">
 <img src="docs/demo.jpg" width="34%" alt="A live check: the 'saving lives' sentence is blocked at 0.80 with the claim ladder and the words that gave it away; three other sentences pass">
 </p>
+
+<img src="docs/false-alarms.svg" width="720" alt="False alarms on 345 faithful releases: Strands Decider 2B 6.7%, Claude Sonnet 4.6 29.6%, Opus 4.6 40.0%, Haiku 4.5 44.9%, Bedrock Guardrails grounding 13.3%">
 
 ## The decision handed to Strands Decider
 

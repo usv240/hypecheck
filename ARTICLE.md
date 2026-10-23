@@ -156,8 +156,9 @@ predictions down first.
 
 **Cost and AI use.** All Claude usage during the build cost at most $9.04 on Bedrock, mostly the
 three Claude baselines. The Guardrails run cost $0.07. An AI coding assistant wrote most of the
-code under my direction. Every number here comes from a script in the repo, and
-`python research/reproduce.py` recomputes all 21 headline numbers offline in about 10 seconds.
+code under my direction. Every number here comes from a script in the repo. `python research/reproduce.py`, or the
+[notebook](https://github.com/usv240/hypecheck/blob/main/notebooks/reproduce.ipynb), recomputes
+all 21 headline numbers offline in about 10 seconds, and 17 offline tests cover the gate.
 
 ## Limits we measured
 

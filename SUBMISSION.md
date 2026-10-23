@@ -9,6 +9,13 @@ HypeCheck reads a draft health press release next to the paper it reports, flags
 
 **Decision pattern demonstrated:** Guardrails. Before the `publish_release` tool runs, Strands Decider 2B verifies that every sentence is grounded in what the paper's conclusion supports (claim strength: none < correlational < conditional causal < direct causal). Overclaims return `Guide`; still overclaiming after three rewrites returns `Confirm`; clean text returns `Proceed`; no source or no Decider returns `Deny` (fail closed). Install: `pip install "git+https://github.com/usv240/hypecheck"`.
 
+**Form fields**
+- **Cover image:** `docs/cover.jpg` (1200 × 675)
+- **GitHub repository:** https://github.com/usv240/hypecheck
+- **Endpoint or live demo:** https://d174bz5yly61n4.cloudfront.net
+- **Jupyter or SageMaker notebook:** https://github.com/usv240/hypecheck/blob/main/notebooks/reproduce.ipynb
+- **Tags (max 5):** `strands-decider-2b`, `guardrails`, `amazon-bedrock`, `strands-agents`, `amazon-bedrock-agentcore`
+
 **Links**
 - Repository (Apache-2.0): https://github.com/usv240/hypecheck
 - Reusable pattern: https://github.com/usv240/hypecheck/tree/main/decision_pattern
