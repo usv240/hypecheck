@@ -1,4 +1,4 @@
-# HypeCheck demo video: script (v2, for the redesigned site)
+# HypeCheck demo video: script (v3: cold open on the statin storm, redesigned site)
 
 Target: under 3:00 (the rules say under three minutes). Budget about 400 words of narration; the
 previous render of 397 words ran 2:49. Narration is Amazon Polly ("Ruth", generative). No music,
@@ -26,7 +26,7 @@ Total: 357 words of narration; the 2026-10-23 render ran 2:53 against the live s
 
 ## Recording notes
 
-- Light theme, 1120×630 viewport scaled to 720p (text reads about 14% larger), as `make_video.py` does.
+- Light theme, 1280×720 viewport with the page zoomed to 115% (text reads larger at 720p), as `make_video.py` does.
 - Scene 3 uses "Check with Decider only" first, then scene 4 clicks "Let Claude fix it →"; that is the
   flow the site now leads with. Set the engine to AgentCore before scene 4.
 - Hover one ⓘ during scene 3 so the tooltip is visible for a beat.
