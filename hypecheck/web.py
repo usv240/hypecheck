@@ -40,7 +40,9 @@ from decision_pattern.fidelity import check_document, split_sentences
 from . import public_api
 from .agentcore_client import stream_events as agentcore_events
 from .hypewatch import summarize
-from .agent import ROOT, europepmc_conclusion, run_hypecheck, sentence_dict, thresholds, verdict_event
+from decision_pattern.receipt import build_receipt
+
+from .agent import DECIDER_MODEL, ROOT, europepmc_conclusion, run_hypecheck, sentence_dict, thresholds, verdict_event
 
 STATIC = Path(__file__).parent / "static"
 RESULTS = ROOT / "research" / "results"
@@ -118,6 +120,9 @@ def _check_job(body: CheckIn, emit) -> None:
         on_sentence=lambda i, n, s: emit({"type": "progress", "round": 0, "index": i, "total": n,
                                           **sentence_dict(s, threshold, review_threshold)}))
     ev = verdict_event(verdict, "check", threshold, 0, body.draft, review_threshold)
+    ev["receipt"] = build_receipt(verdict, source=conclusion, derived=body.draft, threshold=threshold,
+                                  review_threshold=review_threshold, zones=[s["zone"] for s in ev["sentences"]],
+                                  action="check", model=DECIDER_MODEL, round_no=0, host="demo-server")
     emit(ev)
     emit({"type": "done", "mode": "check", "decider_calls": decider.calls - calls0,
           "decider_ms": round((time.perf_counter() - t0) * 1000), "llm_ms": 0, "rounds": 0,
