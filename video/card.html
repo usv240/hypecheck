@@ -1,29 +1,44 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><title>HypeCheck</title>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..800&display=swap" rel="stylesheet">
 <style>
-  html,body{margin:0;height:100%;background:#0b57d0;color:#fff;font-family:system-ui,"Segoe UI",Roboto,sans-serif}
-  .c{height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 90px;box-sizing:border-box}
-  h1{font-size:58px;line-height:1.1;margin:0 0 18px;letter-spacing:-.02em;max-width:18ch}
-  p{font-size:26px;line-height:1.45;margin:0 0 12px;max-width:42ch;opacity:.95}
-  .q{font-size:30px;background:rgba(255,255,255,.12);border-radius:14px;padding:18px 24px;margin:8px 0;max-width:40ch}
-  .q b{color:#ffd166}
-  small{font-size:18px;opacity:.85}
-  .row{display:flex;gap:16px;align-items:center;margin-bottom:26px;font-size:22px;font-weight:700}
-  .logo{width:44px;height:44px;border-radius:10px;background:#fff;display:grid;place-items:center}
+  html,body{margin:0;height:100%;background:#0a1530;color:#f3f6fc;font-family:"Schibsted Grotesk",system-ui,sans-serif}
+  .c{height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 84px;box-sizing:border-box}
+  h1{font-size:62px;line-height:.98;margin:0 0 20px;letter-spacing:-.04em;font-weight:800;max-width:16ch}
+  p{font-size:23px;line-height:1.4;margin:0 0 10px;max-width:44ch;color:#b9c6e2}
+  p b{color:#fff;font-weight:600}
+  .lbl{font-size:15px;font-weight:600;color:#b9c6e2;margin:12px 0 6px}
+  .box{border-radius:12px;padding:14px 18px;font-size:24px;line-height:1.4;max-width:46ch}
+  .paper{background:#15264f}
+  .rel{background:#fff;color:#101318}
+  .bad{background:#fde7e4;color:#a3221a;text-decoration:line-through;text-decoration-thickness:3px;border-radius:4px;padding:0 3px;transition:all .4s}
+  .bad.live{text-decoration:none;background:transparent;color:#101318}
+  .ladder{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-width:46ch;margin-top:16px}
+  .r{min-height:62px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:18px;font-weight:650;background:rgba(255,255,255,.06);color:#b9c6e2}
+  .r small{font-size:13px;margin-top:2px}
+  .r.p{outline:3px solid #6fd49d;outline-offset:-3px;color:#6fd49d}
+  .r.s{background:#ff9a90;color:#0a1530}
+  small.src{font-size:16px;color:#8fa6d6;margin-top:18px;display:block}
+  .row{display:flex;gap:14px;align-items:center;margin-bottom:28px;font-size:24px;font-weight:800}
+  .logo{width:42px;height:42px;border-radius:10px;background:#1f63d6;display:grid;place-items:center}
+  .links{font-size:22px;color:#cfe0ff;margin-top:22px;line-height:1.6}
 </style></head>
 <body><div class="c" id="c"></div>
 <script>
 const s = new URLSearchParams(location.search).get('s') || 'intro';
-const logo = `<div class="row"><div class="logo"><svg width="28" height="28" viewBox="0 0 32 32"><path d="M9 16.5l4.5 4.5L23 11" fill="none" stroke="#0b57d0" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>HypeCheck</div>`;
+const logo = `<div class="row"><div class="logo"><svg width="24" height="24" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></div>HypeCheck</div>`;
 const cards = {
   intro: `${logo}
-    <div class="q">Paper: “Use of the urgent referral pathway <b>could be efficacious</b>.”</div>
-    <div class="q">Press release: “The urgent referral pathway <b>is saving lives</b>.”</div>
-    <p style="margin-top:22px">In 462 university press releases, a third turned an association into a cause. When the release exaggerated, most of the news did too.</p>
-    <small>Sumner et al., BMJ 2014</small>`,
-  outro: `${logo}<h1>Spell-check for hype in health press releases.</h1>
-    <p>Strands Decider 2B judges · Claude on Amazon Bedrock writes · hosted on Amazon Bedrock AgentCore Runtime</p>
-    <p style="margin-top:20px">github.com/usv240/hypecheck<br>d174bz5yly61n4.cloudfront.net</p>`
+    <div class="lbl">What the paper concluded</div>
+    <div class="box paper">“Use of the urgent referral pathway <b>could be efficacious</b>.”</div>
+    <div class="lbl">What the press release says</div>
+    <div class="box rel">The urgent referral pathway <span class="bad live" id="bad">is saving lives</span>.</div>
+    <div class="ladder"><div class="r">no link</div><div class="r">linked</div><div class="r p">may cause<small>paper</small></div><div class="r s">causes<small>release</small></div></div>
+    <small class="src">Sumner et al., BMJ 2014: 462 university press releases</small>`,
+  outro: `${logo}<h1>Spell-check for hype.</h1>
+    <p><b>Strands Decider 2B</b> judges · <b>Claude on Amazon Bedrock</b> writes · hosted on <b>Amazon Bedrock AgentCore Runtime</b></p>
+    <div class="links">d174bz5yly61n4.cloudfront.net<br>github.com/usv240/hypecheck</div>`
 };
 document.getElementById('c').innerHTML = cards[s];
+if (s === 'intro') setTimeout(() => document.getElementById('bad').classList.remove('live'), 1800);
 </script></body></html>

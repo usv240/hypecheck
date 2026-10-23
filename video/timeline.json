@@ -1,53 +1,41 @@
 {
- "total_seconds": 169.2,
+ "total_seconds": 168.0,
  "scenes": [
   [
    "intro",
-   0.8
+   0.9
   ],
   [
    "hero",
-   18.8
+   18.4
   ],
   [
-   "how",
-   31.0
+   "check",
+   40.6
   ],
   [
-   "run",
-   47.4
-  ],
-  [
-   "blocked",
-   62.3
-  ],
-  [
-   "published",
-   75.1
-  ],
-  [
-   "info",
-   88.5
+   "fix",
+   79.8
   ],
   [
    "evidence",
-   93.9
+   97.6
   ],
   [
-   "hypewatch",
-   117.6
+   "realworld",
+   121.7
   ],
   [
    "limits",
-   134.6
+   135.7
   ],
   [
    "builders",
-   145.6
+   148.8
   ],
   [
    "outro",
-   158.1
+   163.9
   ]
  ]
 }

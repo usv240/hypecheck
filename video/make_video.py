@@ -28,9 +28,9 @@ SCENES = [  # kept in step with VIDEO.md; every number here is one the site show
     ("check", 'Here is a real press release from the research data. Decider reads it one sentence at a time, on our own server, with no language model. The saving-lives sentence scores point eight: it says causes, where the paper only says may cause. The other three sentences pass.'),
     ("fix", 'Now Claude fixes it. The agent runs on Amazon Bedrock AgentCore Runtime. Decider reads the rewrite, nothing is above the threshold, and the release is published, with a decision receipt: every probability and threshold, hashed, so anyone can verify the verdict without a model.'),
     ("evidence", "Does it work? On five hundred and sixty-three expert-labelled pairs, Claude asked to judge flagged thirty to forty-five percent of faithful releases. Amazon's own grounding check ranked exaggerations at chance. A keyword rule flagged one honest release in four. Decider, with a calibrated threshold, flags six point seven percent, and the threshold's promise held on data it had never seen."),
-    ("realworld", 'Then we pointed it at the real world. HypeWatch checks eighty-five NIH press releases against their papers every morning. And when Claude summarised the same papers, about one summary in nine overclaimed. The gate fixed nine in ten.'),
-    ("limits", 'Ten pre-registered experiments, every missed prediction reported, and every mistake listed by direction. At the strict setting it catches thirty-nine percent of exaggerations. It is a safety net, not an editor, and it says so.'),
-    ("builders", 'The gate is a reusable Strands intervention handler: one typed question, a conformal threshold, Guide, Confirm, Proceed or Deny. Use it over REST, over MCP, calibrated on your own data, or deployed into your own AWS account.'),
+    ("realworld", 'Then we pointed it at the real world. HypeWatch checks eighty-five NIH press releases against their papers every morning. When Claude summarised the same papers, one in nine overclaimed. The gate fixed nine in ten.'),
+    ("limits", 'Ten pre-registered experiments, every miss reported and listed. At the strict setting it catches thirty-nine percent of exaggerations: a safety net, not an editor, and it says so.'),
+    ("builders", 'The gate is a reusable Strands intervention handler: one typed question, a conformal threshold, Guide, Confirm, Proceed or Deny. Use it over REST or MCP, on your own data, or in your own AWS account.'),
     ("outro", 'HypeCheck. Spell-check for hype. Links are below.'),
 ]
 
@@ -59,10 +59,12 @@ def record(site: str, clips: dict, out: Path) -> tuple[Path, list[tuple[str, flo
     card = (HERE / "card.html").resolve().as_uri()
     with sync_playwright() as p:
         browser = p.chromium.launch()
-        # A slightly smaller viewport scaled up to 720p makes on-screen text about 14% larger.
-        ctx = browser.new_context(viewport={"width": 1120, "height": 630}, color_scheme="dark",
+        # Viewport and recording size must match, or the page is painted into a corner of the frame.
+        # 1280x720 with a 1.15x zoom keeps the text legible at 720p.
+        ctx = browser.new_context(viewport={"width": 1280, "height": 720}, color_scheme="light",
                                   record_video_dir=str(out), record_video_size={"width": 1280, "height": 720})
         page = ctx.new_page()
+        page.add_init_script("document.addEventListener('DOMContentLoaded', () => { document.documentElement.style.zoom = '1.15'; });")
         t0 = time.monotonic()
         busy_until = 0.0
 
@@ -81,54 +83,55 @@ def record(site: str, clips: dict, out: Path) -> tuple[Path, list[tuple[str, flo
             time.sleep(max(0.0, busy_until - (time.monotonic() - t0)))
 
         page.goto(f"{card}?s=intro")
-        page.wait_for_timeout(600)
+        page.wait_for_timeout(700)
         scene("intro")
+
         page.goto(site)
         page.wait_for_selector("#ex option:nth-child(2)", state="attached")
-        page.wait_for_timeout(400)
+        page.evaluate("document.documentElement.setAttribute('data-theme','light')")
+        page.wait_for_timeout(500)
         scene("hero")
-        scene("how", action=lambda: scroll_to(page, "#impact", 64))
 
-        def start_run():
-            page.select_option("#ex", "0")
-            scroll_to(page, "#out", 64)
-            page.wait_for_timeout(900)
-            page.evaluate("document.querySelector('#run').click()")  # a JS click doesn't scroll the view away
-        scene("run", action=start_run)
-        def show_block():
-            page.wait_for_selector(".act.guide", timeout=240_000)
-            scroll_to(page, "#out", 64)
-        scene("blocked", until=show_block)
-
-        def show_end():
-            page.wait_for_function("document.querySelector('#statusText').textContent.startsWith('Done')", timeout=300_000)
-            page.evaluate("document.querySelector('#results').lastElementChild.scrollIntoView({block:'end', behavior:'smooth'})")
+        def start_check():
+            # the hero button loads the first real example and runs the Decider-only check
+            page.evaluate("document.querySelector('input[value=agentcore]').checked = true")
+            page.evaluate("document.querySelector('#heroTry').click()")
+            page.wait_for_selector("#results .sent.block", timeout=240_000)
+            page.wait_for_timeout(400)
+            page.evaluate("document.querySelector('#results .sent.block').scrollIntoView({block:'center', behavior:'smooth'})")
             page.wait_for_timeout(700)
-        scene("published", until=show_end)
-
-        def hover_info():
-            scroll_to(page, "#top", 0)
-            page.wait_for_timeout(700)
-            page.hover(".proof .i")
-        scene("info", action=hover_info)
+            page.hover("#results .sent.block .score .i")
+        scene("check", action=start_check, pad=0.2)
         page.mouse.move(5, 5)
-        scene("evidence", action=lambda: scroll_to(page, "#chartCard", 90))
-        def open_hypewatch():
-            page.goto(site.rstrip("/") + "/hypewatch")
-            page.wait_for_selector(".rel", timeout=60_000)
-            page.wait_for_timeout(1500)
-            page.evaluate("window.scrollTo({top: document.querySelector('.rel').getBoundingClientRect().top + scrollY - 70, behavior:'smooth'})")
-        scene("hypewatch", action=open_hypewatch, pad=1.0)
 
-        def back_to_limits():
-            page.goto(site)
-            page.wait_for_selector(".limits")
-            scroll_to(page, ".limits", 260)
-        scene("limits", action=back_to_limits)
-        scene("builders", action=lambda: scroll_to(page, "#builders", 80))
+        def show_fix():
+            # start Claude's fix as the next line begins, so the viewer sees the rounds build live
+            page.wait_for_selector("#fixBtn", timeout=120_000)
+            page.evaluate("document.querySelector('#fixBtn').click()")
+            page.wait_for_selector("#results .final", timeout=300_000)
+            page.wait_for_timeout(400)
+            page.evaluate("document.querySelector('#results .final').scrollIntoView({block:'center', behavior:'smooth'})")
+            page.wait_for_timeout(800)
+        scene("fix", action=show_fix)
+
+        scene("evidence", action=lambda: scroll_to(page, "#chartCard", 90))
+        scene("realworld", action=lambda: scroll_to(page, "#hypewatch", 70))
+
+        def show_limits():
+            scroll_to(page, ".limits", 140)
+        scene("limits", action=show_limits)
+
+        def open_dev():
+            page.goto(site.rstrip("/") + "/developers")
+            page.wait_for_selector(".grid4", timeout=60_000)
+            page.evaluate("document.documentElement.setAttribute('data-theme','light')")
+            page.wait_for_timeout(900)
+            page.evaluate("window.scrollTo({top: document.querySelector('.grid4').getBoundingClientRect().top + scrollY - 160, behavior:'smooth'})")
+        scene("builders", action=open_dev)
+
         page.goto(f"{card}?s=outro")
         page.wait_for_timeout(300)
-        scene("outro", pad=1.5)
+        scene("outro", pad=0.3)
         video = Path(page.video.path())
         ctx.close()
         browser.close()
