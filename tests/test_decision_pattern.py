@@ -146,3 +146,28 @@ def test_decider_fails_over_to_the_next_server():
             Decider(url="http://127.0.0.1:9", timeout=2).ask("s", {"q": {"type": "noul"}})
     finally:
         srv.shutdown()
+
+
+def test_receipt_recomputes_and_detects_tampering():
+    import json
+
+    from decision_pattern.receipt import build_receipt, sha256, verify_receipt
+
+    decider = FakeDecider({"saves lives": 3, "could be": 2})
+    source = "The pathway could be efficacious."
+    text = "The pathway saves lives. The study ran in England."
+    verdict = check_document(decider, source, text, advisory=False)
+    zones = ["block" if s.p_overclaim > 0.5 else "ok" for s in verdict.sentences]
+    kw = dict(source=source, derived=text, threshold=0.5, review_threshold=0.4, zones=zones, action="guide", model="fake", round_no=1)
+    r = build_receipt(verdict, **kw)
+    assert r["hash"] and r["sentences"][0]["zone"] == "block" and verify_receipt(r)["ok"]
+    # the same facts give the same hash
+    r2 = build_receipt(verdict, **kw)
+    r2["issued_at"] = r["issued_at"]
+    body = {k: v for k, v in r2.items() if k != "hash"}
+    assert sha256(json.dumps(body, sort_keys=True, separators=(",", ":"), ensure_ascii=False)) == r["hash"]
+    # edit a zone: the hash and the zone check both fail, and the problem names the sentence
+    bad = json.loads(json.dumps(r))
+    bad["sentences"][0]["zone"] = "ok"
+    v = verify_receipt(bad)
+    assert not v["ok"] and not v["hash_ok"] and not v["zones_ok"] and "sentence 0" in v["problems"][-1]

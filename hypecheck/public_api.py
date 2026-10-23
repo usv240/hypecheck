@@ -30,6 +30,7 @@ from decision_pattern.calibrate import conformal_threshold
 from decision_pattern.decider import Decider
 from decision_pattern.fidelity import STRENGTH, check_document, overclaim_probability, split_sentences, strength
 from decision_pattern.gate import zone
+from decision_pattern.receipt import build_receipt, verify_receipt
 
 from .apikeys import KeyStore, LimitExceeded
 from .hypewatch import suggest
@@ -61,7 +62,11 @@ class Engine:
         v = check_document(self.decider, source, text)
         sents = [{"sentence": s.sentence, "strength": s.strength, "overclaim": round(s.p_overclaim, 4),
                   "zone": zone(s.p_overclaim, self.threshold, self.review_threshold)} for s in v.sentences]
+        receipt = build_receipt(v, source=source, derived=text, threshold=self.threshold,
+                                review_threshold=self.review_threshold, zones=[s["zone"] for s in sents],
+                                model="strands-decider-2B-qwen3.5-v1-2610")
         return {
+            "receipt": receipt,
             "source_strength": v.source_strength,
             "verdict": "block" if any(s["zone"] == "block" for s in sents) else "review" if any(s["zone"] == "review" for s in sents) else "ok",
             "sentences": sents,
@@ -142,6 +147,10 @@ class TextIn(BaseModel):
     text: str = Field(..., min_length=3, max_length=MAX_CHARS, description="The derived text to check")
 
 
+class ReceiptIn(BaseModel):
+    receipt: dict = Field(..., description="A receipt returned by /v1/check, /v1/rewrite, the agent, or an outbox file")
+
+
 class Pair(BaseModel):
     source: str = Field(..., max_length=2000)
     derived: str = Field(..., max_length=2000)
@@ -186,6 +195,15 @@ def v1_rewrite(body: TextIn, authorization: str | None = Header(None), x_api_key
     cost = engine.keys.add_cost(usage.get("input_tokens", 0), usage.get("output_tokens", 0))
     result["claude"] = {"model": "us.anthropic.claude-sonnet-4-6", **usage, "cost_usd": round(cost, 5)}
     return result
+
+
+@router.post("/verify", summary="Verify a decision receipt without a model (no key needed)")
+def v1_verify(body: ReceiptIn) -> dict:
+    """Recomputes the hash, every overclaim score and every zone from the receipt's own rung probabilities."""
+    try:
+        return verify_receipt(body.receipt)
+    except (KeyError, TypeError, ValueError) as exc:
+        raise HTTPException(400, f"not a HypeCheck receipt: {exc}") from None
 
 
 @router.post("/calibrate", status_code=202, summary="Bring your own labelled pairs; get a conformal threshold")
@@ -235,6 +253,12 @@ def _mcp_spend(action: str) -> None:
 def check_claims(source: str, text: str) -> dict:
     _mcp_spend("check")
     return engine.check(source, text)
+
+
+@mcp.tool(description="Verify a HypeCheck decision receipt offline: recomputes its hash, overclaim scores and zones "
+                      "from the rung probabilities it carries. Free, no model.")
+def verify_decision_receipt(receipt: dict) -> dict:
+    return verify_receipt(receipt)
 
 
 @mcp.tool(description="Like check_claims, then Claude on Amazon Bedrock rewrites each blocked sentence so it claims "

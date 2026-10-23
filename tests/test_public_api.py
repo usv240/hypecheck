@@ -78,3 +78,13 @@ def test_calibrate_needs_enough_faithful_pairs(client):
     pairs = [{"source": "a was associated with b.", "derived": "a prevents b.", "label": "overclaim"}] * 10
     r = client.post("/v1/calibrate", headers={"Authorization": f"Bearer {key}"}, json={"alpha": 0.1, "pairs": pairs})
     assert r.status_code == 400 and "faithful" in r.json()["detail"]
+
+
+def test_check_returns_receipt_and_verify_accepts_it(client):
+    key = client.post("/v1/keys").json()["api_key"]
+    r = client.post("/v1/check", headers={"Authorization": f"Bearer {key}"},
+                    json={"source": "Coffee intake was associated with lower risk.", "text": "Coffee prevents liver disease."}).json()
+    assert "receipt" in r and r["receipt"]["hash"]
+    v = client.post("/v1/verify", json={"receipt": r["receipt"]}).json()
+    assert v["ok"] and v["scores_ok"] and v["zones_ok"]
+    assert client.post("/v1/verify", json={"receipt": {"nope": 1}}).status_code == 400

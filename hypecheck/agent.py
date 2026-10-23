@@ -28,6 +28,7 @@ from strands import Agent, tool
 from decision_pattern.decider import Decider, DeciderUnavailable
 from decision_pattern.fidelity import DocumentVerdict, SentenceVerdict
 from decision_pattern.gate import ClaimFidelityGate, load_threshold, zone
+from decision_pattern.receipt import build_receipt
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTBOX = Path(os.environ.get("HYPECHECK_OUTBOX", ROOT / "outbox"))
@@ -39,6 +40,7 @@ UNAVAILABLE = {"ThrottlingException", "ServiceUnavailableException", "ModelNotRe
                "ModelTimeoutException", "InternalServerException", "AccessDeniedException",
                "ResourceNotFoundException", "ModelThrottledException"}
 THRESHOLD_FILE = ROOT / "research" / "results" / "calibration" / "summary.json"
+DECIDER_MODEL = os.environ.get("STRANDS_DECIDER_MODEL", "strands-decider-2B-qwen3.5-v1-2610")
 
 SYSTEM = (
     "You are a university press-office assistant. You publish health press releases with the "
@@ -134,15 +136,26 @@ def run_hypecheck(draft: str, *, conclusion: str | None = None, pmid: str | None
         record = text
         if gate.review:  # the publish record carries the low-confidence sentences for a human glance
             record += "\n\n---\nFor editor review (low confidence, not blocked):\n" + "\n".join(f"- {s}" for s in gate.review)
+        if receipts:  # the receipt that cleared it travels with the release
+            head = "Decision receipt (sha256 " + receipts[-1]["hash"][:16] + "...):"
+            record += "\n\n---\n" + head + "\n" + json.dumps(receipts[-1], indent=1)
         path.write_text(record, encoding="utf-8")
         published["text"], published["file"] = text, path.name
-        emit({"type": "published", "text": text, "file": path.name, "review": list(gate.review)})
+        emit({"type": "published", "text": text, "file": path.name, "review": list(gate.review),
+              "receipt_hash": receipts[-1]["hash"] if receipts else None})
         return f"Published to {path.name}."
 
     pending: dict[str, Any] = {}
+    receipts: list[dict[str, Any]] = []
 
     def on_verdict(verdict: DocumentVerdict, action: str) -> None:
-        emit(verdict_event(verdict, action, threshold, gate.rounds, pending.get("text", ""), review_threshold))
+        ev = verdict_event(verdict, action, threshold, gate.rounds, pending.get("text", ""), review_threshold)
+        ev["receipt"] = build_receipt(verdict, source=paper["conclusion"], derived=pending.get("text", ""),
+                                      threshold=threshold, review_threshold=review_threshold,
+                                      zones=[s["zone"] for s in ev["sentences"]], action=action,
+                                      model=DECIDER_MODEL, round_no=gate.rounds)
+        receipts.append(ev["receipt"])
+        emit(ev)
 
     def on_sentence(i: int, total: int, s: SentenceVerdict) -> None:
         emit({"type": "progress", "round": gate.rounds, "index": i, "total": total,

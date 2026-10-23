@@ -91,6 +91,7 @@ class ClaimFidelityGate(InterventionHandler):
         self.rounds = 0
         self.history: list[dict[str, Any]] = []
         self.review: list[str] = []
+        self.last: dict[str, Any] = {}
 
     def before_tool_call(self, event, **kwargs):
         if event.tool_use["name"] != self.tool_name:
@@ -107,6 +108,7 @@ class ClaimFidelityGate(InterventionHandler):
         zones = [zone(s.p_overclaim, self.threshold, self.review_threshold) for s in verdict.sentences]
         flagged = [s for s, z in zip(verdict.sentences, zones) if z == "block"]
         self.review = [s.sentence for s, z in zip(verdict.sentences, zones) if z == "review"]
+        self.last = {"verdict": verdict, "zones": zones, "source": source, "text": text}  # for receipts
         self.history.append({"round": self.rounds, "flagged": len(flagged), "review": len(self.review),
                              "sentences": len(verdict.sentences),
                              "max_p_overclaim": round(max((s.p_overclaim for s in verdict.sentences), default=0.0), 4)})
