@@ -75,7 +75,7 @@ We asked Claude on Bedrock the same question on 563 expert-labelled press-releas
 - **The threshold can be promised.** The Decider docs say to measure the cut-off on your own data.
   We did, with conformal calibration: pick the cut-off so that at most 10% of known-honest
   sentences would be flagged. On 441 pairs it had never seen, it flagged 7.7%.
-- **It can't be argued with.** Decider returns a number, and plain code decides what to do.
+- **It can't be argued with.** Decider returns a number, and plain code decides what to do. Every verdict ships a **decision receipt**: the rung probabilities, scores, thresholds and the rule, hashed. Anyone can recompute it without a model (`/v1/verify`), and a press officer can hand it to an editor.
 - **A keyword rule can't do it either.** Flag every sentence with a causal verb and you catch a few more exaggerations, but you also flag one honest release in four (26%). Decider: 6.7%.
 - **AWS's own grounding check doesn't catch this.** Amazon Bedrock Guardrails has a contextual
   grounding check for "does this text stay within its source". On the same pairs it ranked

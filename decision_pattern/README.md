@@ -91,13 +91,31 @@ n ≥ 1/α − 1 faithful pairs.
 
 The same gate is a hosted API and an MCP tool, and you can calibrate it on your own pairs. Instructions and a free key are at https://d174bz5yly61n4.cloudfront.net/developers.
 
-## 6. Install
+## 6. Decision receipts
+
+Every verdict carries a receipt: canonical JSON with the checkpoint, the rung probabilities for the
+source and each sentence, the overclaim scores, the thresholds and their basis, the zones, the
+policy text, and a SHA-256 over all of it. The facts are written by code, never by a model.
+
+```python
+from decision_pattern import build_receipt, verify_receipt
+receipt = build_receipt(verdict, source=paper, derived=draft, threshold=0.5001, review_threshold=0.3986,
+                        zones=zones, action="guide", model="strands-decider-2B-qwen3.5-v1-2610")
+verify_receipt(receipt)   # recomputes scores, zones and the hash with no model; names any sentence that disagrees
+```
+
+In HypeCheck the receipt is attached to each agent round, to the published release in the outbox, and
+to every `/v1/check` and `/v1/rewrite` response. `POST /v1/verify` (no key) and the MCP tool
+`verify_decision_receipt` check one. Credit for the device: Changeset Second Opinion and Heal or Halt
+in the same hackathon.
+
+## 7. Install
 
 ```bash
 pip install "git+https://github.com/usv240/hypecheck"   # installs decision_pattern only
 ```
 
-## 7. Notes for reuse
+## 8. Notes for reuse
 
 - It works for any "derived text must not exceed its source" job: summaries, RAG answers,
   patient leaflets, changelogs. `examples/leaflet_gate.py` runs it unchanged on a leaflet writer.
@@ -113,7 +131,7 @@ pip install "git+https://github.com/usv240/hypecheck"   # installs decision_patt
   (`HYPECHECK_FALLBACK_MODEL`). Both models are cross-region inference profiles.
 - Offline tests: `pytest -q tests` (uses a fake decider; no server or Bedrock needed).
 
-## 8. What this uses from Strands Decider and the hackathon brief
+## 9. What this uses from Strands Decider and the hackathon brief
 
 | Capability | How it is used here |
 |---|---|

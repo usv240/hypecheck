@@ -188,6 +188,7 @@ Bedrock).
 | **REST API** | `POST /v1/check` (free, 300 a day per key): every sentence's claim strength, overclaim probability and zone. `POST /v1/rewrite` (20 a day): Claude fixes the blocked sentences, and Decider verifies each fix. Keys are issued instantly at `/developers`, with no signup; only a SHA-256 hash is stored. OpenAPI reference at `/docs` |
 | **MCP connector** | `https://d174bz5yly61n4.cloudfront.net/mcp` exposes `check_claims` and `suggest_rewrites` to any MCP client: Strands, Claude Desktop (via `mcp-remote`), Kiro, Cursor. A Strands agent on Bedrock has been verified using it to block "Statins prevent dementia" (0.73) |
 | **Bring your own data** | A form on `/developers` (paste or upload a CSV, or load a sample from a non-health domain) or `POST /v1/calibrate` with 10–60 of your labelled pairs returns a split-conformal threshold with a stated false-flag rate for your domain |
+| **Decision receipt** | Every verdict carries hashed, code-written facts (checkpoint, every rung probability, scores, thresholds, zone, policy). `POST /v1/verify` or the `verify_decision_receipt` MCP tool recomputes them with no model, and names any sentence that doesn't match |
 | **Python package** | `pip install "git+https://github.com/usv240/hypecheck"` installs the reusable `decision_pattern` gate on its own |
 | **Bring your own AWS** | `deploy/hypecheck-stack.yaml` deploys the whole stack into your account: one EC2 instance, a least-privilege Bedrock role, access through SSM, no SSH. Test-launched end to end |
 

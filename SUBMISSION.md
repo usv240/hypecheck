@@ -36,6 +36,8 @@ HypeCheck reads a draft health press release next to the paper it reports, flags
 - AI summaries, second use case: about 1 in 9 Claude summaries of the same 85 papers had a sentence the gate blocks (Sonnet 4.6 11.8%, Haiku 4.5 10.6%), and the gate fixed 9 in 10 of them. Pre-registered; 1 of 4 predictions missed.
 - Reproducible: `python research/reproduce.py` checks every result file against its SHA-256, then recomputes all 22 headline numbers offline ($0, no network, about 10 s).
 - Upstream: [strands-decider#103](https://github.com/strands-labs/strands-decider/issues/103) proposes docs for comparing two texts, with our pre-registered numbers.
+- Decision receipts on every verdict and on the published release: hashed, code-written facts; `/v1/verify` and an MCP tool recompute them with no model.
+- No-model baseline: a causal-verb keyword rule flags 26% of faithful releases (ours 6.7%) and ranks at 0.53 vs 0.72.
 - Backups: AgentCore → EC2 for the agent; Claude Sonnet 4.6 → Haiku 4.5 on throttling; several Decider servers with failover; the gate fails closed.
 - 160 ms per decision on a laptop GPU, 0 tokens; the LLM baseline costs ~2 s and ~270 tokens per check.
 
