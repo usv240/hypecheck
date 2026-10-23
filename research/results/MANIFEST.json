@@ -136,6 +136,26 @@
    "bytes": 401,
    "preregistration": "PREREGISTRATION-keyword-baseline.md"
   },
+  "misses/dangerous.csv": {
+   "sha256": "8c5e06321e27ca851e7181d01d297c6b59116b457b536973483e9a02e464ecb9",
+   "bytes": 31944,
+   "preregistration": "PREREGISTRATION-spike.md"
+  },
+  "misses/downplay_flagged.csv": {
+   "sha256": "2906f305f09a461baffd3ff0ecdc8a42eb2332672dc186e3093192550e290ab3",
+   "bytes": 4517,
+   "preregistration": "PREREGISTRATION-spike.md"
+  },
+  "misses/MISSES.md": {
+   "sha256": "4a94e07484834458a47f2bfed85354168af6e32c0e816c4f2660c87e2647cd1c",
+   "bytes": 14514,
+   "preregistration": "PREREGISTRATION-spike.md"
+  },
+  "misses/needless.csv": {
+   "sha256": "9abdaf6792286e8c6da3e25790d3ecfc08c19f4b29b46a034ad51e4807316033",
+   "bytes": 9777,
+   "preregistration": "PREREGISTRATION-spike.md"
+  },
   "prompt-select/summary.json": {
    "sha256": "1257973554938bf96c58207c54c81a5317058c13208ae292287b45c080313ab5",
    "bytes": 333,
@@ -165,6 +185,16 @@
    "sha256": "9b179e504db4f685befd1eed9094b408a3b40ddee9756bee9e29411a56c942ea",
    "bytes": 120858,
    "preregistration": "PREREGISTRATION-spike.md"
+  },
+  "sweep/summary.json": {
+   "sha256": "57960418c02af8043bf3688cefe2556e498204cd98160c47c6793a4402497652",
+   "bytes": 875,
+   "preregistration": "PREREGISTRATION-combo.md"
+  },
+  "sweep/sweep.csv": {
+   "sha256": "0ff3494af0e289fe92ce0073ef6c60a2a867cbc1342c66d7ce8e05919b0c89df",
+   "bytes": 3901,
+   "preregistration": "PREREGISTRATION-combo.md"
   }
  }
 }

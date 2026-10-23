@@ -145,6 +145,12 @@ predictions down first.
    false-alarm gap to Claude survived the same test easily. A tool against overclaiming should not
    overclaim.
 
+**Every mistake, listed.** The repo lists every miss at the strict threshold by direction: the 75
+exaggerations the gate let through (its 39% recall, item by item; 7 of them sat in the review zone, so an
+editor saw them) and the 23 faithful releases it blocked, each with the sentence, the paper and both
+readings of the ladder. A threshold sweep over the saved scores shows the cut-off sits on a plateau,
+not a knife edge: every threshold from 0.46 up keeps the 10% promise.
+
 **Platform findings, for other builders:**
 - **AgentCore code deploy from Windows:** `pip --platform` still pulls Windows-only wheels. We
   resolve the ARM64 list on Linux once and install it with `--no-deps`.

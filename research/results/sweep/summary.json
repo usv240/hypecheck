@@ -1,0 +1,44 @@
+{
+ "n": 563,
+ "grid": "0.00 to 1.00 in steps of 0.01",
+ "conformal_thresholds": {
+  "0.05": 0.6871,
+  "0.1": 0.5001,
+  "0.2": 0.3986
+ },
+ "at_conformal": {
+  "0.05": {
+   "threshold": 0.69,
+   "recall": 0.1967,
+   "false_flag_same": 0.0116,
+   "false_flag_not_overclaim": 0.0159,
+   "precision": 0.7742,
+   "flag_rate": 0.0551
+  },
+  "0.1": {
+   "threshold": 0.5,
+   "recall": 0.3852,
+   "false_flag_same": 0.0667,
+   "false_flag_not_overclaim": 0.0771,
+   "precision": 0.5802,
+   "flag_rate": 0.1439
+  },
+  "0.2": {
+   "threshold": 0.4,
+   "recall": 0.4426,
+   "false_flag_same": 0.1217,
+   "false_flag_not_overclaim": 0.1429,
+   "precision": 0.4615,
+   "flag_rate": 0.2078
+  }
+ },
+ "thresholds_keeping_false_flags_le_10pct": {
+  "min": 0.46,
+  "max": 1.0,
+  "count": 55
+ },
+ "recall_range_within_that_band": [
+  0.0,
+  0.4098
+ ]
+}

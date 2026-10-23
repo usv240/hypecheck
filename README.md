@@ -36,6 +36,18 @@ every number offline.
 
 <img src="docs/false-alarms.svg" width="720" alt="False alarms on 345 faithful releases: Strands Decider 2B 6.7%, Claude Sonnet 4.6 29.6%, Opus 4.6 40.0%, Haiku 4.5 44.9%, Bedrock Guardrails grounding 13.3%">
 
+## Where to look, by judging criterion
+
+| Criterion | The claim | The evidence | Where |
+|---|---|---|---|
+| Creativity | Hype is stopped at its source, and the gate explains every verdict with a claim ladder | The hero replay; a live check; HypeWatch on real NIH releases; the AI-summaries run | [Live demo](https://d174bz5yly61n4.cloudfront.net) · [HypeWatch](https://d174bz5yly61n4.cloudfront.net/hypewatch) |
+| Effective use of Decider + Bedrock | One typed question, compared in code; a threshold with a kept promise; Claude rewrites and Decider re-checks; all four intervention actions; a hashed receipt per verdict | `decision_pattern/`, `research/results/calibration/summary.json`, `research/results/significance/summary.json` | [Pattern README](decision_pattern/README.md) · [Developers](https://d174bz5yly61n4.cloudfront.net/developers) |
+| Beats the alternatives | Fewer false alarms than three Claude models, Bedrock Guardrails and a keyword rule, with CIs | `research/results/baseline-*/`, `guardrails/`, `keyword-baseline/` | [Results table](#results) · [docs/false-alarms.svg](docs/false-alarms.svg) |
+| Honesty | Ten pre-registered experiments with every miss reported; every error listed by direction; the threshold sweep | `research/PREREGISTRATION-*.md`, `research/results/misses/MISSES.md`, `docs/sweep.svg` | [Misses](research/results/misses/MISSES.md) · [Sweep](docs/sweep.svg) |
+| Communication | Plain-language site with ⓘ on every number, a 30-second tour, this README, the article, the video | — | [ARTICLE.md](ARTICLE.md) · [VIDEO.md](VIDEO.md) |
+| Originality | The only entry on health news and AI summaries of science | — | [COMPETITION notes](https://github.com/usv240/hypecheck) |
+| Reproducibility | 22 headline numbers recompute offline in 10 s; every result file is fingerprinted | `research/reproduce.py`, `research/results/MANIFEST.json` | [Notebook](notebooks/reproduce.ipynb) |
+
 ## The decision handed to Strands Decider
 
 Decider gets one typed question, asked of the paper's conclusion and then of every sentence in the draft:
@@ -70,6 +82,10 @@ third round was clean.
   and no tool checks a draft against its own paper.
 
 ## Results
+
+<img src="docs/sweep.svg" width="760" alt="Threshold sweep: recall and false flags against every block threshold from 0 to 1; the conformal thresholds at alpha 0.05, 0.10 and 0.20 are marked, and every threshold from 0.46 up keeps false flags at or below 10%">
+
+**The threshold is not a knife edge.** Every cut-off from 0.46 to 1.0 keeps false flags on non-exaggerating pairs at or below 10%; ours (0.50) sits inside that band and catches 38.5% of exaggerations, against a best of 41% anywhere in it (`python research/sweep.py`). **Every miss is listed by direction** in [research/results/misses/MISSES.md](research/results/misses/MISSES.md): 75 exaggerations let through (of which 7 were in the review zone, so an editor saw them) and 23 faithful releases blocked, each with the sentence, the paper and both readings of the ladder.
 
 All test data is published expert coding that we did not write. Every experiment was
 pre-registered before it ran ([research/](research/README.md)), ten in all, and every
