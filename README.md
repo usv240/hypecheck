@@ -15,7 +15,7 @@ holds against all three Claude models in a paired bootstrap (Sonnet: 22.9 points
 AWS's own **Bedrock Guardrails grounding check ranks these exaggerations at chance** (AUROC 0.50 vs
 0.72), because the facts stay the same and only the claim grows. On real text, the gate flags 15% of
 85 NIH releases and **1 in 9 Claude summaries** of the same papers, and fixes 9 in 10 of those
-summaries. All nine experiments were pre-registered, and `python research/reproduce.py` recomputes
+summaries. All ten experiments were pre-registered, and `python research/reproduce.py` recomputes
 every number offline.
 
 | | |
