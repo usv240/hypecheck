@@ -4,7 +4,7 @@
 <style>
   html,body{margin:0;height:100%;background:#0a1530;color:#f3f6fc;font-family:"Schibsted Grotesk",system-ui,sans-serif}
   .c{height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 84px;box-sizing:border-box}
-  h1{font-size:62px;line-height:.98;margin:0 0 20px;letter-spacing:-.04em;font-weight:800;max-width:16ch}
+  h1{font-size:56px;line-height:1.02;margin:0 0 22px;letter-spacing:-.04em;font-weight:800;max-width:19ch}
   p{font-size:23px;line-height:1.4;margin:0 0 10px;max-width:44ch;color:#b9c6e2}
   p b{color:#fff;font-weight:600}
   .lbl{font-size:15px;font-weight:600;color:#b9c6e2;margin:12px 0 6px}
@@ -28,6 +28,10 @@
 const s = new URLSearchParams(location.search).get('s') || 'intro';
 const logo = `<div class="row"><div class="logo"><svg width="24" height="24" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></div>HypeCheck</div>`;
 const cards = {
+  cold: `${logo}
+    <h1>In one news storm, about 219,000 people stopped their heart medicine.</h1>
+    <p>The hype that reached them started in a press release. A third of university health releases claim more than their study found, and when they do, most of the news repeats it.</p>
+    <small class="src">Matthews et al., BMJ 2016 · Sumner et al., BMJ 2014</small>`,
   intro: `${logo}
     <div class="lbl">What the paper concluded</div>
     <div class="box paper">“Use of the urgent referral pathway <b>could be efficacious</b>.”</div>

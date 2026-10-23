@@ -23,7 +23,7 @@ HypeCheck reads a draft health press release next to the paper it reports, flags
 - Live demo: https://d174bz5yly61n4.cloudfront.net
 - HypeWatch (real NIH releases, daily): https://d174bz5yly61n4.cloudfront.net/hypewatch
 - Article: *(Builder Center URL after posting ARTICLE.md)*
-- Video: *(YouTube URL)*. Upload `video/hypecheck-demo.mp4` (2:48, Polly narration, no music, rendered 2026-10-23 against the live site)
+- Video: *(YouTube URL)*. Upload `video/hypecheck-demo.mp4` (2:53, Polly narration, no music, rendered 2026-10-23 against the live site; opens on the statin storm)
 
 **Headline numbers (all on public expert-labelled data, pre-registered):**
 - Per 1,000 honest sentences: Claude Sonnet as the judge wrongly blocks 296 for $0.97; HypeCheck blocks 67 for $0.18 ($0 on your own GPU).

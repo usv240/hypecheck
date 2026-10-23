@@ -1,41 +1,49 @@
 {
- "total_seconds": 168.0,
+ "total_seconds": 172.7,
  "scenes": [
   [
+   "cold",
+   0.8
+  ],
+  [
    "intro",
-   0.9
+   12.0
   ],
   [
    "hero",
-   18.4
+   23.9
   ],
   [
    "check",
-   40.6
+   45.4
   ],
   [
    "fix",
-   79.8
+   60.5
+  ],
+  [
+   "published",
+   92.5
   ],
   [
    "evidence",
-   97.6
+   100.4
   ],
   [
    "realworld",
-   121.7
+   122.0
   ],
   [
    "limits",
-   135.7
+   136.0
   ],
   [
    "builders",
-   148.8
+   149.1
   ],
   [
    "outro",
-   163.9
+   164.2
   ]
  ]
 }

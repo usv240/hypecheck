@@ -23,11 +23,13 @@ HERE = Path(__file__).resolve().parent
 VOICE = "Ruth"
 
 SCENES = [  # kept in step with VIDEO.md; every number here is one the site shows
-    ("intro", 'The paper says an urgent cancer referral pathway could be efficacious. The press release says it is saving lives. In four hundred and sixty-two university press releases, a third turned an association into a cause, and when the release exaggerated, most of the news did too.'),
-    ("hero", 'HypeCheck stops it at the source. Strands Decider 2B rates every sentence on a four-rung ladder: no link, linked, may cause, causes. If a sentence sits higher than the paper, it is blocked. Claude on Amazon Bedrock rewrites only that sentence, and Decider checks the rewrite again.'),
-    ("check", 'Here is a real press release from the research data. Decider reads it one sentence at a time, on our own server, with no language model. The saving-lives sentence scores point eight: it says causes, where the paper only says may cause. The other three sentences pass.'),
-    ("fix", 'Now Claude fixes it. The agent runs on Amazon Bedrock AgentCore Runtime. Decider reads the rewrite, nothing is above the threshold, and the release is published, with a decision receipt: every probability and threshold, hashed, so anyone can verify the verdict without a model.'),
-    ("evidence", "Does it work? On five hundred and sixty-three expert-labelled pairs, Claude asked to judge flagged thirty to forty-five percent of faithful releases. Amazon's own grounding check ranked exaggerations at chance. A keyword rule flagged one honest release in four. Decider, with a calibrated threshold, flags six point seven percent, and the threshold's promise held on data it had never seen."),
+    ("cold", 'After one news storm about statins, an estimated two hundred and nineteen thousand people in the UK stopped their heart medicine. The hype that reached them started in a press release.'),
+    ("intro", 'The paper says a cancer referral pathway could be efficacious. The press release says it is saving lives. A third of university releases do this, and most of the news repeats it.'),
+    ("hero", 'HypeCheck stops it at the source. Strands Decider 2B rates every sentence on a four-rung ladder: no link, linked, may cause, causes. A sentence that sits higher than the paper is blocked. Claude on Amazon Bedrock rewrites it, and Decider checks the rewrite again.'),
+    ("check", 'Here is a real press release from the research data. Decider reads it one sentence at a time on our own server, with no language model. The saving-lives sentence scores point eight: it says causes, where the paper only says may cause. The other three pass.'),
+    ("fix", 'Now Claude fixes it. The agent runs on Amazon Bedrock AgentCore Runtime. Claude rewrites only the blocked sentence, Decider reads the rewrite, and nothing is above the threshold.'),
+    ("published", "Published, with a decision receipt: every probability and threshold, hashed, so anyone can verify the verdict without a model."),
+    ("evidence", "Does it work? On five hundred and sixty-three expert-labelled pairs, Claude asked to judge flagged thirty to forty-five percent of faithful releases. Amazon's own grounding check scored at chance. A keyword rule flagged one honest release in four. Decider, calibrated, flags six point seven percent, and that promise held on unseen data."),
     ("realworld", 'Then we pointed it at the real world. HypeWatch checks eighty-five NIH press releases against their papers every morning. When Claude summarised the same papers, one in nine overclaimed. The gate fixed nine in ten.'),
     ("limits", 'Ten pre-registered experiments, every miss reported and listed. At the strict setting it catches thirty-nine percent of exaggerations: a safety net, not an editor, and it says so.'),
     ("builders", 'The gate is a reusable Strands intervention handler: one typed question, a conformal threshold, Guide, Confirm, Proceed or Deny. Use it over REST or MCP, on your own data, or in your own AWS account.'),
@@ -82,8 +84,11 @@ def record(site: str, clips: dict, out: Path) -> tuple[Path, list[tuple[str, flo
             busy_until = start + clips[name][1] + pad
             time.sleep(max(0.0, busy_until - (time.monotonic() - t0)))
 
+        page.goto(f"{card}?s=cold")
+        page.wait_for_timeout(600)
+        scene("cold", pad=0.3)
         page.goto(f"{card}?s=intro")
-        page.wait_for_timeout(700)
+        page.wait_for_timeout(600)
         scene("intro")
 
         page.goto(site)
@@ -105,14 +110,18 @@ def record(site: str, clips: dict, out: Path) -> tuple[Path, list[tuple[str, flo
         page.mouse.move(5, 5)
 
         def show_fix():
-            # start Claude's fix as the next line begins, so the viewer sees the rounds build live
+            # start Claude's fix as this line begins; the narration plays over the live rounds, and we
+            # wait for the published block only as long as the clip leaves room for it
             page.wait_for_selector("#fixBtn", timeout=120_000)
             page.evaluate("document.querySelector('#fixBtn').click()")
+        scene("fix", action=show_fix, pad=0.2)
+
+        def land_on_published():
             page.wait_for_selector("#results .final", timeout=300_000)
-            page.wait_for_timeout(400)
+            page.wait_for_timeout(300)
             page.evaluate("document.querySelector('#results .final').scrollIntoView({block:'center', behavior:'smooth'})")
-            page.wait_for_timeout(800)
-        scene("fix", action=show_fix)
+            page.wait_for_timeout(900)
+        scene("published", action=land_on_published, pad=0.2)
 
         scene("evidence", action=lambda: scroll_to(page, "#chartCard", 90))
         scene("realworld", action=lambda: scroll_to(page, "#hypewatch", 70))
