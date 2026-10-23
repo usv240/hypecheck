@@ -51,6 +51,10 @@ def synth(out: Path) -> dict[str, tuple[Path, float]]:
     return clips
 
 
+CSS_W, CSS_H, SCALE = 1600, 900, 2.4          # CSS layout size and device scale factor
+OUT_W, OUT_H = int(CSS_W * SCALE), int(CSS_H * SCALE)   # 3840 x 2160
+
+
 def scroll_to(page, selector: str, offset: int = 70) -> None:
     page.evaluate(f"""(() => {{ const el = document.querySelector({json.dumps(selector)});
         window.scrollTo({{top: el.getBoundingClientRect().top + scrollY - {offset}, behavior: 'smooth'}}); }})()""")
@@ -60,13 +64,13 @@ def record(site: str, clips: dict, out: Path) -> tuple[Path, list[tuple[str, flo
     timeline: list[tuple[str, float]] = []
     card = (HERE / "card.html").resolve().as_uri()
     with sync_playwright() as p:
-        browser = p.chromium.launch()
-        # Viewport and recording size must match, or the page is painted into a corner of the frame.
-        # 1280x720 with a 1.15x zoom keeps the text legible at 720p.
-        ctx = browser.new_context(viewport={"width": 1280, "height": 720}, color_scheme="light",
-                                  record_video_dir=str(out), record_video_size={"width": 1280, "height": 720})
+        # 4K: the recorder paints the viewport in device pixels, so a 1600x900 CSS layout at a forced
+        # 2.4x device scale factor fills a 3840x2160 frame exactly. (A CSS zoom or an emulated
+        # device_scale_factor does not: the first shifts layout coordinates, the second is ignored.)
+        browser = p.chromium.launch(args=[f"--force-device-scale-factor={SCALE}"])
+        ctx = browser.new_context(viewport={"width": CSS_W, "height": CSS_H}, color_scheme="light",
+                                  record_video_dir=str(out), record_video_size={"width": OUT_W, "height": OUT_H})
         page = ctx.new_page()
-        page.add_init_script("document.addEventListener('DOMContentLoaded', () => { document.documentElement.style.zoom = '1.15'; });")
         t0 = time.monotonic()
         busy_until = 0.0
 
@@ -157,7 +161,7 @@ def mux(video: Path, clips: dict, timeline: list[tuple[str, float]], dest: Path)
         labels.append(f"[a{i}]")
     filters.append(f"{''.join(labels)}amix=inputs={len(labels)}:normalize=0:dropout_transition=0[aout]")
     args += ["-filter_complex", ";".join(filters), "-map", "0:v", "-map", "[aout]",
-             "-c:v", "libx264", "-preset", "medium", "-crf", "20", "-pix_fmt", "yuv420p", "-r", "30",
+             "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-pix_fmt", "yuv420p", "-r", "30",
              "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", str(dest)]
     subprocess.run(args, check=True)
 

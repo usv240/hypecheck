@@ -22,11 +22,11 @@ too; `make_video.py` and this file must say the same thing.
 | 9 | **Developers page** | The gate is a reusable Strands intervention handler: one typed question, a conformal threshold, Guide, Confirm, Proceed or Deny. Use it over REST or MCP, on your own data, or in your own AWS account. | 35 |
 | 10 | **Outro card:** the two links | HypeCheck. Spell-check for hype. Links are below. | 7 |
 
-Total: 357 words of narration; the 2026-10-23 render ran 2:53 against the live site, inside the three-minute limit.
+Total: 357 words of narration; the 2026-10-23 render ran 2:44 against the live site, inside the three-minute limit.
 
 ## Recording notes
 
-- Light theme, 1280×720 viewport with the page zoomed to 115% (text reads larger at 720p), as `make_video.py` does.
+- Light theme, 1600×900 CSS viewport recorded at a forced 2.4× device scale factor, so the file is 3840×2160 (4K) with no page zoom, as `make_video.py` does.
 - Scene 3 uses "Check with Decider only" first, then scene 4 clicks "Let Claude fix it →"; that is the
   flow the site now leads with. Set the engine to AgentCore before scene 4.
 - Hover one ⓘ during scene 3 so the tooltip is visible for a beat.

@@ -1,5 +1,5 @@
 {
- "total_seconds": 172.7,
+ "total_seconds": 164.1,
  "scenes": [
   [
    "cold",
@@ -15,35 +15,35 @@
   ],
   [
    "check",
-   45.4
+   45.6
   ],
   [
    "fix",
-   60.5
+   60.7
   ],
   [
    "published",
-   92.5
+   84.0
   ],
   [
    "evidence",
-   100.4
+   91.9
   ],
   [
    "realworld",
-   122.0
+   113.4
   ],
   [
    "limits",
-   136.0
+   127.5
   ],
   [
    "builders",
-   149.1
+   140.8
   ],
   [
    "outro",
-   164.2
+   155.9
   ]
  ]
 }
