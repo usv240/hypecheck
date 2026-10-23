@@ -5,7 +5,7 @@
 **One-line description:**
 HypeCheck reads a draft health press release next to the paper it reports, flags every sentence that claims more than the study found, has Claude rewrite it, and re-checks the rewrite before anything is published.
 
-**Tags:** `#strands-decider-2b` `#guardrails` (plus `amazon-bedrock`, `strands`, `agents`)
+**Tags:** `#strands-decider-2b` `#guardrails` (plus `amazon-bedrock`, `strands-agents`, `amazon-bedrock-agentcore`; five is the maximum)
 
 **Decision pattern demonstrated:** Guardrails. Before the `publish_release` tool runs, Strands Decider 2B verifies that every sentence is grounded in what the paper's conclusion supports (claim strength: none < correlational < conditional causal < direct causal). Overclaims return `Guide`; still overclaiming after three rewrites returns `Confirm`; clean text returns `Proceed`; no source or no Decider returns `Deny` (fail closed). Install: `pip install "git+https://github.com/usv240/hypecheck"`.
 
@@ -23,7 +23,7 @@ HypeCheck reads a draft health press release next to the paper it reports, flags
 - Live demo: https://d174bz5yly61n4.cloudfront.net
 - HypeWatch (real NIH releases, daily): https://d174bz5yly61n4.cloudfront.net/hypewatch
 - Article: *(Builder Center URL after posting ARTICLE.md)*
-- Video: *(YouTube URL)*. Upload `video/hypecheck-demo.mp4` (2:34, narrated, no music)
+- Video: *(YouTube URL)*. Upload `video/hypecheck-demo.mp4` (2:49, Polly narration, no music; re-render against the new design before uploading)
 
 **Headline numbers (all on public expert-labelled data, pre-registered):**
 - Per 1,000 honest sentences: Claude Sonnet as the judge wrongly blocks 296 for $0.97; HypeCheck blocks 67 for $0.18 ($0 on your own GPU).

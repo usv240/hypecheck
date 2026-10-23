@@ -53,7 +53,7 @@ Status key:
 |---|---|
 | Wall of text, no "60-second tour" | 🔧 The README opens with a judge-first summary: tagline, two numbers, links, screenshot. Detail sits below the fold |
 | Jargon (AUROC, conformal, macro-F1) | 🔧 Each term has a ⓘ on the site and a one-line plain-English gloss in the article |
-| No video | ✅ A 2:34 narrated video exists, made by `video/make_video.py` (live site, Amazon Polly voice, no music). ⏳ The author uploads it to YouTube |
+| No video | ✅ A 2:49 narrated video exists, made by `video/make_video.py` (live site, Amazon Polly voice, no music). ⏳ The author uploads it to YouTube |
 | Learnings missing | ✅ The article has a "What we learned" section, including the failed pre-registered predictions |
 
 ### Originality (15%)
@@ -77,7 +77,7 @@ Status key:
 | 9 | Practitioner voice | ✅ via research, per the author's constraint: Sumner/Adams worked *with* press offices (the RCT ran in 9 real press offices), and HealthNewsReview's 2018 closure notice is cited |
 | 10 | Shipped surface | ✅ HTTPS URL |
 | 11 | Limits as measured properties | ✅ Recall 39%; animal check AUROC 0.61; CPU latency; CI widths |
-| 12 | Inspect and rerun | ✅ Ten pre-registrations, per-item outputs, a SHA-256 manifest, and `research/reproduce.py`, which recomputes 21 of 21 headline numbers offline (also a test). Upstream docs issue strands-decider#103 |
+| 12 | Inspect and rerun | ✅ Ten pre-registrations, per-item outputs, a SHA-256 manifest, and `research/reproduce.py`, which recomputes 22 of 22 headline numbers offline (also a test). Upstream docs issue strands-decider#103 |
 
 
 ## D. Second pass (after HypeWatch), scored 4 or 5 per rubric line
@@ -110,3 +110,41 @@ criterion) and the announced recognition for the most-reused pattern:
 - **Not done:** a true one-click "Launch stack" button. It needs a public S3 bucket, which means
   changing an S3 security setting. That is left to the author; the page offers download plus
   console instead.
+
+
+## F. Final audit against Rules.md (2026-10-23, deadline day)
+
+Every requirement on the About and Rules tabs, checked against the live state, not memory.
+
+### Pass/fail
+
+| Requirement (Rules.md) | Status | Checked how |
+|---|---|---|
+| Working agent on AWS using Decider 2B for a meaningful decision, paired with Amazon Bedrock | ✅ | Live run through AgentCore Runtime today: two Decider verdicts, Claude Sonnet 4.6 rewrite, published, receipts attached. `/api/health` 200 |
+| Written article on Builder Center describing the agent, what it does, and the decision handed to Decider | ⏳ **you** | `ARTICLE.md` is final (1,900 words, screenshots load from GitHub). Must be pasted and published on Builder Center |
+| Public repo with the agent's source and at least one reusable Decider 2B decision pattern others can use | ✅ | github.com/usv240/hypecheck is public; Apache-2.0 detected by GitHub's API; `decision_pattern/README.md` is titled "Decision pattern: claim-fidelity gate (`#guardrails`)" and gives the typed question and options verbatim, the `InterventionHandler` wiring, a usage note, calibration, receipts and install (`pip install git+…`). 🔧 Fixed today: the LICENSE still carried the Apache template's `[yyyy] [name of copyright owner]` |
+| Short public demo video, under three minutes, showing the agent and its Decider decision working | ⏳ **you** | `video/hypecheck-demo.mp4` is 2:49 (under 3:00), Polly narration, no music, no third-party footage. It shows the **old** design, so re-render first (`video/make_video.py`), then upload to YouTube or Vimeo |
+| One decision pattern declared | ✅ | Guardrails, stated in the article's first line, the pattern README and SUBMISSION.md |
+| Original agent, not published before | ✅ | First commit 2026-10-17, inside the hackathon window; the collision search found no prior tool that gates a release against its paper |
+| Tags: `#strands-decider-2b` plus one pattern tag | ⏳ **you** | `strands-decider-2b`, `guardrails`, then `amazon-bedrock`, `strands-agents`, `amazon-bedrock-agentcore` (five is the form's maximum). 🔧 Fixed today: SUBMISSION.md listed two different tag sets |
+| Builder 18+, with a Builder Center profile, not an excluded country or employee | ⏳ **you** | Your account; the Chrome profile is currently signed out |
+| One entry per person | ✅ | HypeCheck only |
+
+**Encouraged, not required:** measured latency and cost (✅ per decision and per 1,000 sentences, with the Claude comparison), decision accuracy (✅ with CIs), how low-confidence cases are handled (✅ the REVIEW zone, and `Deny` when unverifiable).
+
+### Rubric, scored 4 or 5 (the judges' scale)
+
+| Criterion | Weight | Score | Why this score, and the one thing that could lower it |
+|---|---|---|---|
+| Creativity and cool factor | 30% | **5** | Hype stopped at its source; the claim ladder explains every verdict; HypeWatch runs on real NIH releases daily; AI summaries as a second use case; a receipt a press officer can hand to an editor. *Risk:* a judge who wants a physical or personal hook |
+| Effective use of Decider 2B with Bedrock, incl. the reusable pattern; latency/cost bonus | 30% | **5** | One typed question compared in code; conformal thresholds with a kept promise; Decider re-checks Claude; all four intervention actions; Decider failover and Claude fallback; the pattern is pip-installable, an API, MCP and a CloudFormation stack; cost and latency measured against Claude, Guardrails and a keyword rule. *Risk:* recall 39% at the strict threshold, stated openly |
+| Communication quality | 25% | **4 → 5** | Site with ⓘ on every number and a 30-second tour; README that opens with a where-to-look table; article with screenshots, limits, misses and learnings; notebook. **4 until the video is re-rendered and the article is posted**; then 5 |
+| Originality | 15% | **5** | No other entry, in 275, works on health news, press releases or AI summaries of science; the data predates the hackathon |
+| **Weighted** | | **4.75 now; 5.00 once the video and article are up** | |
+
+### What only the author can do today (in order)
+
+1. Sign in to Builder Center in Chrome.
+2. Say "render the video" so I re-render it against the new design (about 1–1.5 h); then upload it (public or unlisted) and give me the link.
+3. Say "freeze" so I tag `v1.0-submission` and put the video link into README, ARTICLE and SUBMISSION.
+4. Create the project: paste `ARTICLE.md` as Markdown, cover `docs/cover.jpg`, repo, live demo, notebook link, the five tags. Publish well before 11:59 PM PDT.
