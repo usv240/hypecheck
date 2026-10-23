@@ -22,36 +22,16 @@ from playwright.sync_api import sync_playwright
 HERE = Path(__file__).resolve().parent
 VOICE = "Ruth"
 
-SCENES = [
-    ("intro", "The paper says an urgent cancer referral pathway could be efficacious. The press release says "
-              "it is saving lives. In four hundred and sixty-two university press releases, a third turned an "
-              "association into a cause, and when the release exaggerated, most of the news did too."),
-    ("hero", "HypeCheck stops it at the source. Strands Decider 2B checks every sentence against the paper, "
-             "Claude on Amazon Bedrock rewrites what overclaims, and Decider checks the rewrite again."),
-    ("how", "One overclaim travels from a press office to millions of readers. A third of releases turn a link "
-            "into a cause, most news repeats it, and health news changes what people do. HypeCheck sits at the "
-            "one point where a single fix changes everything downstream."),
-    ("run", "Here is a real press release from the research data. The agent is running on Amazon Bedrock "
-            "AgentCore Runtime, and Decider reads the draft one sentence at a time."),
-    ("blocked", "The saving-lives sentence scores point eight: a definite cause, where the paper only says the "
-                "pathway could be efficacious. Publishing is blocked, and the gate hands Claude its turn back "
-                "with the reason."),
-    ("published", "Claude rewrites only that sentence. Decider checks the rewrite, nothing is above the "
-                  "threshold, and the release is published. The bar shows the time split between Decider and "
-                  "Claude."),
-    ("info", "Every label, score and number has an info button that explains it in plain words."),
-    ("evidence", "Does it work? On five hundred and sixty-three expert-labelled release and paper pairs, Claude "
-                 "asked to judge flagged thirty to forty-five percent of faithful releases as exaggerated, Opus "
-                 "included. Decider, with a calibrated threshold, flags six point seven percent. Amazon's own grounding "
-                 "check ranks these exaggerations at chance, because the facts are the same and only the strength grew."),
-    ("hypewatch", "Then we pointed it at text nobody chose for us. HypeWatch checks eighty-five real releases from "
-                  "the US National Institutes of Health against the papers they cite, every morning. And when we asked "
-                  "Claude to summarise the same papers, about one summary in nine overclaimed. The gate fixed nine in ten."),
-    ("limits", "Every experiment was pre-registered, and the limits are on the page: at its strictest setting it "
-               "catches thirty-nine percent of exaggerations. It's a safety net, not an editor."),
-    ("builders", "The gate is a reusable Strands intervention handler: one typed question, a calibrated "
-                 "threshold, and Guide, Confirm or Proceed. The same code runs a patient-leaflet writer unchanged."),
-    ("outro", "HypeCheck. Spell-check for hype. Links are below."),
+SCENES = [  # kept in step with VIDEO.md; every number here is one the site shows
+    ("intro", 'The paper says an urgent cancer referral pathway could be efficacious. The press release says it is saving lives. In four hundred and sixty-two university press releases, a third turned an association into a cause, and when the release exaggerated, most of the news did too.'),
+    ("hero", 'HypeCheck stops it at the source. Strands Decider 2B rates every sentence on a four-rung ladder: no link, linked, may cause, causes. If a sentence sits higher than the paper, it is blocked. Claude on Amazon Bedrock rewrites only that sentence, and Decider checks the rewrite again.'),
+    ("check", 'Here is a real press release from the research data. Decider reads it one sentence at a time, on our own server, with no language model. The saving-lives sentence scores point eight: it says causes, where the paper only says may cause. The other three sentences pass.'),
+    ("fix", 'Now Claude fixes it. The agent runs on Amazon Bedrock AgentCore Runtime. Decider reads the rewrite, nothing is above the threshold, and the release is published, with a decision receipt: every probability and threshold, hashed, so anyone can verify the verdict without a model.'),
+    ("evidence", "Does it work? On five hundred and sixty-three expert-labelled pairs, Claude asked to judge flagged thirty to forty-five percent of faithful releases. Amazon's own grounding check ranked exaggerations at chance. A keyword rule flagged one honest release in four. Decider, with a calibrated threshold, flags six point seven percent, and the threshold's promise held on data it had never seen."),
+    ("realworld", 'Then we pointed it at the real world. HypeWatch checks eighty-five NIH press releases against their papers every morning. And when Claude summarised the same papers, about one summary in nine overclaimed. The gate fixed nine in ten.'),
+    ("limits", 'Ten pre-registered experiments, every missed prediction reported, and every mistake listed by direction. At the strict setting it catches thirty-nine percent of exaggerations. It is a safety net, not an editor, and it says so.'),
+    ("builders", 'The gate is a reusable Strands intervention handler: one typed question, a conformal threshold, Guide, Confirm, Proceed or Deny. Use it over REST, over MCP, calibrated on your own data, or deployed into your own AWS account.'),
+    ("outro", 'HypeCheck. Spell-check for hype. Links are below.'),
 ]
 
 
