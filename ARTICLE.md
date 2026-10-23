@@ -76,6 +76,7 @@ We asked Claude on Bedrock the same question on 563 expert-labelled press-releas
   We did, with conformal calibration: pick the cut-off so that at most 10% of known-honest
   sentences would be flagged. On 441 pairs it had never seen, it flagged 7.7%.
 - **It can't be argued with.** Decider returns a number, and plain code decides what to do.
+- **A keyword rule can't do it either.** Flag every sentence with a causal verb and you catch a few more exaggerations, but you also flag one honest release in four (26%). Decider: 6.7%.
 - **AWS's own grounding check doesn't catch this.** Amazon Bedrock Guardrails has a contextual
   grounding check for "does this text stay within its source". On the same pairs it ranked
   exaggerations at chance level: AUROC 0.50, against 0.72 for Decider, a gap of 0.21 (95% CI
@@ -84,7 +85,7 @@ We asked Claude on Bedrock the same question on 563 expert-labelled press-releas
   The two belong side by side.
 
 All test data is published expert coding we didn't write. Every experiment was written down,
-predictions included, before it ran: nine experiments, with every missed prediction reported.
+predictions included, before it ran: ten experiments, with every missed prediction reported.
 
 ## HypeWatch: the same check on real releases
 
@@ -158,7 +159,7 @@ predictions down first.
 three Claude baselines. The Guardrails run cost $0.07. An AI coding assistant wrote most of the
 code under my direction. Every number here comes from a script in the repo. `python research/reproduce.py`, or the
 [notebook](https://github.com/usv240/hypecheck/blob/main/notebooks/reproduce.ipynb), recomputes
-all 21 headline numbers offline in about 10 seconds, and 17 offline tests cover the gate.
+all 22 headline numbers offline in about 10 seconds, and 17 offline tests cover the gate.
 
 ## Limits we measured
 

@@ -72,7 +72,7 @@ third round was clean.
 ## Results
 
 All test data is published expert coding that we did not write. Every experiment was
-pre-registered before it ran ([research/](research/README.md)), nine in all, and every
+pre-registered before it ran ([research/](research/README.md)), ten in all, and every
 missed prediction is reported.
 
 | Measurement | Decider 2B (zero-shot) | Claude on Bedrock, same question |
@@ -80,6 +80,7 @@ missed prediction is reported.
 | Faithful releases wrongly flagged (the negative control) | **6.7%** (CI 4.1–9.4%) | Haiku 4.5 44.9% · Sonnet 4.6 29.6% · Opus 4.6 40.0% |
 | Exaggeration macro-F1, 563 pairs (Wright & Augenstein 2021) | **0.498** (CI 0.452–0.541; published best 0.4735, trained: a statistical tie) | Haiku 0.358 · Sonnet 0.401 · Opus 0.460 |
 | Exaggerates-vs-not AUROC | **0.716** | Haiku 0.570 · Sonnet 0.580 · Opus 0.663 |
+| No-model baseline: flag any sentence with a causal verb (the site's own cue-word lists) | AUROC **0.716** vs **0.528**; gap 0.19 (95% CI 0.12–0.25) | The rule flags **26.4%** of faithful releases vs our 6.7% ([pre-registration](research/PREREGISTRATION-keyword-baseline.md)) |
 | AWS-native baseline: Bedrock Guardrails contextual grounding, same pairs, same conformal fit | AUROC **0.716** vs **0.503**; gap 0.21 (95% CI 0.14–0.29). Recall 38.5% vs 13.9% | Guardrails flags 13.3% of faithful releases ([pre-registration](research/PREREGISTRATION-guardrails.md)) |
 | Conformal promise (≤10% false flags) vs measured, 441 unseen non-overclaim pairs | 7.7% (95% CI 5.6–10.6%) | — |
 | Recall at that strict threshold | 39% (CI 30–47%) | Haiku at ~10% false flags: 18% |
@@ -106,7 +107,7 @@ Cost basis:
 - **Claude's rewrites can change meaning.** Decider re-checks how strong each rewrite's claim is, not whether it is faithful in every other respect. A person should read what is published.
 - **One run each.** Every experiment ran once; the intervals are bootstrap intervals over items, not over repeated runs.
 
-**Reproduce every number, offline:** `python research/reproduce.py` recomputes the 21 headline numbers in this README from the saved per-item outputs. It checks each file against its fingerprint first. It needs no Decider, AWS or network, costs nothing, and takes about 10 seconds.
+**Reproduce every number, offline:** `python research/reproduce.py` recomputes the 22 headline numbers in this README from the saved per-item outputs. It checks each file against its fingerprint first. It needs no Decider, AWS or network, costs nothing, and takes about 10 seconds.
 
 ## HypeWatch: the same check on real releases
 

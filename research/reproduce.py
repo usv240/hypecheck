@@ -90,6 +90,11 @@ def main() -> int:
     assert [x["id"] for x in g] == [r["id"] for r in dec]
     check("Bedrock Guardrails AUROC", auroc(y, [1 - x["grounding"] for x in g]), 0.503)
 
+    # 3b. no-model keyword baseline (saved per-item scores)
+    kw = rows(R / "keyword-baseline" / "items.csv")
+    assert [x["id"] for x in kw] == [r["id"] for r in dec]
+    check("Keyword rule AUROC", auroc(y, [int(x["kw_score"]) for x in kw]), 0.528)
+
     # 4. cascade (Claude only on REVIEW), Sonnet
     son = rows(R / "baseline-sonnet-4-6" / "items.csv")
     flag = [x > BLOCK or (REVIEW < x <= BLOCK and s["pred"] == "exaggerates") for x, s in zip(p, son)]

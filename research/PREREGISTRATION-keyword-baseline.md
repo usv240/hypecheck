@@ -49,3 +49,26 @@ checked by `original_file_id`). Text comes from the public dataset (`data/test.j
 ---
 
 ## Results (appended after computing)
+
+Computed 2026-10-23: `python research/keyword_baseline.py --wa-dir data`. Per-item output in
+`results/keyword-baseline/items.csv`; summary in `results/keyword-baseline/summary.json`.
+
+| Measure | Keyword rule (no model) | Strands Decider 2B |
+|---|---|---|
+| AUROC, exaggerates vs not | **0.528** | **0.716** |
+| Recall on exaggerates | 43.4% | 38.5% |
+| False flags on `same` | **26.4%** | **6.7%** |
+| AUROC gap, Decider − rule, paired bootstrap 95% CI | | **+0.188 (0.124–0.254)** |
+
+| Prediction | Result | Hit? |
+|---|---|---|
+| N1: the rule's false flags > 15% | 26.4% | yes |
+| N2: Decider's AUROC ≥ rule + 0.08, CI above 0 | +0.188 (0.124–0.254) | yes |
+| N3: the rule's recall > 38.5% | 43.4% | yes |
+
+**How to read it.** The rule catches a few more exaggerations, but only by flagging one honest
+release in four. That is what a keyword gate does: "reduces" and "improves" are common in faithful
+releases too, because many studies do find effects. The rule ranks pairs at near chance (0.53).
+Decider ranks them at 0.72 and holds false flags at 6.7%. So the model earns its place over the
+cheapest alternative. Credit for the device: Lachesis, RoadSense and Menu Line Check report a
+no-model arm.

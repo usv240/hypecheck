@@ -77,7 +77,7 @@ Status key:
 | 9 | Practitioner voice | ✅ via research, per the author's constraint: Sumner/Adams worked *with* press offices (the RCT ran in 9 real press offices), and HealthNewsReview's 2018 closure notice is cited |
 | 10 | Shipped surface | ✅ HTTPS URL |
 | 11 | Limits as measured properties | ✅ Recall 39%; animal check AUROC 0.61; CPU latency; CI widths |
-| 12 | Inspect and rerun | ✅ Eight pre-registrations, per-item outputs, a SHA-256 manifest, and `research/reproduce.py`, which recomputes 21 of 21 headline numbers offline (also a test). Upstream docs issue strands-decider#103 |
+| 12 | Inspect and rerun | ✅ Ten pre-registrations, per-item outputs, a SHA-256 manifest, and `research/reproduce.py`, which recomputes 21 of 21 headline numbers offline (also a test). Upstream docs issue strands-decider#103 |
 
 
 ## D. Second pass (after HypeWatch), scored 4 or 5 per rubric line

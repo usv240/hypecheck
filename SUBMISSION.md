@@ -34,9 +34,9 @@ HypeCheck reads a draft health press release next to the paper it reports, flags
 - The agent is hosted on Amazon Bedrock AgentCore Runtime; Decider runs on EC2 behind CloudFront.
 - HypeWatch: 85 NIH releases (2023–2026) checked against their papers. 15.3% have a sentence the strict public rule blocks (43.5% under the benchmark rule). Claude rewrites pass Decider's check 67% of the time.
 - AI summaries, second use case: about 1 in 9 Claude summaries of the same 85 papers had a sentence the gate blocks (Sonnet 4.6 11.8%, Haiku 4.5 10.6%), and the gate fixed 9 in 10 of them. Pre-registered; 1 of 4 predictions missed.
-- Reproducible: `python research/reproduce.py` checks every result file against its SHA-256, then recomputes all 21 headline numbers offline ($0, no network, about 10 s).
+- Reproducible: `python research/reproduce.py` checks every result file against its SHA-256, then recomputes all 22 headline numbers offline ($0, no network, about 10 s).
 - Upstream: [strands-decider#103](https://github.com/strands-labs/strands-decider/issues/103) proposes docs for comparing two texts, with our pre-registered numbers.
 - Backups: AgentCore → EC2 for the agent; Claude Sonnet 4.6 → Haiku 4.5 on throttling; several Decider servers with failover; the gate fails closed.
 - 160 ms per decision on a laptop GPU, 0 tokens; the LLM baseline costs ~2 s and ~270 tokens per check.
 
-**What was learned:** decompose the judgement (classify each side's strength, then compare) rather than ask for a direct comparison; calibrate thresholds on your own labelled data instead of using the illustrative 0.9/0.5 bands; pre-register and report the misses (nine pre-registered experiments; every missed prediction is in the repo).
+**What was learned:** decompose the judgement (classify each side's strength, then compare) rather than ask for a direct comparison; calibrate thresholds on your own labelled data instead of using the illustrative 0.9/0.5 bands; pre-register and report the misses (ten pre-registered experiments; every missed prediction is in the repo).

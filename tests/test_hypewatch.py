@@ -48,4 +48,4 @@ def test_every_headline_number_reproduces_offline():
     script = Path(__file__).resolve().parents[1] / "research" / "reproduce.py"
     out = subprocess.run([sys.executable, str(script)], capture_output=True, text=True, timeout=300)
     assert out.returncode == 0, out.stdout[-2000:] + out.stderr[-2000:]
-    assert "21 of 21 headline numbers reproduce" in out.stdout
+    assert "22 of 22 headline numbers reproduce" in out.stdout
