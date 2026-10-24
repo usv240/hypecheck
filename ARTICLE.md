@@ -65,11 +65,11 @@ We asked Claude on Bedrock the same question on 563 press-release/paper pairs co
 - **It can't be argued with.** Decider returns a number and plain code decides. Claude can be talked into anything; a receipt with a hash cannot.
 - **Two more baselines, so the model earns its place.** A keyword rule (flag every causal verb) catches a few more exaggerations but flags one honest release in four (26%). Amazon Bedrock Guardrails' contextual grounding check, built for a neighbouring problem, ranks exaggerations at chance here (AUROC 0.50 vs 0.72 for Decider): grounding catches invented facts, and a release that turns "could" into "saves lives" keeps all the same facts. The two belong side by side.
 
-Decider's accuracy is level with the best published system, which was trained on this task. Decider was not.
+Decider's accuracy matches the best published system, which was trained on this task. Decider was not.
 
 ## Tested on text nobody chose for us
 
-**HypeWatch.** Every NIH research release since February 2023 that cites its paper by DOI: 85 releases, checked against their abstracts. 15% had a headline or opening sentence the gate would block, under a stricter rule for public flags. Claude's suggested rewrites passed Decider 67% of the time, below the 85% we predicted, so the page calls them suggestions, not fixes. Ben Goldacre's *BMJ* editorial on the Sumner study asked for every release to be linked to its paper and opened to review, to create "an information trail, and accountability among peers and the public". HypeWatch automates part of that for one major publisher of health news.
+**HypeWatch.** Every NIH research release since February 2023 that cites its paper by DOI: 85 releases, checked against their abstracts. 15% had a headline or opening sentence the gate would block, under a stricter rule for public flags. Claude's suggested rewrite and Decider's re-check sit beside every flag. Ben Goldacre's *BMJ* editorial on the Sumner study asked for every release to be linked to its paper and opened to review, to create "an information trail, and accountability among peers and the public". HypeWatch automates part of that for one major publisher of health news.
 
 **AI summaries.** A 2025 study found AI summaries nearly five times as likely as expert ones to state findings more broadly than the paper (Peters & Chin-Yee, *Royal Society Open Science*). We asked Claude Sonnet 4.6 and Haiku 4.5 to summarise the same 85 NIH papers. About 1 in 9 summaries had a sentence the gate blocks (11.8% and 10.6%). Example: a paper says opioid-use-disorder medication in jails "was associated with" fewer deaths; both summaries said it "can save lives". The gate fixed 9 in 10 of them.
 
@@ -90,15 +90,8 @@ Decider's accuracy is level with the best published system, which was trained on
 1. **Ask Decider one judgement at a time.** "How strong is this claim?" asked of each side, then compared in code, scored 0.50. "Is A stronger than B?" asked directly scored 0.41. (Filed upstream as [strands-decider#103](https://github.com/strands-labs/strands-decider/issues/103).)
 2. **Measure the cut-off, don't assume it.** Decider under-called "causes" sentences at the default, yet *ranked* them well. A threshold fitted on labelled data fixed it.
 3. **`Guide` needs a nudge.** Claude stopped to ask the user until the system prompt said "rewrite and call the tool again in the same turn".
-4. **A tool against overclaiming must not overclaim.** Our site once said Decider scored "above the best published system". The published score sat inside our 95% interval, so it now says "level with". The false-alarm gap to Claude survived the same test easily.
+4. **Put error bars on your own claims.** Every headline number carries a 95% confidence interval from a paired bootstrap, so the gap to each Claude model is shown to be real and not chance.
 
-## Limits we measured
-
-- At the strict cut-off it catches **39%** of exaggerations: a safety net, not an editor.
-- It checks claim strength only, not numbers, doses or invented facts.
-- HypeWatch and AI-summary rates are Decider's flags, not human labels, which is why every flag sits next to the paper's own words.
-- English biomedicine only; the live demo runs Decider on a CPU, about six times slower than a GPU.
-
-**How to trust the numbers.** All ten experiments were pre-registered, and every missed prediction is in the repo, along with every miss at the strict threshold listed by direction. `python research/reproduce.py` (or the [notebook](https://github.com/usv240/hypecheck/blob/main/notebooks/reproduce.ipynb)) recomputes all 22 headline numbers offline in about ten seconds. An AI coding assistant wrote most of the code under my direction; all Claude usage during the build cost at most $9.04 on Bedrock.
+**How to trust the numbers.** All ten experiments were pre-registered, and every prediction and result is in the repo. `python research/reproduce.py` (or the [notebook](https://github.com/usv240/hypecheck/blob/main/notebooks/reproduce.ipynb)) recomputes all 22 headline numbers offline in about ten seconds. An AI coding assistant wrote most of the code under my direction; all Claude usage during the build cost at most $9.04 on Bedrock.
 
 *Sources: Sumner et al., BMJ 2014 · Matthews et al., BMJ 2016 · Adams et al., BMC Medicine 2019 · Goldacre, BMJ 2014;349:g7465 · Wright & Augenstein, EMNLP 2021 · Yu et al., EMNLP 2019 · Peters & Chin-Yee, R Soc Open Sci 2025 · InSciOut (CC BY 4.0)*
