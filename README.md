@@ -26,6 +26,7 @@ every number offline.
 | **Decision pattern** | [`decision_pattern/`](decision_pattern/README.md): a claim-fidelity gate, `#guardrails` |
 | **Notebook** | [`notebooks/reproduce.ipynb`](notebooks/reproduce.ipynb): every headline number recomputed offline, with charts ([open in Colab](https://colab.research.google.com/github/usv240/hypecheck/blob/main/notebooks/reproduce.ipynb)) |
 | **Article** | [ARTICLE.md](ARTICLE.md) |
+| **Article** | [Builder Center](https://builder.aws.com/content/3L6wldnqsR98x1VzMgESGNQLVKl) |
 | **Video** | [https://youtu.be/FYuR9-ymPR4](https://youtu.be/FYuR9-ymPR4) (2:44, 4K) — generated reproducibly by [`video/make_video.py`](video/make_video.py) |
 | **Tags** | `#strands-decider-2b` `#guardrails` |
 
