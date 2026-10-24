@@ -65,6 +65,8 @@ We asked Claude on Bedrock the same question on 563 press-release/paper pairs co
 - **It can't be argued with.** Decider returns a number and plain code decides. Claude can be talked into anything; a receipt with a hash cannot.
 - **Two more baselines, so the model earns its place.** A keyword rule (flag every causal verb) catches a few more exaggerations but flags one honest release in four (26%). Amazon Bedrock Guardrails' contextual grounding check, built for a neighbouring problem, ranks exaggerations at chance here (AUROC 0.50 vs 0.72 for Decider): grounding catches invented facts, and a release that turns "could" into "saves lives" keeps all the same facts. The two belong side by side.
 
+![False-alarm rate on 345 honest releases: Decider 6.7%, Claude Sonnet 29.6%, Opus 40.0%, Haiku 44.9%, with the calibration, accuracy and Guardrails figures beside it](https://raw.githubusercontent.com/usv240/hypecheck/main/docs/evidence.jpg)
+
 Decider's accuracy matches the best published system, which was trained on this task. Decider was not.
 
 ## Tested on text nobody chose for us
@@ -73,7 +75,11 @@ Decider's accuracy matches the best published system, which was trained on this 
 
 **AI summaries.** A 2025 study found AI summaries nearly five times as likely as expert ones to state findings more broadly than the paper (Peters & Chin-Yee, *Royal Society Open Science*). We asked Claude Sonnet 4.6 and Haiku 4.5 to summarise the same 85 NIH papers. About 1 in 9 summaries had a sentence the gate blocks (11.8% and 10.6%). Example: a paper says opioid-use-disorder medication in jails "was associated with" fewer deaths; both summaries said it "can save lives". The gate fixed 9 in 10 of them.
 
+![HypeWatch: 85 NIH releases checked; AI summaries: a Claude summary saying "can save lives" blocked, the rewrite "may be associated with" passed](https://raw.githubusercontent.com/usv240/hypecheck/main/docs/realworld.jpg)
+
 ## How it runs on AWS
+
+![Architecture: browser → CloudFront and EC2 web app → Strands agent on Amazon Bedrock AgentCore Runtime → Claude on Amazon Bedrock, with Strands Decider 2B on EC2 judging every sentence and a fallback for every box](https://raw.githubusercontent.com/usv240/hypecheck/main/docs/architecture.png)
 
 - **Amazon Bedrock AgentCore Runtime** hosts the Strands agent, deployed as plain code.
 - **Amazon Bedrock** serves Claude Sonnet 4.6, with Haiku 4.5 as the fallback when Sonnet is throttled.
@@ -84,6 +90,8 @@ Decider's accuracy matches the best published system, which was trained on this 
 ## The reusable pattern
 
 `decision_pattern/` in the repo is a self-contained package: the typed Decider question and option set, a Strands `InterventionHandler` that sits in front of any tool, the conformal calibration script, the receipt builder and verifier, and a README that walks through all four actions. It knows nothing about press releases. The same gate ran unchanged on a patient-leaflet writer and caught "statin users were less likely to develop dementia" stated as fact from an observational study. Use it anywhere text must not say more than its source: summaries, RAG answers, patient materials, marketing copy.
+
+![Developers page: free API key, REST API, MCP connector, bring your own data, bring your own AWS](https://raw.githubusercontent.com/usv240/hypecheck/main/docs/developers.jpg)
 
 ## What we learned
 

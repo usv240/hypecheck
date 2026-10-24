@@ -165,6 +165,8 @@ flags, without human labels.
 
 ## Architecture on AWS
 
+![Architecture](https://raw.githubusercontent.com/usv240/hypecheck/main/docs/architecture.png)
+
 ![HypeCheck on AWS](docs/architecture.svg)
 
 - **Amazon Bedrock AgentCore Runtime** hosts the Strands agent (`agentcore_app.py`).
