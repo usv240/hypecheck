@@ -22,7 +22,7 @@ HypeCheck reads a draft health press release next to the paper it reports, flags
 - Developers (free API key, REST, MCP, bring your own data or AWS): https://d174bz5yly61n4.cloudfront.net/developers
 - Live demo: https://d174bz5yly61n4.cloudfront.net
 - HypeWatch (real NIH releases, daily): https://d174bz5yly61n4.cloudfront.net/hypewatch
-- Article (published 2026-10-23): https://builder.aws.com/content/3L6wldnqsR98x1VzMgESGNQLVKl
+- Article (published 2026-10-23): https://builder.aws.com/project/3L6wldnqsR98x1VzMgESGNQLVKl/hypecheck-spell-check-for-hype-in-health-press-releases
 - Video: https://youtu.be/FYuR9-ymPR4 (2:44, 3840×2160, Polly narration, no music, rendered 2026-10-23 against the live site; opens on the statin storm; source `video/hypecheck-demo.mp4`)
 
 **Headline numbers (all on public expert-labelled data, pre-registered):**
